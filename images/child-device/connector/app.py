@@ -36,7 +36,6 @@ class App:
                 client.connect()
                 client.subscribe()
                 client.bootstrap()
-                client.register_worker()
 
                 metrics_thread = threading.Thread(
                     target=collect_metrics, args=(client, _queue)
