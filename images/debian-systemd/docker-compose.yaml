@@ -1,0 +1,42 @@
+version: '3'
+services:
+  tedge:
+    build:
+      context: ".."
+      dockerfile: debian-systemd/debian-systemd.dockerfile
+    env_file:
+      - ../../.env
+    volumes:
+      # Persist the device certificates in a volume so when the container is destroyed it does not delete the cert
+      # - device-certs:/etc/tedge/device-certs
+      # - config:/etc/tedge
+      # - cache:/var/tedge
+      # - logs:/var/logs/tedge
+      - etc:/etc
+    tmpfs:
+      - /run
+    privileged: true
+    networks:
+      - tedge
+
+  child01:
+    build:
+      context: "../child-device"
+      dockerfile: child.dockerfile
+    restart: always
+    environment:
+      - CONNECTOR_DEVICE_ID=75a1d55da2d8
+      - CONNECTOR_TEDGE_HOST=tedge
+      - CONNECTOR_TEDGE_API=http://tedge:8000
+    links:
+      - tedge:tedge
+    networks:
+      - tedge
+    depends_on:
+      - tedge
+
+volumes:
+  etc:
+
+networks:
+  tedge:

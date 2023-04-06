@@ -1,0 +1,38 @@
+#!/bin/sh
+#
+# Send an event when the thin-edge starts up (with the version number)
+#
+if ! command -v tedge >/dev/null 2>&1; then
+    exit 0
+fi
+
+log() {
+    echo "$*" >&2
+}
+
+# Wait for mosquitto process to start up (to reduce spamming logs with uninteresting info)
+if command -v pgrep >/dev/null 2>&1; then
+    if [ "$MQTT_HOST" = "localhost" ] || [ "$MQTT_HOST" = "127.0.0.1" ]; then
+        while :; do
+            if pgrep -fa "mosquitto " >/dev/null 2>&1; then
+                break
+            fi
+            sleep 0.5
+        done
+    fi
+fi
+
+publish() {
+    VERSION=$(tedge --version | cut -d' ' -f2)
+    tedge mqtt pub --qos 0 tedge/events/startup "$(printf '{"text": "tedge started up 🚀 version=%s"}' "$VERSION")"
+}
+
+# Keep trying forever until it is published
+log "Running startup-notifier"
+while true; do
+    if publish >/dev/null 2>&1; then
+        exit 0
+    fi
+    log "Publishing failed, trying again in 5 seconds"
+    sleep 5
+done

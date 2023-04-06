@@ -1,0 +1,12 @@
+[mqtt]
+bind_address = "0.0.0.0"
+port = 1883
+
+[logs]
+path = "/etc/tedge/container/logs"
+
+[data]
+path = "/etc/tedge/container/data"
+
+[tmp]
+path = "/etc/tedge/container/tmp"

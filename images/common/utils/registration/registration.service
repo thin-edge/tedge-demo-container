@@ -1,0 +1,13 @@
+[Unit]
+Description=thin-edge.io child device registration service
+After=mosquitto.service
+
+[Service]
+User=tedge
+ExecStart=/usr/bin/registration
+Restart=always
+RestartSec=30
+EnvironmentFile=-/etc/registration-service/env
+
+[Install]
+WantedBy=multi-user.target

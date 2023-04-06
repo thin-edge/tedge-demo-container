@@ -1,0 +1,11 @@
+[Unit]
+Description=startup-startup
+After=mosquitto.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/startup-notifier
+
+[Install]
+WantedBy=multi-user.target
