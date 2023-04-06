@@ -3,6 +3,13 @@ thin-edge.io demo container setup to showcase thin-edge.io and all its features
 
 🚧 Work in progress 🚧
 
+## Pre-requisites
+
+The following pre-requisites are required before you can get started:
+
+* docker
+* docker compose v2 (e.g. not the python one ;))
+
 ## Getting started locally
 
 First you may need to install [just](https://just.systems/man/en/chapter_1.html) as it is used as the task runner.
@@ -13,7 +20,7 @@ First you may need to install [just](https://just.systems/man/en/chapter_1.html)
     just create-env
     ```
 
-    Fill in values in [.env](./.env)
+    Fill in the values for each of the environment variables in the [.env](./.env) file.
 
 2. Start the docker compose project
 
