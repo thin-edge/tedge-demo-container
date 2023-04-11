@@ -34,14 +34,16 @@ class App:
         while True:
             try:
                 client.connect()
-                client.subscribe()
                 client.bootstrap()
+                client.subscribe()
 
                 metrics_thread = threading.Thread(
                     target=collect_metrics, args=(client, _queue)
                 )
                 metrics_thread.start()
-                client.loop_forever()
+                while True:
+                    time.sleep(1)
+                # client.loop_forever()
             except ConnectionRefusedError:
                 log.info("MQTT broker is not ready yet")
             except KeyboardInterrupt:

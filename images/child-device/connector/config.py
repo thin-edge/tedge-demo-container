@@ -30,6 +30,7 @@ class Metrics:
 
 @dataclass
 class Config:
+    local_id: str = None
     device_id: str = None
 
     tedge: Tedge = field(default_factory=Tedge)

@@ -8,6 +8,7 @@ set -e
 MQTT_HOST=${MQTT_HOST:-}
 MQTT_PORT=${MQTT_PORT:-}
 SERVICE_NAME=${SERVICE_NAME:-registration}
+DEVICE_ID=${DEVICE_ID:-}
 
 log () {
     echo "$*" >&2
@@ -20,23 +21,36 @@ if command -v tedge >/dev/null 2>&1; then
     if [ -z "$MQTT_PORT" ]; then
         MQTT_PORT=$(tedge config get mqtt.client.port)
     fi
+    if [ -z "$DEVICE_ID" ]; then
+        DEVICE_ID=$(tedge config get device.id)
+    fi
 fi
 
 register_device() {
     OPERATIONS_DIR="/etc/tedge/operations/c8y"
     CHILD_NAME="$1"
+    # Prefix child id with the main device's id to make the child unique
+    # otherwise there might be name clashes in the cloud provider
+    CHILD_ID="${DEVICE_ID}_${CHILD_NAME}"
+
     if [ -d "$OPERATIONS_DIR" ]; then
-        CHILD_DIR="$OPERATIONS_DIR/$CHILD_NAME"
+        CHILD_DIR="$OPERATIONS_DIR/$CHILD_ID"
         if [ -d "$CHILD_DIR" ]; then
-            log "[child=$CHILD_NAME] child directory already exists. path=$CHILD_DIR"
+            log "[child=$CHILD_NAME,id=$CHILD_ID] child directory already exists. path=$CHILD_DIR"
         else
             mkdir "$CHILD_DIR"
-            log "[child=$CHILD_NAME] Created new child directory. path=$CHILD_DIR"
+            log "[child=$CHILD_NAME,id=$CHILD_ID] created new child directory. path=$CHILD_DIR"
         fi
         if [ ! -f "$CHILD_DIR/c8y_Firmware" ]; then
-            log "[child=$CHILD_NAME] Registering c8y_Firmware operation"
+            log "[child=$CHILD_NAME,id=$CHILD_ID] registering c8y_Firmware operation"
             touch "$CHILD_DIR/c8y_Firmware"
         fi
+
+        # Publish registration information about the child devices
+        # so the child name can be unique
+        payload=$(printf '{"name":"%s","id":"%s","parent":"%s"}' "$CHILD_NAME" "$CHILD_ID" "$DEVICE_ID")
+        mosquitto_pub -h "$MQTT_HOST" -p "$MQTT_PORT" -t "register/devices/res/$CHILD_NAME" -m "$payload" --retain
+
     else
         log "[child=$CHILD_NAME] Skipping as tedge operations directory does not exist. path=$OPERATIONS_DIR"
     fi
@@ -52,9 +66,9 @@ main() {
             --will-topic "tedge/health/${SERVICE_NAME}" \
             --will-payload "{\"status\":\"down\",\"type\":\"service\"}" \
             --will-retain \
-            -t 'register/devices/+' \
+            -t 'register/devices/req/+' \
             -F '%t' | while read -r topic; do
-                name="${topic#*/*/}"
+                name="${topic#*/*/*/}"
                 log "Registering device. name=$name"
                 register_device "$name" || :
             done

@@ -13,8 +13,10 @@ services:
       # - cache:/var/tedge
       # - logs:/var/logs/tedge
       - etc:/etc
+    restart: always
     tmpfs:
       - /run
+      - /tmp
     privileged: true
     networks:
       - tedge
@@ -25,7 +27,7 @@ services:
       dockerfile: child.dockerfile
     restart: always
     environment:
-      - CONNECTOR_DEVICE_ID=75a1d55da2d8
+      - CONNECTOR_DEVICE_ID=child01
       - CONNECTOR_TEDGE_HOST=tedge
       - CONNECTOR_TEDGE_API=http://tedge:8000
     links:
