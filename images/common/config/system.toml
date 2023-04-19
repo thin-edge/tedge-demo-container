@@ -9,4 +9,4 @@ disable =  ["/bin/systemctl", "disable", "{}"]
 is_active = ["/bin/systemctl", "is-active", "{}"]
 
 [system]
-reboot = ["shutdown", "-r", "now"]
+reboot = ["/usr/bin/on_shutdown.sh"]

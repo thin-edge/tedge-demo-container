@@ -783,7 +783,7 @@ post_configure() {
     fi
 
     if [ ! -f /etc/sudoers.d/tedge ]; then
-        sudo sh -c "echo 'tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /sbin/init, /sbin/shutdown' > /etc/sudoers.d/tedge"
+        sudo sh -c "echo 'tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /sbin/init, /bin/systemctl, /bin/journalctl, /sbin/shutdown, /usr/bin/on_shutdown.sh' > /etc/sudoers.d/tedge"
     fi
 }
 

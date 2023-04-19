@@ -9,4 +9,4 @@ path = "/etc/tedge/container/logs"
 path = "/etc/tedge/container/data"
 
 [tmp]
-path = "/etc/tedge/container/tmp"
+path = "/tmp"
