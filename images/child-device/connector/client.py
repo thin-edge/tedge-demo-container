@@ -1,3 +1,4 @@
+"""thin-edge.io client"""
 import logging
 import json
 import time
@@ -5,6 +6,7 @@ import re
 import os
 import threading
 from typing import Any
+import requests
 from paho.mqtt.client import Client, MQTTMessage
 from .config import Config
 from .topics import health_topic
@@ -26,14 +28,19 @@ def update_url(url: str, replace_url: str) -> str:
 
 
 class TedgeClient:
+    """Tedge Client
+
+    The tedge client is used to communicate with thin-edge.io via MQTT and HTTP
+    """
+
     def __init__(self, config: Config) -> None:
         self.mqtt = None
         self.config = config
         self._workers = []
-        self.config.device_id = self.get_id()
-        self._health_topic = health_topic("connector", self.config.device_id)
+        self.config.local_id = self.get_id()
 
     def get_id(self):
+        """Get the id to be used for the connector"""
         return (
             os.getenv("CONNECTOR_DEVICE_ID")
             or os.getenv("HOSTNAME")
@@ -53,22 +60,55 @@ class TedgeClient:
                 log.info("Failed to connect. code=%d", result_code)
             done.set()
 
+        def on_disconnect(_client: Client, _userdata: Any, result_code: int):
+            log.info("Client was disconnected. result_code=%d", result_code)
+
         # Don't use a clean session so no messages will go missing
-        client = Client(self.config.device_id, clean_session=False)
-        client.will_set(self._health_topic, json.dumps({"status": "down"}))
+        client = Client(self.config.local_id, clean_session=False)
+        if self.config.device_id:
+            client.will_set(
+                health_topic("connector", self.config.device_id),
+                json.dumps({"status": "down"}),
+            )
         client.on_connect = on_connect
+        client.on_disconnect = on_disconnect
         client.connect(self.config.tedge.host, self.config.tedge.port)
         client.loop_start()
         done.wait()
         self.mqtt = client
 
-    def bootstrap(self):
-        """Bootstrap/register the child device's configuration types with thin-edge.io"""
-        # Register device using custom child device registration service
-        self.mqtt.publish(f"register/devices/{self.config.device_id}", "")
+        # Register health check and bootstrap other plugin settings
         time.sleep(5)
-        self.mqtt.publish(self._health_topic, json.dumps({"status": "up"}))
+        self.mqtt.publish(
+            health_topic("connector", self.config.device_id),
+            json.dumps({"status": "up"}),
+        )
         configuration.bootstrap(self.config, self.mqtt)
+
+    def register(self):
+        """Register the child device to thin-edge.io"""
+        # NOTE: Use custom service to provide the registration api. In the future this
+        # will be deprecated and supported by thin-edge.io.
+        response = requests.post(
+            f"{self.config.tedge.registration_api}/register",
+            json={
+                "name": self.config.local_id,
+                "supportedOperations": [
+                    "c8y_Firmware",
+                    "c8y_ConfigurationUpdate",
+                ],
+            },
+            timeout=30,
+        )
+
+        response.raise_for_status()
+        data = response.json()
+        self.config.device_id = data.get("id")
+        log.info(
+            "Child device has been registered successfully. id=%s, message=%s",
+            self.config.device_id,
+            data,
+        )
 
     def subscribe(self):
         """Subscribe to thin-edge.io child device topics and register
@@ -118,4 +158,5 @@ class TedgeClient:
         self._workers.append(worker)
 
     def loop_forever(self):
+        """Block infinitely"""
         self.mqtt.loop_forever()

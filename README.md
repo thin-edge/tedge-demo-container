@@ -73,3 +73,7 @@ The following features are covered by the demo.
 * [x] Configuration management
 * [x] Measurements
 * [x] Services
+
+## TODO
+
+* Support restart command (this may require systemd-shutdown). 

@@ -1,3 +1,4 @@
+"""Worker class to process tasks in the background"""
 import logging
 import queue
 import threading
@@ -74,7 +75,7 @@ class Worker:
 
             config, client, message = data
             self._log.info(
-                "%s: retrieved new message from queue. message=%s",
+                "%s: new message from queue. message=%s",
                 self.name,
                 message.payload,
             )

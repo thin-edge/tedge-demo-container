@@ -15,6 +15,7 @@ RUN apt-get -y update \
         apt-transport-https \
         ca-certificates \
         systemd \
+        systemd-sysv \
         ssh \
         mosquitto \
         mosquitto-clients \
@@ -49,17 +50,15 @@ COPY common/utils/startup-notifier/startup-notifier /usr/bin/
 RUN chmod a+x /usr/bin/startup-notifier \
     && systemctl enable startup-notifier.service
 
-# registration-service
-COPY common/utils/registration/registration.service /lib/systemd/system/
-COPY common/utils/registration/registration /usr/bin/
-RUN chmod a+x /usr/bin/registration \
-    && systemctl enable registration.service
-
 RUN echo "running" \
     && ./bootstrap.sh "$VERSION" --install --no-bootstrap --no-connect \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
-        c8y-command-plugin
+        c8y-command-plugin \ 
+        device-registration-server
+
+# Registration service
+RUN systemctl enable device-registration-server.service
 
 COPY common/config/system.toml /etc/tedge/
 COPY common/config/tedge.toml /etc/tedge/

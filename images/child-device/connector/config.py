@@ -1,3 +1,5 @@
+"""Connector configuration
+"""
 import os
 from dataclasses import dataclass, field
 from configparser import ConfigParser
@@ -5,6 +7,8 @@ from configparser import ConfigParser
 
 @dataclass
 class Configuration:
+    """Configuration settings"""
+
     download_timeout: float = 600.0
     upload_timeout: float = 600.0
     type: str = "c8y-configuration-plugin"
@@ -13,23 +17,33 @@ class Configuration:
 
 @dataclass
 class Firmware:
+    """Firmware settings"""
+
     download_timeout: float = 600.0
 
 
 @dataclass
 class Tedge:
+    """Tedge settings"""
+
     host: str = "localhost"
     port: int = 1883
     api: str = "http://localhost:8000"
+    registration_api: str = "http://localhost:9000"
 
 
 @dataclass
 class Metrics:
+    """Metric settings"""
+
     interval: float = 5.0
 
 
 @dataclass
 class Config:
+    """Configuration class to load the connector's config"""
+
+    local_id: str = None
     device_id: str = None
 
     tedge: Tedge = field(default_factory=Tedge)
@@ -38,6 +52,11 @@ class Config:
     metrics: Metrics = field(default_factory=Metrics)
 
     def load_file(self, path: str):
+        """Load configuration from file
+
+        Args:
+            path (str): Configuration file to load settings from
+        """
         config = ConfigParser()
         config.read(path, encoding="utf8")
 
@@ -61,6 +80,7 @@ class Config:
                         setattr(prop_section, option, new_value)
 
     def load_env(self):
+        """Load connector configuration from environment variables"""
         prefix = "CONNECTOR_"
         for key, value in os.environ.items():
             if not key.startswith(prefix) or not value:

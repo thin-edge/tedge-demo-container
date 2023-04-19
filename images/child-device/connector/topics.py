@@ -1,3 +1,6 @@
+"""MQTT Topics"""
+
+
 def health_topic(service_name: str, child: str = None) -> str:
     """Health topic for the child device"""
     if child:

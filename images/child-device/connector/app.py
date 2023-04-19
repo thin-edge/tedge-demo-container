@@ -1,3 +1,4 @@
+"""Connector application"""
 import logging
 import queue
 import threading
@@ -19,8 +20,11 @@ log.addHandler(handler)
 
 
 class App:
+    """Connection Application"""
+
     # pylint: disable=too-few-public-methods
     def run(self):
+        """Main application loop"""
         # pylint: disable=broad-exception-caught
         _queue = queue.SimpleQueue()
         config = Config()
@@ -33,15 +37,17 @@ class App:
 
         while True:
             try:
+                client.register()
                 client.connect()
                 client.subscribe()
-                client.bootstrap()
 
                 metrics_thread = threading.Thread(
                     target=collect_metrics, args=(client, _queue)
                 )
                 metrics_thread.start()
-                client.loop_forever()
+                while True:
+                    time.sleep(1)
+                # client.loop_forever()
             except ConnectionRefusedError:
                 log.info("MQTT broker is not ready yet")
             except KeyboardInterrupt:
