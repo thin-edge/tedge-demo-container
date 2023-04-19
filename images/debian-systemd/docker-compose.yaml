@@ -13,6 +13,10 @@ services:
       # - cache:/var/tedge
       # - logs:/var/logs/tedge
       - etc:/etc
+
+      # Enable docker from docker - But then this container has elevated access to system resources!
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+
     restart: always
     tmpfs:
       - /run
