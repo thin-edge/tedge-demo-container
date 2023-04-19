@@ -1,3 +1,4 @@
+"""Metric handler"""
 import json
 import logging
 import queue

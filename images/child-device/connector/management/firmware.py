@@ -1,3 +1,4 @@
+"""Firmware handler"""
 import logging
 import json
 import tempfile

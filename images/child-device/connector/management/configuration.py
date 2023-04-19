@@ -1,3 +1,4 @@
+"""Configuration handler to get and set configuration files"""
 from dataclasses import dataclass
 import logging
 import json
@@ -36,6 +37,13 @@ class ConfigurationOperation:
 
 
 def bootstrap(config: Config, client: Client):
+    """Bootstrap configuration settings by sending the
+    available configuration files to thin-edge.io
+
+    Args:
+        config (Config): Connection configuration
+        client (Client): MQTT client
+    """
     if not os.path.exists(config.configuration.path):
         log.info(
             "Skipping configuration bootstrap as file does not exist. path=%s",
