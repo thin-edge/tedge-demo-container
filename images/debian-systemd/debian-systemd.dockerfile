@@ -50,6 +50,9 @@ COPY common/utils/startup-notifier/startup-notifier /usr/bin/
 RUN chmod a+x /usr/bin/startup-notifier \
     && systemctl enable startup-notifier.service
 
+# Shutdown handler
+COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
+
 RUN echo "running" \
     && ./bootstrap.sh "$VERSION" --install --no-bootstrap --no-connect \
     && systemctl enable collectd \
