@@ -55,9 +55,9 @@ The following features are covered by the demo.
 * [ ] Services
     * [x] tedge services
     * [ ] Monit?
-* [ ] Software management
+* [x] Software management
     * [x] apt
-    * [ ] container (docker, docker-compose)
+    * [x] container (docker, docker-compose)
 * [x] Shell
 * [x] Remote Access
     * [x] SSH

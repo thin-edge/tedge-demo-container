@@ -63,6 +63,10 @@ RUN echo "running" \
 # Registration service
 RUN systemctl enable device-registration-server.service
 
+# Optional installations
+COPY common/optional-installer.sh .
+RUN ./optional-installer.sh
+
 COPY common/config/system.toml /etc/tedge/
 COPY common/config/tedge.toml /etc/tedge/
 COPY common/config/c8y-configuration-plugin.toml /etc/tedge/c8y/
