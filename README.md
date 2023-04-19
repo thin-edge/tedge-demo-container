@@ -50,6 +50,7 @@ The following features are covered by the demo.
 * [ ] Alarms?
 * [x] Events
     * [x] On boot-up service: sends an event on startup
+* [x] Device reboot
 * [x] Measurements (via collectd)
 * [ ] Services
     * [x] tedge services
@@ -73,7 +74,3 @@ The following features are covered by the demo.
 * [x] Configuration management
 * [x] Measurements
 * [x] Services
-
-## TODO
-
-* Support restart command (this may require systemd-shutdown). 
