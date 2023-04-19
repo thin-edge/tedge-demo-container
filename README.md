@@ -77,5 +77,3 @@ The following features are covered by the demo.
 ## TODO
 
 * Support restart command (this may require systemd-shutdown). 
-* Create http registration server to easily
-* 
