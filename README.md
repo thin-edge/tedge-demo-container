@@ -67,7 +67,7 @@ The following features are covered by the demo.
 * [x] Telemetry
     * [x] Collectd
 
-**Child device**
+**Child devices**
 
 * [x] Firmware management
     * [x] Sending events before and after the operation transition are being delayed and sent at once
