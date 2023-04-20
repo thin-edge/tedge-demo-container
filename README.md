@@ -1,4 +1,5 @@
 # tedge-demo-container
+
 thin-edge.io demo container setup to showcase thin-edge.io and all its features
 
 🚧 Work in progress 🚧
@@ -46,31 +47,29 @@ The following features are covered by the demo.
 
 **Main device**
 
+* [x] Configuration management
 * [x] mqtt-logger (to better understand what messages are going in and out)
-* [ ] Alarms?
+* [x] Device reboot
 * [x] Events
     * [x] On boot-up service: sends an event on startup
-* [x] Device reboot
+* [x] Log management
+    * [x] log files
 * [x] Measurements (via collectd)
+* [x] Remote Access
+    * [x] SSH
 * [ ] Services
     * [x] tedge services
-    * [ ] Monit?
+* [x] Shell
 * [x] Software management
     * [x] apt
     * [x] container (docker, docker-compose)
-* [x] Shell
-* [x] Remote Access
-    * [x] SSH
-* [x] Log management
-    * [x] log files
-* [x] Configuration management
 * [x] Telemetry
     * [x] Collectd
 
 **Child devices**
 
+* [x] Configuration management
 * [x] Firmware management
     * [x] Sending events before and after the operation transition are being delayed and sent at once
-* [x] Configuration management
 * [x] Measurements
 * [x] Services
