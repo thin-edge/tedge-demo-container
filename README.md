@@ -90,7 +90,7 @@ The following features are covered by the demo.
 * [x] Measurements (via collectd)
 * [x] Remote Access
     * [x] SSH
-* [ ] Services
+* [x] Services
     * [x] tedge services
 * [x] Shell
 * [x] Software management
