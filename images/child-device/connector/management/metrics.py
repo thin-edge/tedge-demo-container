@@ -41,10 +41,10 @@ def collect_metrics(client: TedgeClient, settings: queue.SimpleQueue):
                 json.dumps(
                     {
                         "cpu": {
-                            "percent_bytes-used": cpu_usage,
+                            "percent-used": cpu_usage,
                         },
                         "df-root": {
-                            "percent_bytes-used": disk_root_usage,
+                            "percent-used": disk_root_usage,
                         },
                     }
                 ),
