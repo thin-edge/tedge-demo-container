@@ -1,15 +1,26 @@
 
+set positional-arguments
+
+REGISTRY := "ghcr.io"
+REPO_OWNER := "thin-edge"
+
 # Build the docker images
-[private]
-build:
-  docker build -t "tedge-demo-container" -f images/debian-systemd/debian-systemd.dockerfile images
+build *ARGS:
+  just -f {{justfile()}} build-main-systemd {{ARGS}}
+  just -f {{justfile()}} build-child {{ARGS}}
+
+build-main-systemd OUTPUT_TYPE='oci,dest=tedge-demo-main.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main:{{VERSION}}-systemd -f images/debian-systemd/debian-systemd.dockerfile --output=type={{OUTPUT_TYPE}} images
+
+build-child OUTPUT_TYPE='oci,dest=tedge-demo-child.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:{{VERSION}} -f images/child-device/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device
 
 # Create .env file from the template
 create-env:
     test -f .env || cp env.template .env
 
 # Start the demo
-up args='':
+up *args='':
     docker compose -f images/debian-systemd/docker-compose.yaml up -d --build {{args}}
 
 # Stop the demo (but keep the data)

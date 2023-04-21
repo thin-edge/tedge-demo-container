@@ -2,9 +2,7 @@ version: '3'
 
 # child device template
 x-child-defaults: &child-defaults
-  build:
-      context: "../child-device"
-      dockerfile: child.dockerfile
+  image: ghcr.io/thin-edge/tedge-demo-child:${VERSION:-latest}
   restart: always
   links:
     - tedge:tedge
@@ -13,24 +11,14 @@ x-child-defaults: &child-defaults
   depends_on:
     - tedge
 
+# Services
 services:
   tedge:
-    build:
-      context: ".."
-      dockerfile: debian-systemd/debian-systemd.dockerfile
-    env_file:
-      - ../../.env
+    image: ghcr.io/thin-edge/tedge-demo-main:${VERSION:-latest}
     volumes:
-      # Persist the device certificates in a volume so when the container is destroyed it does not delete the cert
-      # - device-certs:/etc/tedge/device-certs
-      # - config:/etc/tedge
-      # - cache:/var/tedge
-      # - logs:/var/logs/tedge
       - etc:/etc
-
       # Enable docker from docker - But then this container has elevated access to system resources!
       - /var/run/docker.sock:/var/run/docker.sock:rw
-
     restart: always
     tmpfs:
       - /run
