@@ -1,0 +1,45 @@
+version: '3'
+
+# child device template
+x-child-defaults: &child-defaults
+  image: ghcr.io/thin-edge/tedge-demo-child:${VERSION:-latest}
+  restart: always
+  links:
+    - tedge:tedge
+  networks:
+    - tedge
+  depends_on:
+    - tedge
+
+# Services
+services:
+  tedge:
+    image: ghcr.io/thin-edge/tedge-demo-main:${VERSION:-latest}
+    volumes:
+      - etc:/etc
+      # Enable docker from docker - But then this container has elevated access to system resources!
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    restart: always
+    tmpfs:
+      - /run
+      - /tmp
+    privileged: true
+    networks:
+      - tedge
+
+  # child devices
+  child01:
+    <<: *child-defaults
+    environment:
+      - CONNECTOR_DEVICE_ID=child01
+
+  child02:
+    <<: *child-defaults
+    environment:
+      - CONNECTOR_DEVICE_ID=child02
+
+volumes:
+  etc:
+
+networks:
+  tedge:
