@@ -40,6 +40,9 @@ The following pre-requisites are required before you can get started:
 4. Click on the link to your tedge device which is shown on the console
 
 
+Checkout the [USER GUIDE](./docs/USER_GUIDE.md) for more details on other commands that can be run.
+
+
 ## Building the project yourself
 
 The project also includes another docker-compose file to build the project locally. This allows you to manually tweak any of the container images to add/remove things as you see fit.
@@ -106,3 +109,13 @@ The following features are covered by the demo.
     * [x] Sending events before and after the operation transition are being delayed and sent at once
 * [x] Measurements
 * [x] Services
+
+## Known issues
+
+* After the initial registration, sometimes the `tedge-mapper-c8y` may need to restarted before the configuration supported operations will be added to the child devices.
+    
+    You can restart the `tedge-mapper-c8y` service on the main device using the following command:
+
+    ```sh
+    docker compose exec tedge systemctl restart tedge-mapper-c8y
+    ```
