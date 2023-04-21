@@ -119,3 +119,9 @@ The following features are covered by the demo.
     ```sh
     docker compose exec tedge systemctl restart tedge-mapper-c8y
     ```
+
+    Or if you are running using `just up`, then use:
+
+    ```sh
+    just shell systemctl restart tedge-mapper-c8y
+    ```
