@@ -9,7 +9,7 @@ on:
         default: ""
   push:
     tags:
-      - v*
+      - "*"
 
 jobs:
   push:
@@ -36,4 +36,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish images
-        run: just build registry ${{ inputs.VERSION || github.ref_name || 'latest' }}
+        run: just build registry ${{ inputs.VERSION || github.ref_name }}
