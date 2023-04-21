@@ -14,7 +14,7 @@ x-child-defaults: &child-defaults
 # Services
 services:
   tedge:
-    image: ghcr.io/thin-edge/tedge-demo-main:${VERSION:-latest}
+    image: ghcr.io/thin-edge/tedge-demo-main-systemd:${VERSION:-latest}
     volumes:
       - etc:/etc
       # Enable docker from docker - But then this container has elevated access to system resources!
