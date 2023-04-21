@@ -4,3 +4,4 @@ _*.md
 *.pyc
 .venv
 __pycache__
+*.tar
