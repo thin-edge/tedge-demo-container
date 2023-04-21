@@ -3,6 +3,7 @@ version: '3'
 # child device template
 x-child-defaults: &child-defaults
   image: ghcr.io/thin-edge/tedge-demo-child:${VERSION:-latest}
+  pull_policy: always
   restart: always
   links:
     - tedge:tedge
@@ -15,6 +16,7 @@ x-child-defaults: &child-defaults
 services:
   tedge:
     image: ghcr.io/thin-edge/tedge-demo-main-systemd:${VERSION:-latest}
+    pull_policy: always
     volumes:
       - etc:/etc
       # Enable docker from docker - But then this container has elevated access to system resources!
