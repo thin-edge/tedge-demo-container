@@ -25,6 +25,11 @@ create-env:
 up *args='':
     docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml up -d --build {{args}}
 
+# Start the demo and build without caching
+up-no-cache *args='':
+    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml build --no-cache {{args}}
+    just -f {{justfile()}} up {{args}}
+
 # Stop the demo (but keep the data)
 down:
     docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml down
