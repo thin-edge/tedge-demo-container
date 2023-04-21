@@ -56,15 +56,15 @@ class TedgeClient:
         def on_connect(_client, _userdata, _flags, result_code):
             if result_code == 0:
                 log.info("Connected to MQTT Broker!")
+                done.set()
             else:
                 log.info("Failed to connect. code=%d", result_code)
-            done.set()
 
         def on_disconnect(_client: Client, _userdata: Any, result_code: int):
             log.info("Client was disconnected. result_code=%d", result_code)
 
         # Don't use a clean session so no messages will go missing
-        client = Client(self.config.local_id, clean_session=False)
+        client = Client(self.config.device_id, clean_session=False)
         if self.config.device_id:
             client.will_set(
                 health_topic("connector", self.config.device_id),
@@ -72,9 +72,18 @@ class TedgeClient:
             )
         client.on_connect = on_connect
         client.on_disconnect = on_disconnect
+        log.info(
+            "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
+            self.config.tedge.host,
+            self.config.tedge.port,
+            self.config.device_id,
+        )
         client.connect(self.config.tedge.host, self.config.tedge.port)
         client.loop_start()
-        done.wait()
+
+        if not done.wait(30):
+            raise RuntimeError("Failed to connect successfully to MQTT broker")
+
         self.mqtt = client
 
         # Register health check and bootstrap other plugin settings
@@ -96,6 +105,7 @@ class TedgeClient:
                 "supportedOperations": [
                     "c8y_Firmware",
                     "c8y_ConfigurationUpdate",
+                    "c8y_DownloadConfigFile",
                 ],
             },
             timeout=30,

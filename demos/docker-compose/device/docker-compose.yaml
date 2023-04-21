@@ -26,6 +26,10 @@ services:
       - /run
       - /tmp
     privileged: true
+    environment:
+      - DEVICE_ID=${DEVICE_ID:-}
+      - C8Y_BASEURL=${C8Y_BASEURL:-}
+      - C8Y_USER=${C8Y_USER:-}
     networks:
       - tedge
 
