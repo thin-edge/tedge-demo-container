@@ -1,4 +1,18 @@
 version: '3'
+
+# child device template
+x-child-defaults: &child-defaults
+  build:
+      context: "../child-device"
+      dockerfile: child.dockerfile
+  restart: always
+  links:
+    - tedge:tedge
+  networks:
+    - tedge
+  depends_on:
+    - tedge
+
 services:
   tedge:
     build:
@@ -25,37 +39,16 @@ services:
     networks:
       - tedge
 
+  # child devices
   child01:
-    build:
-      context: "../child-device"
-      dockerfile: child.dockerfile
-    restart: always
+    <<: *child-defaults
     environment:
       - CONNECTOR_DEVICE_ID=child01
-      - CONNECTOR_TEDGE_HOST=tedge
-      - CONNECTOR_TEDGE_API=http://tedge:8000
-    links:
-      - tedge:tedge
-    networks:
-      - tedge
-    depends_on:
-      - tedge
 
   child02:
-    build:
-      context: "../child-device"
-      dockerfile: child.dockerfile
-    restart: always
+    <<: *child-defaults
     environment:
       - CONNECTOR_DEVICE_ID=child02
-      - CONNECTOR_TEDGE_HOST=tedge
-      - CONNECTOR_TEDGE_API=http://tedge:8000
-    links:
-      - tedge:tedge
-    networks:
-      - tedge
-    depends_on:
-      - tedge
 
 volumes:
   etc:
