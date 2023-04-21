@@ -7,9 +7,6 @@ delete_device_and_children() {
     device="$1"
     device_id=$(c8y devices get --id "$device" --select id -o csv)
 
-    #c8y devices services list --device "$device_id" --includeAll | c8y inventory delete
-    #c8y devices services list --device "$device_id" --includeAll | c8y inventory delete
-
     echo "Deleting child additions"
     c8y inventory children list --id "$device_id" --childType addition --pageSize 100 | c8y inventory delete
 
