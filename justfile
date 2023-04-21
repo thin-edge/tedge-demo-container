@@ -4,6 +4,8 @@ set positional-arguments
 REGISTRY := "ghcr.io"
 REPO_OWNER := "thin-edge"
 
+DEV_ENV := ".env"
+
 # Build the docker images
 build *ARGS:
   just -f {{justfile()}} build-main-systemd {{ARGS}}
@@ -17,23 +19,23 @@ build-child OUTPUT_TYPE='oci,dest=tedge-demo-child.tar' VERSION='latest':
 
 # Create .env file from the template
 create-env:
-    test -f .env || cp env.template .env
+    test -f {{DEV_ENV}} || cp env.template {{DEV_ENV}}
 
 # Start the demo
 up *args='':
-    docker compose -f images/debian-systemd/docker-compose.yaml up -d --build {{args}}
+    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml up -d --build {{args}}
 
 # Stop the demo (but keep the data)
 down:
-    docker compose -f images/debian-systemd/docker-compose.yaml down
+    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml down
 
 # Stop the demo and destroy the data
 down-all:
-    docker compose -f images/debian-systemd/docker-compose.yaml down -v
+    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml --env-file .env down -v
 
 # Configure and register the device to the cloud
 bootstrap:
-    docker compose -f images/debian-systemd/docker-compose.yaml exec tedge ./bootstrap.sh
+    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml exec tedge ./bootstrap.sh
 
 # Start a shell on the main device
 shell *args='bash':
