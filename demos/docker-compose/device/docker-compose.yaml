@@ -27,6 +27,7 @@ services:
       - /tmp
     privileged: true
     environment:
+      - TEDGE_DEVICE_TYPE=${DEVICE_TYPE:-demo-device}
       - DEVICE_ID=${DEVICE_ID:-}
       - C8Y_BASEURL=${C8Y_BASEURL:-}
       - C8Y_USER=${C8Y_USER:-}
