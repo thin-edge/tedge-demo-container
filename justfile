@@ -63,7 +63,7 @@ test *ARGS:
 # Cleanup device and all it's dependencies
 cleanup DEVICE_ID $CI="true":
     echo "Existing devices"
-    c8y inventory find --owner "device_{{DEVICE_ID}}" -p 100
+    c8y inventory find --owner "device_{{DEVICE_ID}}*" -p 100 -v
 
     echo "Removing device and child devices (including certificates)"
     c8y devicemanagement certificates list --tenant "$(c8y currenttenant get --select name --output csv)" --filter "name eq {{DEVICE_ID}}" --pageSize 2000 | c8y devicemanagement certificates delete --tenant "$(c8y currenttenant get --select name --output csv)"
