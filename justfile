@@ -1,5 +1,6 @@
 
 set positional-arguments
+set dotenv-load
 
 REGISTRY := "ghcr.io"
 REPO_OWNER := "thin-edge"
@@ -39,8 +40,8 @@ down-all:
     docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml --env-file .env down -v
 
 # Configure and register the device to the cloud
-bootstrap:
-    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml exec tedge ./bootstrap.sh
+bootstrap *ARGS:
+    @docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml exec tedge env C8Y_PASSWORD=${C8Y_PASSWORD} ./bootstrap.sh {{ARGS}}
 
 # Start a shell on the main device
 shell *args='bash':
@@ -49,3 +50,12 @@ shell *args='bash':
 # Start a shell on the child device
 shell-child *args='bash':
     docker compose -f images/debian-systemd/docker-compose.yaml exec child01 {{args}}
+
+# Install python virtual environment
+venv:
+  [ -d .venv ] || python3 -m venv .venv
+  ./.venv/bin/pip3 install -r tests/requirements.txt
+
+# Run tests
+test *ARGS:
+  ./.venv/bin/python3 -m robot.run --outputdir output {{ARGS}} tests
