@@ -45,7 +45,6 @@ services:
   child02:
     <<: *child-defaults
     environment:
-      - TEDGE_DEVICE_TYPE=${DEVICE_TYPE:-demo-device}
       - CONNECTOR_DEVICE_ID=child02
 
 volumes:
