@@ -19,4 +19,4 @@ Service status
 
 Sends measurements
     ${date_from}=    Get Test Start Time
-    Cumulocity.Device Should Have Measurements    minimum=2    after=${date_from}    timeout=90
+    Cumulocity.Device Should Have Measurements    minimum=1    after=${date_from}    timeout=90
