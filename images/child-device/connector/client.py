@@ -120,6 +120,9 @@ class TedgeClient:
             data,
         )
 
+        # FIXME: Wait before trying to connect to broker
+        time.sleep(5)
+
     def subscribe(self):
         """Subscribe to thin-edge.io child device topics and register
         handlers to respond to different operations.
