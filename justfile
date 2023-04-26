@@ -37,7 +37,7 @@ down:
 
 # Stop the demo and destroy the data
 down-all:
-    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml --env-file .env down -v
+    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml down -v
 
 # Configure and register the device to the cloud
 bootstrap *ARGS:
