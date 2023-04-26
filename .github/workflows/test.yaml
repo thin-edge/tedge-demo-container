@@ -78,6 +78,19 @@ jobs:
         if: always()
         run: just down-all
 
+      - name: Install go-c8y-cli
+        if: always()
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -LSs https://github.com/reubenmiller/go-c8y-cli/releases/download/v2.22.4/c8y_linux_$(dpkg --print-architecture) -o "$HOME/.local/bin/c8y"
+          chmod +x "$HOME/.local/bin/c8y"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Cleanup Devices
+        if: always()
+        run: |
+          just cleanup "$DEVICE_ID"
+
   generate_report:
     name: Publish report
     if: ${{ always() && github.event_name == 'pull_request' }}

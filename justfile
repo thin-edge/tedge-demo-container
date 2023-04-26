@@ -59,3 +59,9 @@ venv:
 # Run tests
 test *ARGS:
   ./.venv/bin/python3 -m robot.run --outputdir output {{ARGS}} tests
+
+# Cleanup device and all it's dependencies
+cleanup DEVICE_ID $CI="true":
+    echo "Removing device and child devices (including certificates)"
+    c8y devicemanagement certificates list --tenant "$(c8y currenttenant get --select name --output csv)" --filter "name eq {{DEVICE_ID}}" --pageSize 2000 | c8y devicemanagement certificates delete --tenant "$(c8y currenttenant get --select name --output csv)"
+    c8y inventory find --owner "device_{{DEVICE_ID}}" -p 100 | c8y inventory delete
