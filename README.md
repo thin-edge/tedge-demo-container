@@ -77,6 +77,32 @@ Once you have [just](https://github.com/casey/just) installed, you can proceed w
 
 5. That's it 🚀
 
+## Running Tests
+
+Integration tests are included in the demo to ensure that everything is working as it should. The tests can be run using the following steps:
+
+1. Edit the `.env` file and add the following environment variables
+
+    ```sh
+    DEVICE_ID=tedge_unique_name_abcdef
+    C8Y_BASEURL=example.tenant.c8y.io
+    C8Y_USER=myuser@example.com
+    C8Y_PASSWORD="your_password"
+    ```
+
+2. Start the demo and bootstrap it
+
+    ```sh
+    just up
+    just bootstrap --no-prompt
+    ```
+
+3. Run the tests
+
+    ```sh
+    just test
+    ```
+
 ## What is included?
 
 The following features are covered by the demo.
