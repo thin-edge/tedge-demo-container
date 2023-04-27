@@ -39,6 +39,7 @@ class App:
             try:
                 client.register()
                 client.connect()
+                client.bootstrap()
                 client.subscribe()
 
                 metrics_thread = threading.Thread(

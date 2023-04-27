@@ -1,7 +1,23 @@
-.pytest_cache
+# dotenv
 .env
+
+# hidden/temp docs
 _*.md
+
+# artifacts
+*.tar
+
+# python
 *.pyc
 .venv
 __pycache__
-*.tar
+.pytest_cache
+
+# tests
+log.html
+output.xml
+report.html
+
+# misc
+.DS_Store
+tmp/

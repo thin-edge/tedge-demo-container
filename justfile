@@ -1,5 +1,6 @@
 
 set positional-arguments
+set dotenv-load
 
 REGISTRY := "ghcr.io"
 REPO_OWNER := "thin-edge"
@@ -36,11 +37,11 @@ down:
 
 # Stop the demo and destroy the data
 down-all:
-    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml --env-file .env down -v
+    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml down -v
 
 # Configure and register the device to the cloud
-bootstrap:
-    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml exec tedge ./bootstrap.sh
+bootstrap *ARGS:
+    @docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml exec tedge env C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} ./bootstrap.sh {{ARGS}}
 
 # Start a shell on the main device
 shell *args='bash':
@@ -49,3 +50,19 @@ shell *args='bash':
 # Start a shell on the child device
 shell-child *args='bash':
     docker compose -f images/debian-systemd/docker-compose.yaml exec child01 {{args}}
+
+# Install python virtual environment
+venv:
+  [ -d .venv ] || python3 -m venv .venv
+  ./.venv/bin/pip3 install -r tests/requirements.txt
+
+# Run tests
+test *ARGS:
+  ./.venv/bin/python3 -m robot.run --outputdir output {{ARGS}} tests
+
+# Cleanup device and all it's dependencies
+cleanup DEVICE_ID $CI="true":
+    echo "Removing device and child devices (including certificates)"
+    c8y devicemanagement certificates list -n --tenant "$(c8y currenttenant get --select name --output csv)" --filter "name eq {{DEVICE_ID}}" --pageSize 2000 | c8y devicemanagement certificates delete --tenant "$(c8y currenttenant get --select name --output csv)"
+    c8y inventory find -n --owner "device_{{DEVICE_ID}}" -p 100 | c8y inventory delete
+    c8y users delete -n --id "device_{{DEVICE_ID}}" --tenant "$(c8y currenttenant get --select name --output csv)" --silentStatusCodes 404 --silentExit
