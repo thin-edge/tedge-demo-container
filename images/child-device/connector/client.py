@@ -50,6 +50,9 @@ class TedgeClient:
 
     def connect(self):
         """Connect to the thin-edge.io MQTT broker"""
+        if self.mqtt and self.mqtt.is_connected():
+            log.info("MQTT client is already connected")
+            return
 
         done = threading.Event()
 
@@ -62,36 +65,37 @@ class TedgeClient:
 
         def on_disconnect(_client: Client, _userdata: Any, result_code: int):
             log.info("Client was disconnected. result_code=%d", result_code)
+            client.loop_stop()
 
         # Don't use a clean session so no messages will go missing
-        client = Client(self.config.device_id, clean_session=False)
-        if self.config.device_id:
-            client.will_set(
-                health_topic("connector", self.config.device_id),
-                json.dumps({"status": "down"}),
+        if self.mqtt is None:
+            client = Client(self.config.device_id, clean_session=False)
+            client.reconnect_delay_set(10, 120)
+            if self.config.device_id:
+                client.will_set(
+                    health_topic("connector", self.config.device_id),
+                    json.dumps({"status": "down"}),
+                )
+            client.on_connect = on_connect
+            client.on_disconnect = on_disconnect
+            log.info(
+                "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
+                self.config.tedge.host,
+                self.config.tedge.port,
+                self.config.device_id,
             )
-        client.on_connect = on_connect
-        client.on_disconnect = on_disconnect
-        log.info(
-            "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
-            self.config.tedge.host,
-            self.config.tedge.port,
-            self.config.device_id,
-        )
-        client.connect(self.config.tedge.host, self.config.tedge.port)
-        client.loop_start()
+            self.mqtt = client
+
+        self.mqtt.connect(self.config.tedge.host, self.config.tedge.port)
+        self.mqtt.loop_start()
 
         if not done.wait(30):
+            self.mqtt.loop_stop(True)
             raise RuntimeError("Failed to connect successfully to MQTT broker")
 
-        self.mqtt = client
-
-        # Register health check and bootstrap other plugin settings
-        time.sleep(5)
-        self.mqtt.publish(
-            health_topic("connector", self.config.device_id),
-            json.dumps({"status": "up"}),
-        )
+    def bootstrap(self):
+        """Register extra services once the mqtt client is up
+        """
         configuration.bootstrap(self.config, self.mqtt)
 
     def register(self):
@@ -145,6 +149,14 @@ class TedgeClient:
         for topic, handler in handlers:
             log.info("Registering worker. topic=%s", topic)
             self.register_worker(topic, handler)
+
+        # Only register that the child device is ready now
+        # Register health check and bootstrap other plugin settings
+        log.info("Publishing health endpoint. device=%s, service=connector", self.config.device_id)
+        self.mqtt.publish(
+            health_topic("connector", self.config.device_id),
+            json.dumps({"status": "up"}),
+        )
 
     def register_worker(self, topic: str, target: Job, num_threads: int = 1):
         """Register a worker to handle requests for a specific MQTT topic
