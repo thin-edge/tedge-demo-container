@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+# https://www.mankier.com/8/openrc-run
+name="startup-notifier"
+description="startup notifier"
+command=/bin/sh
+command_args="/usr/bin/startup-notifier"
+command_background=1
+pidfile="/run/lock/${RC_SVCNAME}.lock"
+
+depend()
+{
+    # We write a pidfile and to /var/cache, so we need localmount.
+    # need localmount
+    after mosquitto
+}

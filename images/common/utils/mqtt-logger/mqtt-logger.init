@@ -1,0 +1,8 @@
+#!/sbin/openrc-run
+# https://www.mankier.com/8/openrc-run
+name="mqtt-logger"
+description="MQTT Logger service"
+command=/bin/sh
+command_args="/usr/bin/mqtt-logger"
+command_background=1
+pidfile="/run/lock/${RC_SVCNAME}.lock"
