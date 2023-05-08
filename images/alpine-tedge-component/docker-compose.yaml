@@ -1,0 +1,103 @@
+version: '3'
+
+# tedge component template
+x-service-base: &service-base
+  build:
+    dockerfile: alpine-tedge-component/alpine-tedge-component.dockerfile
+    context: ".."
+  environment:
+    - DEVICE_ID=${DEVICE_ID:-}
+    - TEDGE_MQTT_CLIENT_HOST=mqtt
+    - TEDGE_C8Y_URL=${C8Y_BASEURL:-}
+    - C8Y_USER=${C8Y_USER:-}
+  volumes:
+    - tedge_logs:/var/log/tedge
+    - tedge_config:/etc/tedge
+    - tedge_cache:/var/tedge
+  networks:
+    - tedge
+
+x-service-defaults: &service-defaults
+  <<: *service-base
+  restart: always
+  depends_on:
+    mqtt-broker:
+      condition: service_healthy
+  links:
+    - "mqtt-broker:mqtt"
+    - "tedge-agent:tedgeapi"
+
+services:
+  init:
+    <<: *service-base
+    user: root
+    secrets:
+      - source: c8y_password
+        target: /run/secrets/c8y_password.txt
+
+    entrypoint: entrypoint.sh
+    command:
+      - init
+
+  mqtt-broker:
+    build:
+      dockerfile: ./mosquitto/mosquitto.dockerfile
+      context: ".."
+    # Optional: Expose port if you would like the mqtt broker to be available for
+    # components outside of this docker-compose. It is not required for communication within network
+    # ports:
+    #   - 1883:1883
+    restart: always
+    environment:
+      - DEVICE_ID=${DEVICE_ID:-}
+      - TEDGE_C8Y_URL=${C8Y_BASEURL:-}
+      - C8Y_USER=${C8Y_USER:-}
+
+      - SERVICE_NAME=mqtt-broker
+      - TEDGE_MQTT_BIND_ADDRESS=0.0.0.0
+      - TEDGE_MQTT_PORT=1883
+
+    volumes:
+      - tedge_config:/etc/tedge
+      - tedge_logs:/var/log/tedge
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    networks:
+      - tedge
+
+  tedge-mapper-c8y:
+    <<: *service-defaults
+    entrypoint: tedge-mapper
+    command:
+      - c8y
+
+  tedge-agent:
+    <<: *service-defaults
+    entrypoint: tedge-agent
+    links:
+    - "mqtt-broker:mqtt"
+
+  c8y-configuration-plugin:
+    <<: *service-defaults
+    entrypoint: c8y-configuration-plugin
+
+  c8y-log-plugin:
+    <<: *service-defaults
+    entrypoint: c8y-log-plugin
+
+  c8y-firmware-plugin:
+    <<: *service-defaults
+    entrypoint: c8y-firmware-plugin
+
+networks:
+  tedge:
+
+secrets:
+  c8y_password:
+    environment: C8Y_PASSWORD
+
+volumes:
+  tedge_config:
+  tedge_logs:
+  tedge_cache:

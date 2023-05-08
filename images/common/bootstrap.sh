@@ -324,7 +324,9 @@ do
     shift
 done
 
-set -- "$POSITIONAL_ARGS"
+if [ -n "$POSITIONAL_ARGS" ]; then
+    set -- "$POSITIONAL_ARGS"
+fi
 
 # ---------------------------------------
 # Initializing
@@ -690,18 +692,18 @@ bootstrap_c8y() {
     # needs to be done.
 
     # Force disconnection of mapper before setting url
-    sudo tedge disconnect "$TEDGE_MAPPER" >/dev/null 2>&1 || true
+    sudo -E tedge disconnect "$TEDGE_MAPPER" >/dev/null 2>&1 || true
 
     DEVICE_ID=$(prompt_value "Enter the device.id" "$DEVICE_ID")
 
     # Remove existing certificate if it does not match
     if tedge cert show >/dev/null 2>&1; then
         echo "Removing existing device certificate"
-        sudo tedge cert remove
+        sudo -E tedge cert remove
     fi
 
     echo "Creating certificate: $DEVICE_ID"
-    sudo tedge cert create --device-id "$DEVICE_ID"
+    sudo -E tedge cert create --device-id "$DEVICE_ID"
 
     # Cumulocity URL
     C8Y_BASEURL=$(prompt_value "Enter the Cumulocity IoT url" "$C8Y_BASEURL")
@@ -712,7 +714,7 @@ bootstrap_c8y() {
     fi
 
     echo "Setting c8y.url to $C8Y_BASEURL"
-    sudo tedge config set c8y.url "$C8Y_BASEURL"
+    sudo -E tedge config set c8y.url "$C8Y_BASEURL"
 
     C8Y_USER=$(prompt_value "Enter your Cumulocity user" "$C8Y_USER")
 
@@ -736,12 +738,12 @@ bootstrap_c8y() {
 
 connect_mappers() {
     # retry connection attempts
-    sudo tedge disconnect "$TEDGE_MAPPER" || true
+    sudo -E tedge disconnect "$TEDGE_MAPPER" || true
 
     CONNECT_ATTEMPT=0
     while true; do
         CONNECT_ATTEMPT=$((CONNECT_ATTEMPT + 1))
-        if sudo tedge connect "$TEDGE_MAPPER"; then
+        if sudo -E tedge connect "$TEDGE_MAPPER"; then
             break
         else
             if [ "$CONNECT_ATTEMPT" -ge "$MAX_CONNECT_ATTEMPTS" ]; then
@@ -842,10 +844,10 @@ main() {
 
                 # Re-init some of the file structures (in case paths have been changed)
                 sudo systemctl stop tedge-agent ||:
-                sudo tedge-agent --init
-                sudo c8y-configuration-plugin --init
-                sudo c8y-firmware-plugin --init
-                sudo c8y-log-plugin --init
+                sudo -E tedge-agent --init
+                sudo -E c8y-configuration-plugin --init
+                sudo -E c8y-firmware-plugin --init
+                sudo -E c8y-log-plugin --init
 
                 sudo systemctl start ssh
 
