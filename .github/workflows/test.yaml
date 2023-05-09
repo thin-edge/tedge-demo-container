@@ -32,10 +32,6 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }} # Check out the code of the PR. Only after the manual approval process
 
       - name: Checkout
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-
-      - name: Checkout
         uses: actions/checkout@v3
         if: ${{ github.event_name != 'pull_request_target' }}
 
