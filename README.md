@@ -151,3 +151,19 @@ The following features are covered by the demo.
     ```sh
     just shell systemctl restart tedge-mapper-c8y
     ```
+
+* After the initial startup, the software list on the main device maybe empty. There is an issue tracking this problem on the thin-edge.io repository: https://github.com/thin-edge/thin-edge.io/issues/1731
+
+    **Workaround**
+
+    You can restart the `tedge-mapper-c8y` service on the main device using the following command:
+
+    ```sh
+    docker compose exec tedge systemctl restart tedge-mapper-c8y
+    ```
+
+    Or if you are running using `just up`, then use:
+
+    ```sh
+    just shell systemctl restart tedge-mapper-c8y
+    ```
