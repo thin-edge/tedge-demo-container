@@ -29,3 +29,17 @@ Execute shell command
     ${operation}=    Cumulocity.Execute Shell Command    ls -l /etc/tedge
     ${operation}=    Operation Should Be SUCCESSFUL    ${operation}
     Should Not Be Empty    ${operation["c8y_Command"]["result"]}
+
+Get Logfile Request
+    [Template]    Get Logfile Request
+    software-management
+    apt-terminal-log
+    dpkg
+
+*** Keywords ***
+
+Get Logfile Request
+    [Arguments]    ${name}
+    ${operation}=    Cumulocity.Create Operation    description=Get Log File    fragments={"c8y_LogfileRequest": {"dateFrom": "2023-05-08T20:46:56+0200","dateTo": "2023-05-09T20:46:56+0200","logFile": "${name}","maximumLines": 1000,"searchText": ""}}
+    ${operation}=    Operation Should Be SUCCESSFUL    ${operation}
+    Should Not Be Empty    ${operation["c8y_LogfileRequest"]["file"]}
