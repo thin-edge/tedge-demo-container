@@ -14,6 +14,13 @@ install_container_management () {
     
     sudo apt-get update
     sudo apt-get install -y docker-ce-cli docker-compose-plugin tedge-container-plugin
+
+    # Disable services to prevent from starting too early
+    # before thin-edge has been registered
+    if command -v systemctl; then
+        echo "Disabling tedge-container-monitor"
+        systemctl disable tedge-container-monitor
+    fi
 }
 
 main() {
