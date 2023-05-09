@@ -134,15 +134,15 @@ class TedgeClient:
         # get config handler
         handlers = [
             (
-                f"tedge/{self.config.device_id}/commands/req/config_snapshot",
+                f"tedge/{self.config.device_id}/commands/req/config_snapshot/#",
                 configuration.on_config_snapshot_request,
             ),
             (
-                f"tedge/{self.config.device_id}/commands/req/config_update",
+                f"tedge/{self.config.device_id}/commands/req/config_update/#",
                 configuration.on_config_update_request,
             ),
             (
-                f"tedge/{self.config.device_id}/commands/req/firmware_update",
+                f"tedge/{self.config.device_id}/commands/req/firmware_update/#",
                 firmware.on_firmware_update_request,
             ),
         ]
