@@ -18,7 +18,7 @@ jobs:
     environment:
       # For security reasons, all pull requests need to be approved first before granting access to secrets
       # So the environment should be set to have a reviewer/s inspect it before approving it
-      name: ${{ inputs.environment || 'Test Pull Request' }}
+      name: ${{ github.event_name == 'pull_request_target' && 'Test Pull Request' || 'Test Auto'  }}
     runs-on: ubuntu-20.04
     env:
       COMPOSE_PROJECT_NAME: ci_${{github.run_id}}_${{github.run_attempt || '1'}}
