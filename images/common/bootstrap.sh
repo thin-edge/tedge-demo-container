@@ -124,6 +124,7 @@ PREFIX=${PREFIX:-tedge_}
 REPO_CHANNEL=${REPO_CHANNEL:-main}
 C8Y_BASEURL=${C8Y_BASEURL:-}
 COMMUNITY_REPO=${COMMUNITY_REPO:-"community"}
+BOOTSTRAP_POSTINST_DIR="${BOOTSTRAP_POSTINST_DIR:-/etc/boostrap/post.d}"
 
 
 get_debian_arch() {
@@ -856,6 +857,18 @@ main() {
                 sudo systemctl start tedge-mapper-collectd
             fi
         fi
+    fi
+
+    # Run optional post bootstrap scripts
+    if [ -d "$BOOTSTRAP_POSTINST_DIR" ]; then
+        for script in "$BOOTSTRAP_POSTINST_DIR"/*.sh; do
+            if [ -x "$script" ]; then
+                echo "Running post bootstrap script: $script"
+                "$script"
+            else
+                echo "Found post bootstrap script but it is not executable: file=$script"
+            fi
+        done
     fi
 
     if [ "$BOOTSTRAP" = 1 ] || [ "$CONNECT" = 1 ]; then

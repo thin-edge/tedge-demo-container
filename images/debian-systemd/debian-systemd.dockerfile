@@ -67,6 +67,9 @@ RUN systemctl enable device-registration-server.service
 COPY common/optional-installer.sh .
 RUN ./optional-installer.sh
 
+# Copy bootstrap script hooks
+COPY common/config/bootstrap /etc/boostrap
+
 COPY common/config/system.toml /etc/tedge/
 COPY common/config/tedge.toml /etc/tedge/
 COPY common/config/c8y-configuration-plugin.toml /etc/tedge/c8y/
