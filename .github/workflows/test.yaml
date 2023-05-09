@@ -11,6 +11,7 @@ on:
     branches: [ main ]
   push:
     branches: [ main ]
+  merge_group:
 jobs:
   test:
     name: Test
