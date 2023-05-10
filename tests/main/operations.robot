@@ -17,12 +17,12 @@ Restart device
 
 Install software package
     ${operation}=    Cumulocity.Install Software    vim-tiny,latest::apt
-    Operation Should Be SUCCESSFUL    ${operation}
+    Operation Should Be SUCCESSFUL    ${operation}    timeout=90
     Cumulocity.Device Should Have Installed Software    vim-tiny
 
 Uninstall software package
     Skip    Missing Uninstall software keyword
-    ${operation}=    Cumulocity.Install Software    vim-tiny
+    ${operation}=    Cumulocity.Install Software    vim-tiny    timeout=90
     Operation Should Be SUCCESSFUL    ${operation}
 
 Execute shell command

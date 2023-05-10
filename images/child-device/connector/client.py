@@ -5,7 +5,7 @@ import time
 import re
 import os
 import threading
-from typing import Any
+from typing import Any, List
 import requests
 from paho.mqtt.client import Client, MQTTMessage
 from .config import Config
@@ -36,8 +36,24 @@ class TedgeClient:
     def __init__(self, config: Config) -> None:
         self.mqtt = None
         self.config = config
-        self._workers = []
+        self._workers: List[Worker] = []
         self.config.local_id = self.get_id()
+        self._subscriptions = []
+
+    def shutdown(self, worker_timeout: float = 10):
+        """Shutdown client including any workers in progress
+
+        Args:
+            worker_timeout(float): Timeout in seconds to wait for
+                each worker (individually). Defaults to 10.
+        """
+        if self.mqtt and self.mqtt.is_connected():
+            self.mqtt.disconnect()
+            self.mqtt.loop_stop(True)
+
+        # Stop all workers
+        for worker in self._workers:
+            worker.join(worker_timeout if worker_timeout and worker_timeout > 0 else 10)
 
     def get_id(self):
         """Get the id to be used for the connector"""
@@ -65,7 +81,6 @@ class TedgeClient:
 
         def on_disconnect(_client: Client, _userdata: Any, result_code: int):
             log.info("Client was disconnected. result_code=%d", result_code)
-            client.loop_stop()
 
         # Don't use a clean session so no messages will go missing
         if self.mqtt is None:
@@ -78,6 +93,8 @@ class TedgeClient:
                 )
             client.on_connect = on_connect
             client.on_disconnect = on_disconnect
+            # Enable paho mqtt logs to help with any mqtt connection debugging
+            client.enable_logger(log)
             log.info(
                 "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
                 self.config.tedge.host,
@@ -94,8 +111,7 @@ class TedgeClient:
             raise RuntimeError("Failed to connect successfully to MQTT broker")
 
     def bootstrap(self):
-        """Register extra services once the mqtt client is up
-        """
+        """Register extra services once the mqtt client is up"""
         configuration.bootstrap(self.config, self.mqtt)
 
     def register(self):
@@ -152,7 +168,10 @@ class TedgeClient:
 
         # Only register that the child device is ready now
         # Register health check and bootstrap other plugin settings
-        log.info("Publishing health endpoint. device=%s, service=connector", self.config.device_id)
+        log.info(
+            "Publishing health endpoint. device=%s, service=connector",
+            self.config.device_id,
+        )
         self.mqtt.publish(
             health_topic("connector", self.config.device_id),
             json.dumps({"status": "up"}),
@@ -179,7 +198,7 @@ class TedgeClient:
             worker.put(self.config, client, JSONMessage(message.topic, payload))
 
         self.mqtt.message_callback_add(topic, add_job)
-        self.mqtt.subscribe(topic)
+        self.mqtt.subscribe(topic, qos=2)
         self._workers.append(worker)
 
     def loop_forever(self):

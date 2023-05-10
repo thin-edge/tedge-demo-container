@@ -25,8 +25,8 @@ class App:
     # pylint: disable=too-few-public-methods
     def run(self):
         """Main application loop"""
-        # pylint: disable=broad-exception-caught
-        _queue = queue.SimpleQueue()
+        # pylint: disable=broad-except
+        metrics_queue = queue.SimpleQueue()
         config = Config()
 
         file = os.getenv("CONNECTOR_SETTINGS", "./config/connector.ini")
@@ -43,7 +43,7 @@ class App:
                 client.subscribe()
 
                 metrics_thread = threading.Thread(
-                    target=collect_metrics, args=(client, _queue)
+                    target=collect_metrics, args=(client, metrics_queue), daemon=True
                 )
                 metrics_thread.start()
                 while True:
@@ -53,6 +53,8 @@ class App:
                 log.info("MQTT broker is not ready yet")
             except KeyboardInterrupt:
                 log.info("Exiting...")
+                if client:
+                    client.shutdown()
                 sys.exit(0)
             except Exception as ex:
                 log.info("Unexpected error. %s", ex)

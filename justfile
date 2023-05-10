@@ -51,6 +51,14 @@ shell *args='bash':
 shell-child *args='bash':
     docker compose -f images/debian-systemd/docker-compose.yaml exec child01 {{args}}
 
+# Show logs of the main device
+logs *args='':
+    docker compose -f images/debian-systemd/docker-compose.yaml exec tedge journalctl -f -u "c8y-*" -u "tedge-*" {{args}}
+
+# Show child device logs
+logs-child child='child01' *args='':
+    docker compose -f images/debian-systemd/docker-compose.yaml logs {{child}} -f {{args}}
+
 # Install python virtual environment
 venv:
   [ -d .venv ] || python3 -m venv .venv
