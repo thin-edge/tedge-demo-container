@@ -41,7 +41,7 @@ down-all:
 
 # Configure and register the device to the cloud
 bootstrap *ARGS:
-    @docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml exec tedge env C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} ./bootstrap.sh {{ARGS}}
+    @docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml exec tedge env C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} bootstrap.sh {{ARGS}}
 
 # Start a shell on the main device
 shell *args='bash':

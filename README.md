@@ -34,7 +34,7 @@ The following pre-requisites are required before you can get started:
 3. Bootstrap the device
 
     ```sh
-    docker compose exec tedge ./bootstrap.sh
+    docker compose exec tedge bootstrap.sh
     ```
 
 4. Click on the link to your tedge device which is shown on the console

@@ -36,7 +36,7 @@ RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
 
 # Install base files to help with bootstrapping and common settings
 WORKDIR /setup
-COPY common/bootstrap.sh .
+COPY common/bootstrap.sh /usr/bin/bootstrap.sh
 
 # mqtt-logger
 COPY common/utils/mqtt-logger/mqtt-logger.service /lib/systemd/system/
@@ -54,7 +54,7 @@ RUN chmod a+x /usr/bin/startup-notifier \
 COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 
 RUN echo "running" \
-    && ./bootstrap.sh "$VERSION" --install --no-bootstrap --no-connect \
+    && bootstrap.sh "$VERSION" --install --no-bootstrap --no-connect \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         c8y-command-plugin \ 
