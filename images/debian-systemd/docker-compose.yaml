@@ -6,11 +6,7 @@ x-child-defaults: &child-defaults
       context: "../child-device"
       dockerfile: child.dockerfile
   restart: always
-  links:
-    - tedge:tedge
   networks:
-    - tedge
-  depends_on:
     - tedge
 
 services:
@@ -26,7 +22,7 @@ services:
       - etc:/etc
 
       # Enable docker from docker - But then this container has elevated access to system resources!
-      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /var/run/docker.sock:${DOCKER_SOCKET:-/var/run/docker.sock}:rw
 
     restart: always
     tmpfs:
