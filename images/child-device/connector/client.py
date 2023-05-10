@@ -5,7 +5,7 @@ import time
 import re
 import os
 import threading
-from typing import Any
+from typing import Any, List
 import requests
 from paho.mqtt.client import Client, MQTTMessage
 from .config import Config
@@ -36,8 +36,24 @@ class TedgeClient:
     def __init__(self, config: Config) -> None:
         self.mqtt = None
         self.config = config
-        self._workers = []
+        self._workers: List[Worker] = []
         self.config.local_id = self.get_id()
+        self._subscriptions = []
+
+    def shutdown(self, worker_timeout: float = 10):
+        """Shutdown client including any workers in progress
+
+        Args:
+            worker_timeout(float): Timeout in seconds to wait for
+                each worker (individually). Defaults to 10.
+        """
+        if self.mqtt and self.mqtt.is_connected():
+            self.mqtt.disconnect()
+            self.mqtt.loop_stop(True)
+
+        # Stop all workers
+        for worker in self._workers:
+            worker.join(worker_timeout if worker_timeout and worker_timeout > 0 else 10)
 
     def get_id(self):
         """Get the id to be used for the connector"""
