@@ -93,6 +93,8 @@ class TedgeClient:
                 )
             client.on_connect = on_connect
             client.on_disconnect = on_disconnect
+            # Enable paho mqtt logs to help with any mqtt connection debugging
+            client.enable_logger(log)
             log.info(
                 "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
                 self.config.tedge.host,
