@@ -33,7 +33,7 @@ def collect_metrics(client: TedgeClient, settings: queue.SimpleQueue):
                 timeout = settings.get(timeout=timeout)
             except queue.Empty:
                 pass
-            log.info("Checking metrics")
+            log.debug("Checking metrics")
             disk_root_usage = psutil.disk_usage("/").percent
             cpu_usage = psutil.cpu_percent()
             client.mqtt.publish(
