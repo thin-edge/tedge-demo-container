@@ -65,7 +65,6 @@ class TedgeClient:
 
         def on_disconnect(_client: Client, _userdata: Any, result_code: int):
             log.info("Client was disconnected. result_code=%d", result_code)
-            client.loop_stop()
 
         # Don't use a clean session so no messages will go missing
         if self.mqtt is None:
