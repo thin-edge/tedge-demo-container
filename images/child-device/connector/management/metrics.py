@@ -26,7 +26,7 @@ def collect_metrics(client: TedgeClient, settings: queue.SimpleQueue):
     """
     timeout = 5
     while True:
-        # pylint: disable=broad-exception-caught
+        # pylint: disable=broad-except
         try:
             try:
                 # use a queue to limit how often the collection is run

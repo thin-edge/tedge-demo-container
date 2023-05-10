@@ -109,8 +109,7 @@ class TedgeClient:
             raise RuntimeError("Failed to connect successfully to MQTT broker")
 
     def bootstrap(self):
-        """Register extra services once the mqtt client is up
-        """
+        """Register extra services once the mqtt client is up"""
         configuration.bootstrap(self.config, self.mqtt)
 
     def register(self):
@@ -167,7 +166,10 @@ class TedgeClient:
 
         # Only register that the child device is ready now
         # Register health check and bootstrap other plugin settings
-        log.info("Publishing health endpoint. device=%s, service=connector", self.config.device_id)
+        log.info(
+            "Publishing health endpoint. device=%s, service=connector",
+            self.config.device_id,
+        )
         self.mqtt.publish(
             health_topic("connector", self.config.device_id),
             json.dumps({"status": "up"}),
