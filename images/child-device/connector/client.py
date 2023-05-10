@@ -196,7 +196,7 @@ class TedgeClient:
             worker.put(self.config, client, JSONMessage(message.topic, payload))
 
         self.mqtt.message_callback_add(topic, add_job)
-        self.mqtt.subscribe(topic)
+        self.mqtt.subscribe(topic, qos=2)
         self._workers.append(worker)
 
     def loop_forever(self):
