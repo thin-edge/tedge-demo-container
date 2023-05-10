@@ -6,11 +6,7 @@ x-child-defaults: &child-defaults
       context: "../child-device"
       dockerfile: child.dockerfile
   restart: always
-  links:
-    - tedge:tedge
   networks:
-    - tedge
-  depends_on:
     - tedge
 
 services:
