@@ -5,11 +5,7 @@ x-child-defaults: &child-defaults
   image: ghcr.io/thin-edge/tedge-demo-child:${VERSION:-latest}
   pull_policy: always
   restart: always
-  links:
-    - tedge:tedge
   networks:
-    - tedge
-  depends_on:
     - tedge
 
 # Services
@@ -20,7 +16,7 @@ services:
     volumes:
       - etc:/etc
       # Enable docker from docker - But then this container has elevated access to system resources!
-      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /var/run/docker.sock:${DOCKER_SOCKET:-/var/run/docker.sock}:rw
     restart: always
     tmpfs:
       - /run
