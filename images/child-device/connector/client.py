@@ -55,6 +55,10 @@ class TedgeClient:
         for worker in self._workers:
             worker.join(worker_timeout if worker_timeout and worker_timeout > 0 else 10)
 
+        # Clear workers
+        self._workers = []
+        self.mqtt = None
+
     def get_id(self):
         """Get the id to be used for the connector"""
         return (
@@ -66,49 +70,59 @@ class TedgeClient:
 
     def connect(self):
         """Connect to the thin-edge.io MQTT broker"""
-        if self.mqtt and self.mqtt.is_connected():
-            log.info("MQTT client is already connected")
+        if self.mqtt is not None:
+            log.info(
+                "MQTT client already exists. connected=%s", self.mqtt.is_connected()
+            )
             return
 
-        done = threading.Event()
+        # Don't use a clean session so no messages will go missing
+        client = Client(self.config.device_id, clean_session=False)
+        client.reconnect_delay_set(10, 120)
+        if self.config.device_id:
+            client.will_set(
+                health_topic("connector", self.config.device_id),
+                json.dumps({"status": "down"}),
+            )
 
-        def on_connect(_client, _userdata, _flags, result_code):
-            if result_code == 0:
-                log.info("Connected to MQTT Broker!")
-                done.set()
-            else:
-                log.info("Failed to connect. code=%d", result_code)
+        def _create_on_connect_callback(done):
+            _done = done
+
+            def on_connect(_client, _userdata, _flags, result_code):
+                nonlocal _done
+                if result_code == 0:
+                    log.info("Connected to MQTT Broker!")
+                    _done.set()
+                else:
+                    log.info("Failed to connect. code=%d", result_code)
+
+            return on_connect
 
         def on_disconnect(_client: Client, _userdata: Any, result_code: int):
             log.info("Client was disconnected. result_code=%d", result_code)
 
-        # Don't use a clean session so no messages will go missing
-        if self.mqtt is None:
-            client = Client(self.config.device_id, clean_session=False)
-            client.reconnect_delay_set(10, 120)
-            if self.config.device_id:
-                client.will_set(
-                    health_topic("connector", self.config.device_id),
-                    json.dumps({"status": "down"}),
-                )
-            client.on_connect = on_connect
-            client.on_disconnect = on_disconnect
-            # Enable paho mqtt logs to help with any mqtt connection debugging
-            client.enable_logger(log)
-            log.info(
-                "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
-                self.config.tedge.host,
-                self.config.tedge.port,
-                self.config.device_id,
-            )
-            self.mqtt = client
-
+        done = threading.Event()
+        client.on_connect = _create_on_connect_callback(done)
+        client.on_disconnect = on_disconnect
+        # Enable paho mqtt logs to help with any mqtt connection debugging
+        client.enable_logger(log)
+        log.info(
+            "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
+            self.config.tedge.host,
+            self.config.tedge.port,
+            self.config.device_id,
+        )
+        self.mqtt = client
         self.mqtt.connect(self.config.tedge.host, self.config.tedge.port)
         self.mqtt.loop_start()
 
         if not done.wait(30):
-            self.mqtt.loop_stop(True)
-            raise RuntimeError("Failed to connect successfully to MQTT broker")
+            log.warning(
+                "Failed to connect successfully after 30 seconds. Continuing anyway"
+            )
+            # TODO: Should an exception be thrown, or just let paho do the reconnect eventually
+            # self.shutdown()
+            # raise RuntimeError("Failed to connect successfully to MQTT broker")
 
     def bootstrap(self):
         """Register extra services once the mqtt client is up"""
