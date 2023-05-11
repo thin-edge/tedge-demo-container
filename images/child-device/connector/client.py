@@ -39,6 +39,7 @@ class TedgeClient:
         self._workers: List[Worker] = []
         self.config.local_id = self.get_id()
         self._subscriptions = []
+        self._connected_once = threading.Event()
 
     def shutdown(self, worker_timeout: float = 10):
         """Shutdown client including any workers in progress
@@ -76,47 +77,50 @@ class TedgeClient:
             )
             return
 
-        # Don't use a clean session so no messages will go missing
-        client = Client(self.config.device_id, clean_session=False)
-        client.reconnect_delay_set(10, 120)
-        if self.config.device_id:
-            client.will_set(
-                health_topic("connector", self.config.device_id),
-                json.dumps({"status": "down"}),
+        if self.mqtt is None:
+            # Don't use a clean session so no messages will go missing
+            client = Client(self.config.device_id, clean_session=False)
+            client.reconnect_delay_set(10, 120)
+            if self.config.device_id:
+                client.will_set(
+                    health_topic("connector", self.config.device_id),
+                    json.dumps({"status": "down"}),
+                )
+
+            def _create_on_connect_callback(done):
+                _done = done
+                def on_connect(_client, _userdata, _flags, result_code):
+                    nonlocal _done
+                    if result_code == 0:
+                        log.info("Connected to MQTT Broker!")
+                        _done.set()
+                    else:
+                        log.info("Failed to connect. code=%d", result_code)
+
+                return on_connect
+
+            def on_disconnect(_client: Client, _userdata: Any, result_code: int):
+                log.info("Client was disconnected. result_code=%d", result_code)
+
+            self._connected_once.clear()
+            client.on_connect = _create_on_connect_callback(self._connected_once)
+            client.on_disconnect = on_disconnect
+            # Enable paho mqtt logs to help with any mqtt connection debugging
+            client.enable_logger(log)
+            log.info(
+                "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
+                self.config.tedge.host,
+                self.config.tedge.port,
+                self.config.device_id,
             )
 
-        def _create_on_connect_callback(done):
-            _done = done
+            client.connect(self.config.tedge.host, self.config.tedge.port)
+            client.loop_start()
 
-            def on_connect(_client, _userdata, _flags, result_code):
-                nonlocal _done
-                if result_code == 0:
-                    log.info("Connected to MQTT Broker!")
-                    _done.set()
-                else:
-                    log.info("Failed to connect. code=%d", result_code)
+            # Only assign client after .connect call (as it can throw an error if the address is not reachable)
+            self.mqtt = client
 
-            return on_connect
-
-        def on_disconnect(_client: Client, _userdata: Any, result_code: int):
-            log.info("Client was disconnected. result_code=%d", result_code)
-
-        done = threading.Event()
-        client.on_connect = _create_on_connect_callback(done)
-        client.on_disconnect = on_disconnect
-        # Enable paho mqtt logs to help with any mqtt connection debugging
-        client.enable_logger(log)
-        log.info(
-            "Trying to connect to the MQTT broker: host=%s:%s, client_id=%s",
-            self.config.tedge.host,
-            self.config.tedge.port,
-            self.config.device_id,
-        )
-        self.mqtt = client
-        self.mqtt.connect(self.config.tedge.host, self.config.tedge.port)
-        self.mqtt.loop_start()
-
-        if not done.wait(30):
+        if not self._connected_once.wait(30):
             log.warning(
                 "Failed to connect successfully after 30 seconds. Continuing anyway"
             )
