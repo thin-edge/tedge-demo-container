@@ -20,6 +20,8 @@ RUN apt-get -y update \
         mosquitto \
         mosquitto-clients \
         collectd-core \
+        # extra collectd shared libraries
+        libmnl0 \
         vim.tiny
 
 # Remove unnecessary systemd services
@@ -77,6 +79,8 @@ COPY common/config/tedge.toml /etc/tedge/
 COPY common/config/c8y-configuration-plugin.toml /etc/tedge/c8y/
 COPY common/config/c8y-log-plugin.toml /etc/tedge/c8y/
 COPY common/config/collectd.conf /etc/collectd/collectd.conf
+COPY common/config/collectd.conf.d /etc/collectd/collectd.conf.d
+
 # Custom mosquitto config
 COPY common/config/mosquitto.conf /etc/mosquitto/conf.d/
 
