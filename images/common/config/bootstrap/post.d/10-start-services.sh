@@ -1,22 +1,28 @@
 #!/bin/sh
 #
-# Enable services
+# Setup services
 #
 
 set -e
 
-start_enable_service() {
+control_service() {
     name="$1"
+    action="$2"
     if command -v systemctl >/dev/null 2>&1; then
-        echo "Enabling/starting $name"
+        echo "Enable/$action $name"
         sudo systemctl enable "$name"
 
         if [ -d /run/systemd/system ]; then
-            sudo systemctl start "$name"
+            sudo systemctl "$action" "$name"
         fi
     fi
 }
 
 sleep 5
-start_enable_service "tedge-container-monitor"
-start_enable_service "ssh"
+control_service tedge-container-monitor start
+control_service ssh start
+
+# Restart collectd as sometimes it fail with the error:
+# mqtt plugin: mosquitto_connect failed: Cannot assign requested address
+# Seems to be related to: https://github.com/collectd/collectd/issues/3834
+control_service collectd restart
