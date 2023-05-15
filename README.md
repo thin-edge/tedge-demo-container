@@ -167,3 +167,7 @@ The following features are covered by the demo.
     ```sh
     just shell systemctl restart tedge-mapper-c8y
     ```
+
+* telemetry data from the [tedge-container-plugin](https://github.com/thin-edge/tedge-container-plugin) is currently disabled due to an issue where the services would appear as child devices instead
+
+    Root cause: When measurements are sent to a service before a service has been registered with Cumulocity IoT.
