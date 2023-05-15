@@ -764,7 +764,7 @@ display_banner_c8y() {
     echo "tedge.version:   $(tedge --version 2>/dev/null | tail -1 | cut -d' ' -f2)"
     echo "device.id:       ${DEVICE_ID}"
     DEVICE_SEARCH=$(echo "$DEVICE_ID" | sed 's/-/*/g')
-    DISPLAY_URL=$(echo "$C8Y_BASEURL" | sed 's|^https?://||g')
+    DISPLAY_URL=$(echo "$C8Y_BASEURL" | sed -E 's|^https?://||g')
     echo "Cumulocity IoT:  https://${DISPLAY_URL}/apps/devicemanagement/index.html#/assetsearch?filter=*${DEVICE_SEARCH}*"
     echo ""
     echo "----------------------------------------------------------"    
