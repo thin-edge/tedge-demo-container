@@ -1,5 +1,5 @@
 [Unit]
-Description=startup-startup
+Description=Send an event when the device starts up
 After=mosquitto.target
 
 [Service]
