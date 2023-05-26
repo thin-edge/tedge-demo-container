@@ -19,12 +19,13 @@ log = logging.getLogger(__file__)
 
 def update_url(url: str, replace_url: str) -> str:
     """Modify the url by replacing any reference to a generic 0.0.0.0
-    ip with the real ip address of http server hosted by thin-edge.io
+    ip or a loopback address with the real ip address of http server
+    hosted by thin-edge.io
 
     Args:
         url (str): Url to be modified
     """
-    return re.sub(r"^(https?://)?0.0.0.0(:\d+)?", replace_url, url, 1)
+    return re.sub(r"^(https?://)?(0.0.0.0|127.0.\d+.\d+|localhost)(:\d+)?", replace_url, url, 1)
 
 
 class TedgeClient:
