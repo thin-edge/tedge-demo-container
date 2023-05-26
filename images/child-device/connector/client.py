@@ -25,7 +25,7 @@ def update_url(url: str, replace_url: str) -> str:
     Args:
         url (str): Url to be modified
     """
-    return re.sub(r"^(https?://)?(0.0.0.0|127.0.\d+.\d+|localhost)(:\d+)?", replace_url, url, 1)
+    return re.sub(r"^(https?://)?(0\.0\.0\.0|127\.0\.\d+\.\d+|localhost)(:\d+)?", replace_url, url, 1)
 
 
 class TedgeClient:
