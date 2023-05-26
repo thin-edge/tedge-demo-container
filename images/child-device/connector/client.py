@@ -25,7 +25,12 @@ def update_url(url: str, replace_url: str) -> str:
     Args:
         url (str): Url to be modified
     """
-    return re.sub(r"^(https?://)?(0\.0\.0\.0|127\.0\.\d+\.\d+|localhost)(:\d+)?", replace_url, url, 1)
+    return re.sub(
+        r"^(https?://)?(0\.0\.0\.0|127\.0\.\d+\.\d+|localhost)(:\d+)?",
+        replace_url,
+        url,
+        1,
+    )
 
 
 class TedgeClient:
@@ -90,6 +95,7 @@ class TedgeClient:
 
             def _create_on_connect_callback(done):
                 _done = done
+
                 def on_connect(_client, _userdata, _flags, result_code):
                     nonlocal _done
                     if result_code == 0:
