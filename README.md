@@ -2,7 +2,6 @@
 
 thin-edge.io demo container setup to showcase thin-edge.io and all its features
 
-🚧 Work in progress 🚧
 
 ## Pre-requisites
 
@@ -10,6 +9,8 @@ The following pre-requisites are required before you can get started:
 
 * docker
 * docker compose v2 (not the python one)
+
+Checkout the list of [known working setups](./docs/USER_GUIDE.md#known-working-environments) to see what software you can use for your Operating Systemd to meet the pre-requisites.
 
 ## Getting started
 
