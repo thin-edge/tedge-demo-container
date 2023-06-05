@@ -2,7 +2,6 @@
 
 thin-edge.io demo container setup to showcase thin-edge.io and all its features
 
-🚧 Work in progress 🚧
 
 ## Pre-requisites
 
@@ -10,6 +9,8 @@ The following pre-requisites are required before you can get started:
 
 * docker
 * docker compose v2 (not the python one)
+
+Check out the list of [known working setups](./docs/USER_GUIDE.md#known-working-environments) to see what software you can use for your Operating Systemd to meet the pre-requisites.
 
 ## Getting started
 
@@ -40,14 +41,14 @@ The following pre-requisites are required before you can get started:
 4. Click on the link to your tedge device which is shown on the console
 
 
-Checkout the [USER GUIDE](./docs/USER_GUIDE.md) for more details on other commands that can be run.
+Check out the [USER GUIDE](./docs/USER_GUIDE.md) for more details on other commands that can be run.
 
 
 ## Building the project yourself
 
 The project also includes another docker-compose file to build the project locally. This allows you to manually tweak any of the container images to add/remove things as you see fit.
 
-After you have cloned the project you still need to install, [just](https://github.com/casey/just). `just` is used as the project's task runner to simplify the commands required during development. Checkout their [installation instructions](https://just.systems/man/en/chapter_1.html) to see how to install it on your machine.
+After you have cloned the project you still need to install, [just](https://github.com/casey/just). `just` is used as the project's task runner to simplify the commands required during development. Check out their [installation instructions](https://just.systems/man/en/chapter_1.html) to see how to install it on your machine.
 
 Once you have [just](https://github.com/casey/just) installed, you can proceed with the following instructions:
 

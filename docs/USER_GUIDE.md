@@ -1,5 +1,27 @@
 # User guide
 
+## Known working environments
+
+The following setups have been known to work on the following Operating Systems.
+
+Please feel free to extend the list via a Pull Request if you have verified the demo on another setup.
+
+### Linux
+
+* Using [docker-ce](https://docs.docker.com/engine/)
+* Using [Rancher Desktop](https://rancherdesktop.io/)
+
+### MacOS (Apple Silicon and Intel)
+
+* Using [Colima](https://github.com/abiosoft/colima)
+* Using [Rancher Desktop](https://rancherdesktop.io/)
+* Using [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+### Windows
+
+* Using [Rancher Desktop](https://rancherdesktop.io/)
+* Using [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
 ## Common actions
 
 This section contains commonly used commands used to interact with the demo.
