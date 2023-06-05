@@ -27,7 +27,7 @@ FLAGS
     INSTALLATION FLAGS
     --version <version>                     Thin-edge.io version to install. Only applies for apt/script installation methods
     --channel <release|main>                Which channel, e.g. release or main to install thin-edge.io from. Defaults to main
-    --install-method <apt|script|local>     Type of method to use to install thin.edge.io. Checkout the 'Install method' section for more info
+    --install-method <apt|script|local>     Type of method to use to install thin.edge.io. Check out the 'Install method' section for more info
     --install-sourcedir <path>              Path where to look for local deb files to install
 
     CUMULOCITY FLAGS
