@@ -70,7 +70,7 @@ COPY common/optional-installer.sh .
 RUN ./optional-installer.sh
 
 # Copy bootstrap script hooks
-COPY common/config/bootstrap /etc/boostrap
+COPY common/config/bootstrap /etc/bootstrap
 
 COPY common/config/tedge-container-plugin.env /etc/tedge-container-plugin/env
 
