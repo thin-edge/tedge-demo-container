@@ -1,4 +1,6 @@
-FROM alpine:3.17
+# Use alpine 3.16 as it uses the more stable mosquitto 2.0.14 version rather than 2.0.15
+# which is included in newer versions of alpine
+FROM alpine:3.16
 ARG TARGETARCH
 ARG TEDGE_VERSION=0.11.0
 ARG S6_OVERLAY_VERSION=3.1.5.0
