@@ -2,11 +2,11 @@ version: "3"
 services:
   tedge:
     build:
-      dockerfile: alpine-tedge-s6.dockerfile
+      dockerfile: alpine-s6.dockerfile
       context: "."
     restart: always
-    ports:
-      - "1884:1883"
+    # ports:
+    #   - "1883:1883"
     environment:
       - DEVICE_ID=${DEVICE_ID:-}
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
