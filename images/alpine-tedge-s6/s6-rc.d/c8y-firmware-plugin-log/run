@@ -1,0 +1,2 @@
+#!/bin/sh
+sed 's/^/\x1b[33mfirmware      |\x1b[0m /' --unbuffered

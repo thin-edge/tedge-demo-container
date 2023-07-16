@@ -1,0 +1,37 @@
+#!/bin/sh
+
+set -e
+
+COMMAND=""
+NAME=""
+
+if [ $# -ge 1 ]; then
+    COMMAND="$1"
+fi
+
+if [ $# -ge 2 ]; then
+    NAME="$2"
+fi
+
+printf '%s %s\n' "$COMMAND" "$NAME" >&2
+
+case "$COMMAND" in
+    start|enable)
+        /command/s6-rc start "$NAME"
+        ;;
+    stop|disable)
+        /command/s6-rc stop "$NAME"
+        ;;
+    restart)
+        /command/s6-svc -r "/run/service/$NAME"
+        ;;
+    is_available)
+        /command/s6-rc list
+        ;;
+    is_active)
+        if [ -f "/run/service/$NAME/down" ]; then
+            # Not active
+            exit 1
+        fi
+        ;;
+esac

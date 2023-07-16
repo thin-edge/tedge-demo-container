@@ -1,0 +1,2 @@
+#!/bin/sh
+sed 's/^/\x1b[32mlog           |\x1b[0m/' --unbuffered

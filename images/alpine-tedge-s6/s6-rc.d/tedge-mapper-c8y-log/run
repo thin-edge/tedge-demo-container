@@ -1,0 +1,2 @@
+#!/bin/sh
+sed 's/^/\x1b[36mmapper-c8y    |\x1b[0m /' --unbuffered

@@ -1,0 +1,11 @@
+[init]
+name = "s6-overlay"
+is_available = ["/usr/bin/s6-servicectl", "is_available"]
+restart = ["/usr/bin/s6-servicectl", "restart", "{}"]
+stop =  ["/usr/bin/s6-servicectl", "stop", "{}"]
+enable =  ["/usr/bin/s6-servicectl", "enable", "{}"]
+disable =  ["/usr/bin/s6-servicectl", "disable", "{}"]
+is_active = ["/usr/bin/s6-servicectl", "is_active", "{}"]
+
+[system]
+reboot = ["/usr/bin/on_shutdown.sh"]
