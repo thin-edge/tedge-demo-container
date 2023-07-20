@@ -43,6 +43,14 @@ Check out the list of [known working setups](./docs/USER_GUIDE.md#known-working-
 
 Check out the [USER GUIDE](./docs/USER_GUIDE.md) for more details on other commands that can be run.
 
+**Note**
+
+The tedge container has the following default SSH user which can be used with the SSH protocol of the Cumulocity IoT Cloud Remote Access (CRA) feature.
+
+|Property|Value|
+|--------|-----|
+|SSH User|iotadmin|
+|SSH Password|iotadmin|
 
 ## Building the project yourself
 
