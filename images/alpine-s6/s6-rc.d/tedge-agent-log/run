@@ -1,2 +1,0 @@
-#!/bin/sh
-sed 's/^/\x1b[35magent         |\x1b[0m /' --unbuffered

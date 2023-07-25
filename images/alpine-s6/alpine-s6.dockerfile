@@ -41,6 +41,9 @@ RUN case ${TARGETARCH} in \
 # Add custom service definitions and config
 COPY cont-init.d/* /etc/cont-init.d/
 COPY s6-rc.d/ /etc/s6-overlay/s6-rc.d/
+ADD https://dl.cloudsmith.io/public/thinedge/community/raw/names/tedge-s6overlay/versions/latest/tedge-s6overlay.tar.gz /tmp
+RUN tar xzvf /tmp/tedge-s6overlay.tar.gz -C /
+
 COPY system.toml /etc/tedge/system.toml
 COPY mosquitto.conf /etc/mosquitto/mosquitto.conf
 COPY s6-servicectl /usr/bin/
