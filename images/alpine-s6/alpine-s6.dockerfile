@@ -12,7 +12,7 @@ RUN apk update \
         ca-certificates \
         mosquitto \
         curl \
-        # GNU sed
+        # GNU sed (to provide the unbuffered streaming option used in the log parsing)
         sed
 
 # Install s6-overlay
@@ -38,16 +38,19 @@ RUN case ${TARGETARCH} in \
     && curl https://github.com/thin-edge/thin-edge.io/releases/download/${TEDGE_VERSION}/tedge_${TEDGE_VERSION}_${TEDGE_ARCH}.tar.gz -L -s --output /tmp/tedge.tar.gz \
     && tar -C /usr/bin/ -xzf /tmp/tedge.tar.gz
 
-# Add custom service definitions and config
+# Add custom service definitions
 COPY cont-init.d/* /etc/cont-init.d/
 COPY s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 ADD https://dl.cloudsmith.io/public/thinedge/community/raw/names/tedge-s6overlay/versions/latest/tedge-s6overlay.tar.gz /tmp
 RUN tar xzvf /tmp/tedge-s6overlay.tar.gz -C /
 
+# Add custom config
 COPY system.toml /etc/tedge/system.toml
 COPY mosquitto.conf /etc/mosquitto/mosquitto.conf
-COPY s6-servicectl /usr/bin/
 COPY on_shutdown.sh /usr/bin/
+# sudo is still required due to fixed usage within tedge components (e.g. tedge-agent restart etc.)
+# https://github.com/thin-edge/thin-edge.io/issues/2096
+COPY fake-sudo /usr/bin/sudo
 
 ENV CONTAINER_USER=tedge
 ENV CONTAINER_GROUP=tedge
