@@ -44,6 +44,10 @@ COPY s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 ADD https://dl.cloudsmith.io/public/thinedge/community/raw/names/tedge-s6overlay/versions/latest/tedge-s6overlay.tar.gz /tmp
 RUN tar xzvf /tmp/tedge-s6overlay.tar.gz -C /
 
+# Add pki extension
+ADD https://github.com/reubenmiller/tedge-pki/releases/download/0.0.1/tedge-pki-cfssl_0.0.1_noarch.apk /tmp
+RUN apk add --allow-untrusted /tmp/tedge-pki-cfssl_*_noarch.apk
+
 # Add custom config
 COPY system.toml /etc/tedge/system.toml
 COPY mosquitto.conf /etc/mosquitto/mosquitto.conf

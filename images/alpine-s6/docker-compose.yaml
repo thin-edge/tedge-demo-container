@@ -12,11 +12,19 @@ services:
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
       - C8Y_USER=${C8Y_USER:-}
       - C8Y_PASSWORD=${C8Y_PASSWORD:-}
+      # PKI which is hosted on the user's host machine
+      - CFSSL_HOST=host.docker.internal:8888
+      - USE_PKI=1
+      - PKI_PROVIDER=pki-cfssl
     volumes:
       - mosquitto:/mosquitto/data
       - device-certs:/etc/tedge/device-certs
     tmpfs:
       - /tmp
+
+    # Support reaching other services from the host, e.g. curl http://host.docker.internal:8888
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   device-certs:

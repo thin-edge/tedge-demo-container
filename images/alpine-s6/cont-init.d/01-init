@@ -5,6 +5,13 @@ fail () { echo "ERROR $*" >&2; exit 1; }
 warning () { echo "WARN  $*" >&2; }
 info () { echo "INFO  $*" >&2; }
 
+is_enabled() {
+    case "$1" in
+        1|true|yes) return 0; ;;
+        *) return 1; ;;
+    esac
+}
+
 DEVICE_ID="${DEVICE_ID:-}"
 C8Y_USER="${C8Y_USER:-}"
 C8Y_PASSWORD="${C8Y_PASSWORD:-}"
@@ -17,6 +24,26 @@ if [ -z "$DEVICE_ID" ]; then
     fi
 fi
 
+if is_enabled "$USE_PKI"; then
+    case "$PKI_PROVIDER" in
+        pki-cfssl)
+            if ! command -V pki-cfssl >/dev/null 2>&1; then
+                fail "Missing dependency: $PKI_PROVIDER"
+            fi
+            export DEVICE_ID
+            info "Using PKI Provider: $PKI_PROVIDER"
+            pki-cfssl new
+            ;;
+        *)
+            fail "Unsupported PKI provider: got=$PKI_PROVIDER, expected=[cfssl-pki]"
+            ;;
+    esac
+
+    tedge connect c8y ||:
+    exit 0
+fi
+
+# Use self-signed certificates (dev only!)
 existing_device_id=$(tedge config get device.id 2>/dev/null)
 if [ "$DEVICE_ID" != "$existing_device_id" ]; then
     info "Creating device certificate: device_id=$DEVICE_ID"
