@@ -11,17 +11,14 @@ RUN apk update \
 # Copy all binaries to make the image generic
 ADD ./bin/*.tar.gz /usr/bin/
 
-VOLUME [ "/device-certs" ]
+# VOLUME [ "/device-certs" ]
 VOLUME [ "/etc/tedge" ]
 VOLUME [ "/var/tedge" ]
 VOLUME [ "/var/log/tedge" ]
 
-COPY ./common/configure.sh ./common/entrypoint.sh ./common/bootstrap.sh ./common/health_check.sh /usr/bin/
-# HACK: Initialize the file systems under /etc/tedge however it will be overridden by the later mounted volume
-RUN /usr/bin/configure.sh tedge tedge-agent c8y-configuration-plugin c8y-firmware-plugin c8y-log-plugin \
-  # Allow init command to be run by tedge
-  # TODO: Remove contraint that different files should be managed by different users. All files in a container should be owned by the process
-  && sh -c "echo 'tedge  ALL = (ALL) NOPASSWD:SETENV: /usr/bin/tedge, /usr/bin/tedge-agent --init, /usr/bin/c8y-configuration-plugin --init, /usr/bin/c8y-firmware-plugin --init, /usr/bin/c8y-log-plugin --init, /usr/bin/tedge-mapper --init [a-zA-Z0-9]*' > /etc/sudoers.d/tedge"
+ENV TEDGE_RUN_LOCK_FILES=false
+
+COPY ./common/entrypoint.sh ./common/bootstrap.sh ./common/health_check.sh /usr/bin/
 USER tedge
 
 # Use healthcheck as a holding pattern to prevent the other

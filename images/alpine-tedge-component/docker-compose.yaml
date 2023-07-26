@@ -55,7 +55,7 @@ services:
 
       - SERVICE_NAME=mqtt-broker
       - TEDGE_MQTT_BIND_ADDRESS=0.0.0.0
-      - TEDGE_MQTT_PORT=1883
+      - TEDGE_MQTT_BIND_PORT=1883
 
     volumes:
       - tedge_config:/etc/tedge

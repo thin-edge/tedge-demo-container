@@ -5,18 +5,47 @@ set -e
 CMD="$1"
 shift
 
-common_init() {
-    # FIXME: Check if this can be moved to the image
-    mkdir -p /device-certs
+TEDGE_USER=${TEDGE_USER:-tedge}
+TEDGE_GROUP=${TEDGE_GROUP:-tedge}
 
-    # FIXME: Requires: /etc/ssl/certs to exist, and it fails with only an out of context error reason: 'No such file or directory (os error 2)'
-    mkdir -p /etc/ssl/certs
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --user)
+            TEDGE_USER="$2"
+            shift
+            ;;
+        --group)
+            TEDGE_GROUP="$2"
+            shift
+            ;;
+    esac
+    shift
+done
+
+create_user_group() {
+    USER="$1"
+    GROUP="${2:-$USER}"
+    if ! getent group "$GROUP" >/dev/null; then
+
+        if command -v groupadd >/dev/null 2>&1; then
+            groupadd --system "$GROUP"
+        else
+            addgroup -S "$GROUP"
+        fi
+    fi
+
+    if ! getent passwd "$USER" >/dev/null; then
+        if command -v groupadd >/dev/null 2>&1; then
+            useradd --system --no-create-home --shell /sbin/nologin --gid "$GROUP" "$USER"
+        else
+            adduser -g "" -H -D "$USER" -G "$GROUP"
+        fi
+    fi
 }
 
 #
 # Run the initializations required by each component
 #
-common_init
 
 create_c8y_bridge() {
     # Create the c8y bridge configuration without relying on tedge
@@ -70,13 +99,28 @@ topic s/dat/# in 2 c8y/ ""
 EOF
 }
 
+TEDGE_C8Y_URL=$( echo "$TEDGE_C8Y_URL" | sed -E "s|^https?://||" )
+export TEDGE_C8Y_URL
+
+SUDO=""
+
+if [ "$(id -u)" = 0 ]; then
+    SUDO=""
+elif command -v sudo >/dev/null 2>&1; then
+    SUDO="sudo -E"
+elif command -v su >/dev/null 2>&1; then
+    SUDO="su -c"
+fi
+
 if [ "$CMD" = "init" ]; then
-    configure.sh tedge tedge-agent tedge-configuration-plugin c8y-firmware-plugin c8y-log-plugin
+    if command -v configure.sh >/dev/null 2>&1; then
+        configure.sh
+    fi
 
     if [ -n "$DEVICE_ID" ]; then
         if [ ! -f "${TEDGE_DEVICE_CERT_PATH:-/etc/tedge/device-certs/tedge-certificate.pem}" ]; then
             echo "Creating tedge certificate"
-            sudo -E tedge cert create --device-id "$DEVICE_ID"
+            $SUDO tedge cert create --device-id "$DEVICE_ID"
 
             if [ -f "/run/secrets/c8y_password.txt" ]; then
                 env C8YPASS="$(cat "/run/secrets/c8y_password.txt")" tedge cert upload c8y --user "$C8Y_USER"
@@ -107,7 +151,7 @@ FULL_CMD=$(which "$CMD")
 case "$FULL_CMD" in
     *mosquitto*)
         # FIXME: Why does mosquitto need to own the file?
-        sudo chown mosquitto /etc/tedge/device-certs/tedge-private-key.pem
+        $SUDO chown mosquitto /etc/tedge/device-certs/tedge-private-key.pem
 
         while :; do
             if [ ! -f "/etc/tedge/mosquitto-conf/c8y-bridge.conf" ]; then
