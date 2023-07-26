@@ -2,7 +2,7 @@
 # which is included in newer versions of alpine
 FROM alpine:3.16
 ARG TARGETARCH
-ARG TEDGE_VERSION=0.11.0
+ARG TEDGE_VERSION=0.12.0
 ARG S6_OVERLAY_VERSION=3.1.5.0
 
 # Notes: ca-certificates is required for the initial connection with c8y, otherwise the c8y cert is not trusted
@@ -68,16 +68,10 @@ VOLUME "/mosquitto/data"
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENV TEDGE_RUN_LOCK_FILES=false
 ENV TEDGE_MQTT_BIND_ADDRESS=0.0.0.0
-ENV TEDGE_MQTT_PORT=1883
+ENV TEDGE_MQTT_BIND_PORT=1883
 ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=30000
 
-RUN tedge --init \
-    && tedge-agent --init \
-    && tedge-mapper --init c8y \
-    && tedge-mapper --init az \
-    && tedge-mapper --init aws \
-    && c8y-log-plugin --init \
-    && c8y-configuration-plugin --init \
+RUN tedge init --user "$CONTAINER_USER" --group "$CONTAINER_GROUP" \
     && c8y-remote-access-plugin --init \
     && chown -R "${CONTAINER_USER}:${CONTAINER_GROUP}" /etc/tedge
 
