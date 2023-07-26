@@ -1,0 +1,11 @@
+[init]
+name = "tedgectl"
+is_available = ["/usr/bin/tedgectl", "is_available"]
+restart = ["/usr/bin/tedgectl", "restart", "{}"]
+stop =  ["/usr/bin/tedgectl", "stop", "{}"]
+enable =  ["/usr/bin/tedgectl", "enable", "{}"]
+disable =  ["/usr/bin/tedgectl", "disable", "{}"]
+is_active = ["/usr/bin/tedgectl", "is_active", "{}"]
+
+[system]
+reboot = ["/usr/bin/on_shutdown.sh"]
