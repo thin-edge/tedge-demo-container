@@ -1,8 +1,5 @@
-# Use alpine 3.16 as it uses the more stable mosquitto 2.0.14 version rather than 2.0.15
-# which is included in newer versions of alpine
-FROM alpine:3.16
+FROM alpine:3.18
 ARG TARGETARCH
-ARG TEDGE_VERSION=0.12.0
 ARG S6_OVERLAY_VERSION=3.1.5.0
 
 # Notes: ca-certificates is required for the initial connection with c8y, otherwise the c8y cert is not trusted
@@ -10,7 +7,6 @@ ARG S6_OVERLAY_VERSION=3.1.5.0
 RUN apk update \
     && apk add --no-cache \
         ca-certificates \
-        mosquitto \
         curl \
         # GNU sed (to provide the unbuffered streaming option used in the log parsing)
         sed
@@ -29,52 +25,19 @@ RUN case ${TARGETARCH} in \
     && tar -C / -Jxpf /tmp/s6-overlay-${S6_ARCH}.tar.xz
 
 # Install tedge
-RUN case ${TARGETARCH} in \
-        "amd64")   TEDGE_ARCH=x86_64-unknown-linux-musl;  ;; \
-        "arm64")   TEDGE_ARCH=aarch64-unknown-linux-musl;  ;; \
-        "arm/v6")  TEDGE_ARCH=armv7-unknown-linux-musleabihf;  ;; \
-        "arm/v7")  TEDGE_ARCH=armv7-unknown-linux-musleabihf;  ;; \
-    esac \
-    && curl https://github.com/thin-edge/thin-edge.io/releases/download/${TEDGE_VERSION}/tedge_${TEDGE_VERSION}_${TEDGE_ARCH}.tar.gz -L -s --output /tmp/tedge.tar.gz \
-    && tar -C /usr/bin/ -xzf /tmp/tedge.tar.gz
+RUN curl -sSL thin-edge.io/install.sh | sh -s
 
 # Add custom service definitions
-COPY cont-init.d/* /etc/cont-init.d/
-COPY s6-rc.d/ /etc/s6-overlay/s6-rc.d/
-ADD https://dl.cloudsmith.io/public/thinedge/community/raw/names/tedge-s6overlay/versions/latest/tedge-s6overlay.tar.gz /tmp
-RUN tar xzvf /tmp/tedge-s6overlay.tar.gz -C /
-
-# Add pki extension
-ADD https://github.com/reubenmiller/tedge-pki/releases/download/0.0.1/tedge-pki-cfssl_0.0.1_noarch.apk /tmp
-RUN apk add --allow-untrusted /tmp/tedge-pki-cfssl_*_noarch.apk
+RUN curl -sSL thin-edge.io/install-services.sh | sh -s
 
 # Add custom config
-COPY system.toml /etc/tedge/system.toml
-COPY mosquitto.conf /etc/mosquitto/mosquitto.conf
-COPY on_shutdown.sh /usr/bin/
 # sudo is still required due to fixed usage within tedge components (e.g. tedge-agent restart etc.)
 # https://github.com/thin-edge/thin-edge.io/issues/2096
 COPY fake-sudo /usr/bin/sudo
 
-ENV CONTAINER_USER=tedge
-ENV CONTAINER_GROUP=tedge
-RUN addgroup -S "$CONTAINER_GROUP" \
-    && adduser -g "" -H -D "$CONTAINER_USER" -G "$CONTAINER_GROUP" \
-    && mkdir -p /mosquitto/data \
-    && chown -R "${CONTAINER_USER}:${CONTAINER_GROUP}" /mosquitto/data
-
-VOLUME "/mosquitto/data"
-
-ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENV TEDGE_RUN_LOCK_FILES=false
-ENV TEDGE_MQTT_BIND_ADDRESS=0.0.0.0
-ENV TEDGE_MQTT_BIND_PORT=1883
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=30000
 
-RUN tedge init --user "$CONTAINER_USER" --group "$CONTAINER_GROUP" \
-    && c8y-remote-access-plugin --init \
-    && chown -R "${CONTAINER_USER}:${CONTAINER_GROUP}" /etc/tedge
-
-
-USER "$CONTAINER_USER"
+USER "tedge"
 ENTRYPOINT ["/init"]

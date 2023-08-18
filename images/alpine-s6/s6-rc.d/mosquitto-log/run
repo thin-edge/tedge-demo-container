@@ -1,2 +1,0 @@
-#!/bin/sh
-sed 's/^/\x1b[90mmosquitto     |\x1b[0m /' --unbuffered
