@@ -14,15 +14,24 @@ on:
   merge_group:
 jobs:
   test:
-    name: Test
+    name: Test ${{ matrix.job.target }}
     environment:
       # For security reasons, all pull requests need to be approved first before granting access to secrets
       # So the environment should be set to have a reviewer/s inspect it before approving it
       name: ${{ github.event_name == 'pull_request_target' && 'Test Pull Request' || 'Test Auto'  }}
     runs-on: ubuntu-20.04
     env:
-      COMPOSE_PROJECT_NAME: ci_${{github.run_id}}_${{github.run_attempt || '1'}}
-      DEVICE_ID: ci_${{github.run_id}}_${{github.run_attempt || '1'}}
+      COMPOSE_PROJECT_NAME: ci_${{ matrix.job.target }}_${{github.run_id}}_${{github.run_attempt || '1'}}
+      DEVICE_ID: ci_${{ matrix.job.target }}_${{github.run_id}}_${{github.run_attempt || '1'}}
+
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        job:
+          - { target: debian-systemd, bootstrap: true }
+          - { target: alpine-s6, bootstrap: false }
+
     steps:
       # Checkout either the PR or the branch
       - name: Checkout PR
@@ -35,10 +44,13 @@ jobs:
         uses: actions/checkout@v3
         if: ${{ github.event_name != 'pull_request_target' }}
 
+      - uses: reubenmiller/setup-go-c8y-cli@main
       - name: create .env file
         run: |
           touch .env
           echo "DEVICE_ID=$DEVICE_ID" >> .env
+          C8Y_DOMAIN=$(echo "${{ secrets.C8Y_BASEURL }}" | sed -E 's|^https?://||g')
+          echo "C8Y_DOMAIN=$C8Y_DOMAIN" >> .env
           echo 'C8Y_BASEURL="${{ secrets.C8Y_BASEURL }}"' >> .env
           echo 'C8Y_USER="${{ secrets.C8Y_USER }}"' >> .env
           echo 'C8Y_PASSWORD="${{ secrets.C8Y_PASSWORD }}"' >> .env
@@ -62,8 +74,11 @@ jobs:
       - name: Start demo
         run: |
           # just up-no-cache
-          just up
-          just bootstrap --no-prompt
+          just IMAGE=${{matrix.job.target}} up
+
+          if [ "${{matrix.job.bootstrap}}" = "true" ]; then
+            just bootstrap --no-prompt
+          fi
 
           # FIXME: Debug why the mapper does not start up cleanly sometimes
           # Is it just waiting for the token?
@@ -71,45 +86,28 @@ jobs:
           #just shell systemctl restart tedge-mapper-c8y
 
       - name: Run tests
-        run: just test
+        run: just IMAGE=${{matrix.job.target}} test
 
       - name: Upload test results
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: reports
+          name: reports-${{matrix.job.target}}
           path: output
 
       - name: Stop demo
         if: always()
-        run: just down-all
+        run: just IMAGE=${{matrix.job.target}} down-all
 
-      - name: Install go-c8y-cli
-        if: always()
-        run: |
-          mkdir -p "$HOME/.local/bin"
-          curl -LSs https://github.com/reubenmiller/go-c8y-cli/releases/download/v2.22.4/c8y_linux_$(dpkg --print-architecture) -o "$HOME/.local/bin/c8y"
-          chmod +x "$HOME/.local/bin/c8y"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Cleanup Devices
         if: always()
         run: |
           just cleanup "$DEVICE_ID"
 
-  generate_report:
-    name: Publish report
-    if: ${{ always() && github.event_name == 'pull_request_target' }}
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Download reports
-      uses: actions/download-artifact@v3
-      with:
-        name: reports
-        path: reports
-    - name: Send report to commit
-      uses: joonvena/robotframework-reporter-action@v2.1
-      with:
-        gh_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Send report to commit
+        uses: joonvena/robotframework-reporter-action@v2.2
+        with:
+          gh_access_token: ${{ secrets.GITHUB_TOKEN }}
+          report_path: 'output'
+          show_passed_tests: 'false'
