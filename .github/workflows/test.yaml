@@ -48,8 +48,8 @@ jobs:
         run: |
           touch .env
           echo "DEVICE_ID=$DEVICE_ID" >> .env
-          TEDGE_C8Y_URL=$(echo "${{ secrets.C8Y_BASEURL }}" | sed -E 's|^https?://||g')
-          echo "TEDGE_C8Y_URL=\"$TEDGE_C8Y_URL\"" >> .env
+          C8Y_DOMAIN=$(echo "${{ secrets.C8Y_BASEURL }}" | sed -E 's|^https?://||g')
+          echo "C8Y_DOMAIN=$C8Y_DOMAIN" >> .env
           echo 'C8Y_BASEURL="${{ secrets.C8Y_BASEURL }}"' >> .env
           echo 'C8Y_USER="${{ secrets.C8Y_USER }}"' >> .env
           echo 'C8Y_PASSWORD="${{ secrets.C8Y_PASSWORD }}"' >> .env
