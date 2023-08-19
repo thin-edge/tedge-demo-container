@@ -2,6 +2,10 @@
 set positional-arguments
 set dotenv-load
 
+# Control which demo setup to use
+# IMAGE := "alpine-s6"
+IMAGE := "debian-systemd"
+
 REGISTRY := "ghcr.io"
 REPO_OWNER := "thin-edge"
 
@@ -24,40 +28,40 @@ create-env:
 
 # Start the demo
 up *args='':
-    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml up -d --build {{args}}
+    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml up -d --build {{args}}
 
 # Start the demo and build without caching
 up-no-cache *args='':
-    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml build --no-cache {{args}}
+    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml build --no-cache {{args}}
     just -f {{justfile()}} up {{args}}
 
 # Stop the demo (but keep the data)
 down:
-    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml down
+    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml down
 
 # Stop the demo and destroy the data
 down-all:
-    docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml down -v
+    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml down -v
 
 # Configure and register the device to the cloud
 bootstrap *ARGS:
-    @docker compose --env-file {{DEV_ENV}} -f images/debian-systemd/docker-compose.yaml exec tedge env C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} bootstrap.sh {{ARGS}}
+    @docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec tedge env C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} bootstrap.sh {{ARGS}}
 
 # Start a shell on the main device
 shell *args='bash':
-    docker compose -f images/debian-systemd/docker-compose.yaml exec tedge {{args}}
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge {{args}}
 
 # Start a shell on the child device
 shell-child *args='bash':
-    docker compose -f images/debian-systemd/docker-compose.yaml exec child01 {{args}}
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec child01 {{args}}
 
 # Show logs of the main device
 logs *args='':
-    docker compose -f images/debian-systemd/docker-compose.yaml exec tedge journalctl -f -u "c8y-*" -u "tedge-*" {{args}}
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge journalctl -f -u "c8y-*" -u "tedge-*" {{args}}
 
 # Show child device logs
 logs-child child='child01' *args='':
-    docker compose -f images/debian-systemd/docker-compose.yaml logs {{child}} -f {{args}}
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml logs {{child}} -f {{args}}
 
 # Install python virtual environment
 venv:
@@ -65,8 +69,8 @@ venv:
   ./.venv/bin/pip3 install -r tests/requirements.txt
 
 # Run tests
-test *ARGS:
-  ./.venv/bin/python3 -m robot.run --outputdir output {{ARGS}} tests
+test *ARGS='':
+  ./.venv/bin/python3 -m robot.run --outputdir output {{ARGS}} tests/{{IMAGE}}
 
 # Cleanup device and all it's dependencies
 cleanup DEVICE_ID $CI="true":

@@ -14,7 +14,7 @@ on:
   merge_group:
 jobs:
   test:
-    name: Test
+    name: Test ${{ matrix.job.target }}
     environment:
       # For security reasons, all pull requests need to be approved first before granting access to secrets
       # So the environment should be set to have a reviewer/s inspect it before approving it
@@ -23,6 +23,14 @@ jobs:
     env:
       COMPOSE_PROJECT_NAME: ci_${{github.run_id}}_${{github.run_attempt || '1'}}
       DEVICE_ID: ci_${{github.run_id}}_${{github.run_attempt || '1'}}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { target: debian-systemd, bootstrap: true }
+          - { target: alpine-s6, bootstrap: false }
+
     steps:
       # Checkout either the PR or the branch
       - name: Checkout PR
@@ -39,6 +47,8 @@ jobs:
         run: |
           touch .env
           echo "DEVICE_ID=$DEVICE_ID" >> .env
+          TEDGE_C8Y_URL=$(echo "${{ secrets.C8Y_BASEURL }}" | sed -E 's|^https?://||g')
+          echo "TEDGE_C8Y_URL=\"$TEDGE_C8Y_URL\"" >> .env
           echo 'C8Y_BASEURL="${{ secrets.C8Y_BASEURL }}"' >> .env
           echo 'C8Y_USER="${{ secrets.C8Y_USER }}"' >> .env
           echo 'C8Y_PASSWORD="${{ secrets.C8Y_PASSWORD }}"' >> .env
@@ -62,8 +72,11 @@ jobs:
       - name: Start demo
         run: |
           # just up-no-cache
-          just up
-          just bootstrap --no-prompt
+          just IMAGE=${{matrix.job.target}} up
+
+          if [ "${{matrix.job.bootstrap}}" = "true" ]; then
+            just bootstrap --no-prompt
+          fi
 
           # FIXME: Debug why the mapper does not start up cleanly sometimes
           # Is it just waiting for the token?
@@ -71,7 +84,7 @@ jobs:
           #just shell systemctl restart tedge-mapper-c8y
 
       - name: Run tests
-        run: just test
+        run: just IMAGE=${{matrix.job.target}} test
 
       - name: Upload test results
         uses: actions/upload-artifact@v3
@@ -82,7 +95,7 @@ jobs:
 
       - name: Stop demo
         if: always()
-        run: just down-all
+        run: just IMAGE=${{matrix.job.target}} down-all
 
       - name: Install go-c8y-cli
         if: always()
