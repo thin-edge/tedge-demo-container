@@ -44,6 +44,7 @@ jobs:
         uses: actions/checkout@v3
         if: ${{ github.event_name != 'pull_request_target' }}
 
+      - uses: reubenmiller/setup-go-c8y-cli@main
       - name: create .env file
         run: |
           touch .env
@@ -98,13 +99,6 @@ jobs:
         if: always()
         run: just IMAGE=${{matrix.job.target}} down-all
 
-      - name: Install go-c8y-cli
-        if: always()
-        run: |
-          mkdir -p "$HOME/.local/bin"
-          curl -LSs https://github.com/reubenmiller/go-c8y-cli/releases/download/v2.22.4/c8y_linux_$(dpkg --print-architecture) -o "$HOME/.local/bin/c8y"
-          chmod +x "$HOME/.local/bin/c8y"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Cleanup Devices
         if: always()
