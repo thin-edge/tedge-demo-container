@@ -1,5 +1,5 @@
 *** Settings ***
-Resource    ../resources/common.robot
+Resource    ../../resources/common.robot
 Library    Cumulocity
 Library    DeviceLibrary
 
