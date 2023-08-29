@@ -2,7 +2,6 @@
 
 thin-edge.io demo container setup to showcase thin-edge.io and all its features
 
-
 ## Pre-requisites
 
 The following pre-requisites are required before you can get started:
@@ -147,32 +146,4 @@ The following features are covered by the demo.
 
 ## Known issues
 
-* After the initial registration, sometimes the `tedge-mapper-c8y` may need to restarted before the configuration supported operations will be added to the child devices.
-    
-    You can restart the `tedge-mapper-c8y` service on the main device using the following command:
-
-    ```sh
-    docker compose exec tedge systemctl restart tedge-mapper-c8y
-    ```
-
-    Or if you are running using `just up`, then use:
-
-    ```sh
-    just shell systemctl restart tedge-mapper-c8y
-    ```
-
-* After the initial startup, the software list on the main device maybe empty. There is an issue tracking this problem on the thin-edge.io repository: https://github.com/thin-edge/thin-edge.io/issues/1731
-
-    **Workaround**
-
-    You can restart the `tedge-mapper-c8y` service on the main device using the following command:
-
-    ```sh
-    docker compose exec tedge systemctl restart tedge-mapper-c8y
-    ```
-
-    Or if you are running using `just up`, then use:
-
-    ```sh
-    just shell systemctl restart tedge-mapper-c8y
-    ```
+There are currently no known issues.
