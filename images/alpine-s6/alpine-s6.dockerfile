@@ -35,7 +35,6 @@ RUN curl -sSL thin-edge.io/install-services.sh | sh -s
 # https://github.com/thin-edge/thin-edge.io/issues/2096
 COPY fake-sudo /usr/bin/sudo
 
-ENV TEDGE_RUN_LOCK_FILES=false
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=30000
 
