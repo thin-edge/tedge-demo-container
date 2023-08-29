@@ -15,12 +15,24 @@ DEV_ENV := ".env"
 build *ARGS:
   just -f {{justfile()}} build-main-systemd {{ARGS}}
   just -f {{justfile()}} build-child {{ARGS}}
+  just -f {{justfile()}} build-main-s6 {{ARGS}}
+  just -f {{justfile()}} build-mosquitto {{ARGS}}
 
+# Build the main systemd image
 build-main-systemd OUTPUT_TYPE='oci,dest=tedge-demo-main.tar' VERSION='latest':
     docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-systemd:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-systemd:latest -f images/debian-systemd/debian-systemd.dockerfile --output=type={{OUTPUT_TYPE}} images
 
+# Build the child device image
 build-child OUTPUT_TYPE='oci,dest=tedge-demo-child.tar' VERSION='latest':
     docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:latest -f images/child-device/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device
+
+# Build the alpine s6 image
+build-main-s6 OUTPUT_TYPE='oci,dest=tedge-demo-main-s6.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-s6:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-systemd:latest -f images/alpine-s6/alpine-s6.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
+
+# Build the mosquitto image (used with the alpine s6 image)
+build-mosquitto OUTPUT_TYPE='oci,dest=tedge-mosquitto.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-s6:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:latest -f images/alpine-s6/mosquitto/mosquitto.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
 
 # Create .env file from the template
 create-env:
