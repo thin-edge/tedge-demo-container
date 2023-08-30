@@ -7,6 +7,7 @@ ARG S6_OVERLAY_VERSION=3.1.5.0
 RUN apk update \
     && apk add --no-cache \
         ca-certificates \
+        bash \
         curl \
         # GNU sed (to provide the unbuffered streaming option used in the log parsing)
         sed
@@ -28,7 +29,11 @@ RUN case ${TARGETARCH} in \
 RUN curl -sSL thin-edge.io/install.sh | sh -s
 
 # Add custom service definitions
-RUN curl -sSL thin-edge.io/install-services.sh | sh -s
+RUN curl -sSL thin-edge.io/install-services.sh | sh -s \
+    # Install additional community plugins
+    && apk add --no-cache \
+        c8y-command-plugin \
+        tedge-apk-plugin
 
 # Add custom config
 # sudo is still required due to fixed usage within tedge components (e.g. tedge-agent restart etc.)
