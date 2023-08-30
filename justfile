@@ -28,11 +28,11 @@ build-child OUTPUT_TYPE='oci,dest=tedge-demo-child.tar' VERSION='latest':
 
 # Build the alpine s6 image
 build-main-s6 OUTPUT_TYPE='oci,dest=tedge-demo-main-s6.tar' VERSION='latest':
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-s6:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-systemd:latest -f images/alpine-s6/alpine-s6.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-s6:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-s6:latest -f images/alpine-s6/alpine-s6.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
 
 # Build the mosquitto image (used with the alpine s6 image)
 build-mosquitto OUTPUT_TYPE='oci,dest=tedge-mosquitto.tar' VERSION='latest':
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-s6:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:latest -f images/alpine-s6/mosquitto/mosquitto.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:latest -f images/alpine-s6/mosquitto/mosquitto.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
 
 # Create .env file from the template
 create-env:
