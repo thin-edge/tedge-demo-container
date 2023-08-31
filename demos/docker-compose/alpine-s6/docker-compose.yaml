@@ -1,0 +1,43 @@
+version: "3"
+services:
+  mosquitto:
+    image: ghcr.io/thin-edge/tedge-mosquitto:${VERSION:-latest}
+    pull_policy: always
+    restart: always
+    environment:
+      - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
+      - C8Y_USER=${C8Y_USER:-}
+      - C8Y_PASSWORD=${C8Y_PASSWORD:-}
+      - C8Y_MQTT_PORT=${C8Y_MQTT_PORT:-8883}
+      - DEVICE_ID=${DEVICE_ID:-}
+    volumes:
+      - device-certs:/etc/tedge/device-certs
+      - mosquitto:/mosquitto/data
+    networks:
+      - tedge
+
+  tedge:
+    image: ghcr.io/thin-edge/tedge-demo-main-s6:${VERSION:-latest}
+    pull_policy: always
+    restart: always
+    environment:
+      - TEDGE_MQTT_CLIENT_HOST=mosquitto
+      - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
+    volumes:
+      - device-certs:/etc/tedge/device-certs
+    tmpfs:
+      - /tmp
+    # Support reaching other services from the host, e.g. curl http://host.docker.internal:8888
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - tedge
+    depends_on:
+      - mosquitto
+
+volumes:
+  device-certs:
+  mosquitto:
+
+networks:
+  tedge:
