@@ -34,5 +34,5 @@
 4. Upload the certificate (from the mosquitto container)
 
     ```sh
-    docker compose exec mosquitto tedge cert upload c8y --user "$C8Y_USER"
+    docker compose exec tedge bootstrap.sh
     ```

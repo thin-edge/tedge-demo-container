@@ -45,7 +45,7 @@ up *args='':
 # Start the demo and build without caching
 up-no-cache *args='':
     docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml build --no-cache {{args}}
-    just -f {{justfile()}} up {{args}}
+    just -f {{justfile()}} DEV_ENV={{DEV_ENV}} IMAGE={{IMAGE}} up {{args}}
 
 # Stop the demo (but keep the data)
 down:
@@ -57,7 +57,7 @@ down-all:
 
 # Configure and register the device to the cloud
 bootstrap *ARGS:
-    @docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec tedge env C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} bootstrap.sh {{ARGS}}
+    @docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec tedge env C8Y_USER=${C8Y_USER:-} C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} bootstrap.sh {{ARGS}}
 
 # Start a shell on the main device
 shell *args='bash':
