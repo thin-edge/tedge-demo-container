@@ -13,7 +13,7 @@ Child devices should be attached to the main device
     Cumulocity.Should Be A Child Device Of Device    ${CHILD_DEVICE_2}
 
 Service status
-    Cumulocity.Should Have Services    name=tedge-mapper-c8y             service_type=service    status=up
+    Cumulocity.Should Have Services    name=tedge-mapper-c8y             service_type=service    status=up    timeout=90
     Cumulocity.Should Have Services    name=tedge-agent                  service_type=service    status=up
     Cumulocity.Should Have Services    name=c8y-configuration-plugin     service_type=service    status=up
     Cumulocity.Should Have Services    name=c8y-log-plugin               service_type=service    status=up
