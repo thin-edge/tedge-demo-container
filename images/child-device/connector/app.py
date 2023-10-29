@@ -37,7 +37,6 @@ class App:
 
         while True:
             try:
-                client.register()
                 client.connect()
                 client.bootstrap()
                 client.subscribe()

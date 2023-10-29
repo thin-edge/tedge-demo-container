@@ -13,6 +13,8 @@ from .topics import health_topic
 from .management.worker import Worker, Job
 from .management import configuration, firmware
 from .messages import JSONMessage
+from .management.operation import OperationStatus
+
 
 log = logging.getLogger(__file__)
 
@@ -43,7 +45,7 @@ class TedgeClient:
         self.mqtt = None
         self.config = config
         self._workers: List[Worker] = []
-        self.config.local_id = self.get_id()
+        self.config.device_id = self.get_id()
         self._subscriptions = []
         self._connected_once = threading.Event()
 
@@ -89,7 +91,9 @@ class TedgeClient:
             client.reconnect_delay_set(10, 120)
             if self.config.device_id:
                 client.will_set(
-                    health_topic("connector", self.config.device_id),
+                    health_topic(
+                        topic_id=f"device/{self.config.device_id}/service/connector"
+                    ),
                     json.dumps({"status": "down"}),
                 )
 
@@ -137,36 +141,23 @@ class TedgeClient:
 
     def bootstrap(self):
         """Register extra services once the mqtt client is up"""
-        configuration.bootstrap(self.config, self.mqtt)
 
-    def register(self):
-        """Register the child device to thin-edge.io"""
-        # NOTE: Use custom service to provide the registration api. In the future this
-        # will be deprecated and supported by thin-edge.io.
-        response = requests.post(
-            f"{self.config.tedge.registration_api}/register",
-            json={
-                "name": self.config.local_id,
-                "supportedOperations": [
-                    "c8y_Firmware",
-                    "c8y_ConfigurationUpdate",
-                    "c8y_DownloadConfigFile",
-                ],
-            },
-            timeout=30,
+        self.mqtt.publish(
+            f"te/device/{self.config.device_id}//",
+            json.dumps(
+                {
+                    "@type": "child-device",
+                    "name": self.config.device_id,
+                    "type": "python-connector",
+                }
+            ),
+            retain=True,
+            qos=1,
         )
-
-        response.raise_for_status()
-        data = response.json()
-        self.config.device_id = data.get("id")
-        log.info(
-            "Child device has been registered successfully. id=%s, message=%s",
-            self.config.device_id,
-            data,
-        )
-
-        # FIXME: Wait before trying to connect to broker
+        # wait for registration to be processed
         time.sleep(5)
+        configuration.bootstrap(self.config, self.mqtt)
+        firmware.bootstrap(self.config, self.mqtt)
 
     def subscribe(self):
         """Subscribe to thin-edge.io child device topics and register
@@ -175,15 +166,16 @@ class TedgeClient:
         # get config handler
         handlers = [
             (
-                f"tedge/{self.config.device_id}/commands/req/config_snapshot/#",
+                f"te/device/{self.config.device_id}///cmd/config_snapshot/+",
                 configuration.on_config_snapshot_request,
             ),
             (
-                f"tedge/{self.config.device_id}/commands/req/config_update/#",
+                f"te/device/{self.config.device_id}///cmd/config_update/+",
                 configuration.on_config_update_request,
             ),
             (
-                f"tedge/{self.config.device_id}/commands/req/firmware_update/#",
+                # TODO: Update to te/ topic once c8y-firmware-plugin has been updated
+                f"tedge/+/commands/req/firmware_update",
                 firmware.on_firmware_update_request,
             ),
         ]
@@ -198,7 +190,7 @@ class TedgeClient:
             self.config.device_id,
         )
         self.mqtt.publish(
-            health_topic("connector", self.config.device_id),
+            health_topic(topic_id=f"device/{self.config.device_id}/service/connector"),
             json.dumps({"status": "up"}),
         )
 
@@ -214,11 +206,25 @@ class TedgeClient:
         worker.start()
 
         def add_job(client, _userdata, message: MQTTMessage):
-            log.info("Adding job")
+            if len(message.payload) == 0:
+                # Message is being cleared
+                return
+
             payload = json.loads(message.payload.decode())
+            status = payload.get("status", "")
+            is_legacy = message.topic.startswith("tedge/")
+            if not is_legacy and status != OperationStatus.INIT:
+                return
+
+            log.info("Adding job")
             if isinstance(payload, dict):
                 if "url" in payload:
                     payload["url"] = update_url(payload["url"], self.config.tedge.api)
+
+                if "tedgeUrl" in payload:
+                    payload["tedgeUrl"] = update_url(
+                        payload["tedgeUrl"], self.config.tedge.api
+                    )
 
             worker.put(self.config, client, JSONMessage(message.topic, payload))
 
