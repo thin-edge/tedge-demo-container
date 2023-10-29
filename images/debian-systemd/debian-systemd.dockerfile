@@ -55,15 +55,17 @@ RUN chmod a+x /usr/bin/startup-notifier \
 # Shutdown handler
 COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 
+# register-operations service
+# WORKAROUND: Remove once the firmware_update command can be registered via MQTT
+COPY common/utils/register-operations/register-operations.service /lib/systemd/system/
+COPY common/utils/register-operations/register-operations.sh /usr/bin/register-operations
+RUN systemctl enable register-operations.service
+
 RUN echo "running" \
     && bootstrap.sh "$VERSION" --install --no-bootstrap --no-connect \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
-        c8y-command-plugin \ 
-        device-registration-server
-
-# Registration service
-RUN systemctl enable device-registration-server.service
+        c8y-command-plugin
 
 # Optional installations
 COPY common/optional-installer.sh .
