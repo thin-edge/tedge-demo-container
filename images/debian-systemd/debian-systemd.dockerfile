@@ -76,8 +76,8 @@ COPY common/config/tedge-container-plugin.env /etc/tedge-container-plugin/env
 
 COPY common/config/system.toml /etc/tedge/
 COPY common/config/tedge.toml /etc/tedge/
-COPY common/config/c8y-configuration-plugin.toml /etc/tedge/c8y/
-COPY common/config/c8y-log-plugin.toml /etc/tedge/c8y/
+COPY common/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
+COPY common/config/tedge-log-plugin.toml /etc/tedge/plugins/
 COPY common/config/collectd.conf /etc/collectd/collectd.conf
 COPY common/config/collectd.conf.d /etc/collectd/collectd.conf.d
 
