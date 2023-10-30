@@ -35,8 +35,17 @@ RUN curl -sSL thin-edge.io/install-services.sh | sh -s \
         c8y-command-plugin \
         tedge-apk-plugin
 
+# Set permissions of all files under /etc/tedge
+# TODO: Can thin-edge.io set permissions during installation?
+RUN chown -R tedge:tedge /etc/tedge
+
+# Custom init. scripts
+COPY cont-init.d/*  /etc/cont-init.d/
+
 # Add custom config
 COPY bootstrap.sh /usr/bin/
+COPY tedge-log-plugin.toml /etc/tedge/plugins/
+COPY tedge-configuration-plugin.toml /etc/tedge/plugins/
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=30000

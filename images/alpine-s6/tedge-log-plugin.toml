@@ -1,0 +1,4 @@
+files = [
+    { type = "software-management", path = "/var/log/tedge/agent/software-*" },
+    { type = "shell", path = "/var/log/tedge/agent/c8y_Command-*" },
+]
