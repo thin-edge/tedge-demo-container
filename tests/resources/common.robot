@@ -4,8 +4,8 @@ Library    Cumulocity
 *** Variables ***
 
 ${DEVICE_ID}         %{DEVICE_ID=main}
-${CHILD_DEVICE_1}    ${DEVICE_ID}_child01
-${CHILD_DEVICE_2}    ${DEVICE_ID}_child02
+${CHILD_DEVICE_1}    ${DEVICE_ID}:device:child01
+${CHILD_DEVICE_2}    ${DEVICE_ID}:device:child02
 
 # Cumulocity settings
 &{C8Y_CONFIG}        host=%{C8Y_BASEURL= }    username=%{C8Y_USER= }    password=%{C8Y_PASSWORD= }    tenant=%{C8Y_TENANT= }

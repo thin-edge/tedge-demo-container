@@ -15,7 +15,8 @@ Service status
     Cumulocity.Should Have Services    name=tedge-mapper-c8y    service_type=service    status=up
     Cumulocity.Should Have Services    name=tedge-mapper-collectd    service_type=service    status=up
     Cumulocity.Should Have Services    name=tedge-agent    service_type=service    status=up
-    Cumulocity.Should Have Services    name=tedge-container-monitor    service_type=service    status=up
+    # TODO: Enable once the tedge-container-monitor service has been released
+    # Cumulocity.Should Have Services    name=tedge-container-monitor    service_type=service    status=up
 
 Sends measurements
     ${date_from}=    Get Test Start Time

@@ -1,0 +1,13 @@
+[Unit]
+Description=Listen for command registration messages which are not yet supported by the thin-edge.io MQTT v1 api and convert them to the Cumulocity IoT equivalent
+After=syslog.target network.target mosquitto.service
+
+[Service]
+User=tedge
+ExecStart=/usr/bin/register-operations
+Restart=on-failure
+RestartPreventExitStatus=255
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

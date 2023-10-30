@@ -37,7 +37,10 @@ def collect_metrics(client: TedgeClient, settings: queue.SimpleQueue):
             disk_root_usage = psutil.disk_usage("/").percent
             cpu_usage = psutil.cpu_percent()
             client.mqtt.publish(
-                measurement_topic(client.config.device_id),
+                measurement_topic(
+                    topic_id=f"device/{client.config.device_id}//",
+                    type="resource_usage",
+                ),
                 json.dumps(
                     {
                         "cpu": {

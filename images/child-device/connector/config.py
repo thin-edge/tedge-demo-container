@@ -11,8 +11,8 @@ class Configuration:
 
     download_timeout: float = 600.0
     upload_timeout: float = 600.0
-    type: str = "c8y-configuration-plugin"
-    path: str = "./c8y-configuration-plugin.toml"
+    type: str = "tedge-configuration-plugin"
+    path: str = "./tedge-configuration-plugin.json"
 
 
 @dataclass
@@ -29,7 +29,6 @@ class Tedge:
     host: str = "localhost"
     port: int = 1883
     api: str = "http://localhost:8000"
-    registration_api: str = "http://localhost:9000"
 
 
 @dataclass
@@ -43,7 +42,6 @@ class Metrics:
 class Config:
     """Configuration class to load the connector's config"""
 
-    local_id: str = None
     device_id: str = None
 
     tedge: Tedge = field(default_factory=Tedge)

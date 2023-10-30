@@ -55,15 +55,18 @@ RUN chmod a+x /usr/bin/startup-notifier \
 # Shutdown handler
 COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 
+# register-operations service
+# WORKAROUND: Remove once the firmware_update command can be registered via MQTT
+COPY common/utils/register-operations/register-operations.service /lib/systemd/system/
+COPY common/utils/register-operations/register-operations.sh /usr/bin/register-operations
+RUN systemctl enable register-operations.service
+
 RUN echo "running" \
-    && bootstrap.sh "$VERSION" --install --no-bootstrap --no-connect \
+    && wget -O - thin-edge.io/install.sh | sh -s \
+    && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/setup.deb.sh' | sudo -E bash \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
-        c8y-command-plugin \ 
-        device-registration-server
-
-# Registration service
-RUN systemctl enable device-registration-server.service
+        c8y-command-plugin
 
 # Optional installations
 COPY common/optional-installer.sh .
@@ -76,8 +79,8 @@ COPY common/config/tedge-container-plugin.env /etc/tedge-container-plugin/env
 
 COPY common/config/system.toml /etc/tedge/
 COPY common/config/tedge.toml /etc/tedge/
-COPY common/config/c8y-configuration-plugin.toml /etc/tedge/c8y/
-COPY common/config/c8y-log-plugin.toml /etc/tedge/c8y/
+COPY common/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
+COPY common/config/tedge-log-plugin.toml /etc/tedge/plugins/
 COPY common/config/collectd.conf /etc/collectd/collectd.conf
 COPY common/config/collectd.conf.d /etc/collectd/collectd.conf.d
 

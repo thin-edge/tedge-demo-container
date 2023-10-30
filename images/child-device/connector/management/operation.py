@@ -11,6 +11,7 @@ class OperationStatus:
     """Operation statuses"""
 
     # pylint: disable=too-few-public-methods
+    INIT = "init"
     EXECUTING = "executing"
     SUCCESSFUL = "successful"
     FAILED = "failed"
@@ -44,8 +45,8 @@ class OperationFlow:
     def executing(self):
         """Transition operation to the executing state"""
         payload = {
-            "status": OperationStatus.EXECUTING,
             **self.request.__dict__,
+            "status": OperationStatus.EXECUTING,
         }
         log.info(
             "Setting %s to %s. topic=%s, payload=%s",
@@ -64,8 +65,8 @@ class OperationFlow:
             reason (str, optional): Failure reason
         """
         payload = {
-            "status": status,
             **self.request.__dict__,
+            "status": status,
         }
         if reason:
             payload["reason"] = reason
@@ -87,6 +88,7 @@ class OperationFlow:
     def __exit__(self, exc_type, exc_val, exc_tb):
         # set operation to either successful or failed
         if exc_type:
+            log.warning("Operation failed. %s %s", exc_type, exc_val, exc_info=True)
             self.finished(OperationStatus.FAILED, str(exc_val))
         else:
             self.finished(OperationStatus.SUCCESSFUL)
