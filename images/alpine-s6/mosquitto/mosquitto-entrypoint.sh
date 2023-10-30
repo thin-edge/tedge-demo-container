@@ -32,10 +32,7 @@ tedge disconnect c8y 2>&1 ||:
 while true; do
     echo "Registering device"
 
-    # TODO: update to use the exit code, once ticket is resolved:
-    # https://github.com/thin-edge/thin-edge.io/issues/2172
-    resp=$(tedge connect c8y 2>&1 ||:)
-    if echo "$resp" | grep -q "Saving configuration for requested bridge"; then
+    if tedge connect c8y; then
         break
     fi
     sleep 10
