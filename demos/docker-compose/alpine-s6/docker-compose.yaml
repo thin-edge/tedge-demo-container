@@ -1,10 +1,8 @@
 version: "3"
 
 # child device template
-x-child-defaults: &child-defaults
-  build:
-    dockerfile: alpine-s6.dockerfile
-    context: "."
+x-device-defaults: &device-defaults
+  image: ghcr.io/thin-edge/tedge-demo-main-s6:${VERSION:-latest}
   restart: always
   tmpfs:
     - /tmp
@@ -16,12 +14,12 @@ x-child-defaults: &child-defaults
   depends_on:
     - mosquitto
 
-x-child-env: &child-env
+x-device-env: &device-env
     TEDGE_MQTT_CLIENT_HOST: mosquitto
-    TEDGE_C8Y_URL: ${C8Y_DOMAIN:-}
     #
     # Enable/disable specific services
     #
+    REGISTER_DEVICE: 1
     SERVICE_TEDGE_AGENT: 1
     SERVICE_TEDGE_CONFIGURATION_PLUGIN: 1
     SERVICE_TEDGE_LOG_PLUGIN: 1
@@ -35,7 +33,6 @@ x-child-env: &child-env
 services:
   mosquitto:
     image: ghcr.io/thin-edge/tedge-mosquitto:${VERSION:-latest}
-    pull_policy: always
     restart: always
     environment:
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
@@ -49,28 +46,32 @@ services:
     networks:
       - tedge
 
-  tedge:
+  tedge-mapper-c8y:
     image: ghcr.io/thin-edge/tedge-demo-main-s6:${VERSION:-latest}
-    pull_policy: always
     restart: always
     environment:
       - TEDGE_MQTT_CLIENT_HOST=mosquitto
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
-      - TEDGE_MQTT_DEVICE_TOPIC_ID=device/main//
       #
       # Enable/disable specific services
       #
-      - SERVICE_TEDGE_AGENT=1
-      - SERVICE_TEDGE_CONFIGURATION_PLUGIN=1
-      - SERVICE_TEDGE_LOG_PLUGIN=1
+      # Rename when https://github.com/thin-edge/thin-edge.io/issues/2391 is resolved
+      - FIXME_TEDGE_HTTP_CLIENT_HOST=tedge
       - SERVICE_TEDGE_MAPPER_C8Y=1
+      # FIXME: remove once c8y-firmware-plugin has been made generic
+      # Run c8y-firmware-plugin on the mapper as it needs access to the certificates and c8y.url
+      - SERVICE_C8Y_FIRMWARE_PLUGIN=1
+      - SERVICE_TEDGE_AGENT=0
+      - SERVICE_TEDGE_CONFIGURATION_PLUGIN=0
+      - SERVICE_TEDGE_LOG_PLUGIN=0
       - SERVICE_TEDGE_MAPPER_AZ=0
       - SERVICE_TEDGE_MAPPER_AWS=0
       - SERVICE_TEDGE_MAPPER_COLLECTD=0
-      - SERVICE_C8Y_FIRMWARE_PLUGIN=1
       - SERVICE_MOSQUITTO=0
     volumes:
       - device-certs:/etc/tedge/device-certs
+      # FIXME: Remove volume once https://github.com/thin-edge/thin-edge.io/issues/2390 is resolved
+      - file-transfer:/var/tedge
     tmpfs:
       - /tmp
     # Support reaching other services from the host, e.g. curl http://host.docker.internal:8888
@@ -81,16 +82,31 @@ services:
     depends_on:
       - mosquitto
 
+  # main device
+  tedge:
+    <<: *device-defaults
+    environment:
+      <<: *device-env
+      TEDGE_MQTT_DEVICE_TOPIC_ID: device/main//
+      # FIXME: Move environment variable to dockerfile once https://github.com/thin-edge/thin-edge.io/issues/2391 is resolved
+      # as the bind and client host addresses will be decoupled
+      TEDGE_HTTP_BIND_ADDRESS: "0.0.0.0"
+
+    # FIXME: Remove volume once https://github.com/thin-edge/thin-edge.io/issues/2390 is resolved
+    volumes:
+      - file-transfer:/var/tedge
+
   # child devices
   child01:
-    <<: *child-defaults
+    <<: *device-defaults
     environment:
-      <<: *child-env
+      <<: *device-env
       TEDGE_MQTT_DEVICE_TOPIC_ID: device/child01//
 
 volumes:
   device-certs:
   mosquitto:
+  file-transfer:
 
 networks:
   tedge:
