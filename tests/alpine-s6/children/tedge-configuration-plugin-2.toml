@@ -1,0 +1,5 @@
+files = [
+    { path = '/etc/tedge/tedge.toml', type = 'tedge.toml', user = 'tedge', group = 'tedge', mode = 0o444 },
+    { path = '/etc/tedge/system.toml', type = 'system.toml', user = 'tedge', group = 'tedge', mode = 0o444 },
+    { path = '/etc/tedge/plugins/tedge-log-plugin.toml', type = 'tedge-log-plugin.toml', user = 'tedge', group = 'tedge', mode = 0o644 },
+]
