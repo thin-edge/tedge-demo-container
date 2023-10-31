@@ -22,6 +22,7 @@ x-child-env: &child-env
     #
     # Enable/disable specific services
     #
+    REGISTER_DEVICE: 1
     SERVICE_TEDGE_AGENT: 1
     SERVICE_TEDGE_CONFIGURATION_PLUGIN: 1
     SERVICE_TEDGE_LOG_PLUGIN: 1
