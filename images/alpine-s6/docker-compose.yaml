@@ -6,21 +6,6 @@ x-child-defaults: &child-defaults
     dockerfile: alpine-s6.dockerfile
     context: "."
   restart: always
-  environment:
-    - TEDGE_MQTT_CLIENT_HOST=mosquitto
-    - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
-    #
-    # Enable/disable specific services
-    #
-    - SERVICE_TEDGE_AGENT=1
-    - SERVICE_TEDGE_CONFIGURATION_PLUGIN=1
-    - SERVICE_TEDGE_LOG_PLUGIN=1
-    - SERVICE_TEDGE_MAPPER_C8Y=0
-    - SERVICE_TEDGE_MAPPER_AZ=0
-    - SERVICE_TEDGE_MAPPER_AWS=0
-    - SERVICE_TEDGE_MAPPER_COLLECTD=0
-    - SERVICE_C8Y_FIRMWARE_PLUGIN=0
-    - SERVICE_MOSQUITTO=0
   tmpfs:
     - /tmp
   # Support reaching other services from the host, e.g. curl http://host.docker.internal:8888
@@ -30,6 +15,22 @@ x-child-defaults: &child-defaults
     - tedge
   depends_on:
     - mosquitto
+
+x-child-env: &child-env
+    TEDGE_MQTT_CLIENT_HOST: mosquitto
+    TEDGE_C8Y_URL: ${C8Y_DOMAIN:-}
+    #
+    # Enable/disable specific services
+    #
+    SERVICE_TEDGE_AGENT: 1
+    SERVICE_TEDGE_CONFIGURATION_PLUGIN: 1
+    SERVICE_TEDGE_LOG_PLUGIN: 1
+    SERVICE_TEDGE_MAPPER_C8Y: 0
+    SERVICE_TEDGE_MAPPER_AZ: 0
+    SERVICE_TEDGE_MAPPER_AWS: 0
+    SERVICE_TEDGE_MAPPER_COLLECTD: 0
+    SERVICE_C8Y_FIRMWARE_PLUGIN: 0
+    SERVICE_MOSQUITTO: 0
 
 services:
   mosquitto:
@@ -86,7 +87,8 @@ services:
   child01:
     <<: *child-defaults
     environment:
-      - TEDGE_MQTT_DEVICE_TOPIC_ID=device/child01//
+      <<: *child-env
+      TEDGE_MQTT_DEVICE_TOPIC_ID: device/child01//
 
 volumes:
   device-certs:
