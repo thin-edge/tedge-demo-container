@@ -11,9 +11,9 @@ CREATE_CERT=${CREATE_CERT:-1}
 if [ "$CREATE_CERT" = "1" ]; then
     if command -V tedge >/dev/null 2>&1; then
         if [ -n "$DEVICE_ID" ]; then
-            if [ ! -f /etc/tedge/device-certs/tedge-private-key.pem ]; then
+        PRIVATE_CERT=$(tedge config get device.key_path)
+        if [ ! -f "$PRIVATE_CERT" ]; then
                 tedge cert create --device-id "$DEVICE_ID"
-            fi
         fi
     fi
 fi
