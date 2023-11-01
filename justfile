@@ -27,8 +27,8 @@ build-child OUTPUT_TYPE='oci,dest=tedge-demo-child.tar' VERSION='latest':
     docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:latest -f images/child-device/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device
 
 # Build the alpine s6 image
-build-main-s6 OUTPUT_TYPE='oci,dest=tedge-demo-main-s6.tar' VERSION='latest':
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-s6:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-s6:latest -f images/alpine-s6/alpine-s6.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
+build-main-s6 OUTPUT_TYPE='oci,dest=tedge-demo-s6.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-s6:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-s6:latest -f images/alpine-s6/alpine-s6.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
 
 # Build the mosquitto image (used with the alpine s6 image)
 build-mosquitto OUTPUT_TYPE='oci,dest=tedge-mosquitto.tar' VERSION='latest':

@@ -2,7 +2,7 @@ version: "3"
 
 # child device template
 x-device-defaults: &device-defaults
-  image: ghcr.io/thin-edge/tedge-demo-main-s6:${VERSION:-latest}
+  image: ghcr.io/thin-edge/tedge-demo-s6:${VERSION:-latest}
   restart: always
   tmpfs:
     - /tmp
@@ -46,7 +46,7 @@ services:
       - tedge
 
   tedge-mapper-c8y:
-    image: ghcr.io/thin-edge/tedge-demo-main-s6:${VERSION:-latest}
+    image: ghcr.io/thin-edge/tedge-demo-s6:${VERSION:-latest}
     restart: always
     environment:
       - TEDGE_MQTT_CLIENT_HOST=mosquitto
