@@ -86,6 +86,9 @@ services:
       - tedge
     depends_on:
       - mosquitto
+    # FIXME: Remove volume once https://github.com/thin-edge/thin-edge.io/issues/2390 is resolved
+    # However this is only required if the tedge container is running under the root user
+    user: root
 
   # main device
   tedge:
