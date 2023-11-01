@@ -2,7 +2,7 @@ version: "3"
 
 # child device template
 x-device-defaults: &device-defaults
-  image: ghcr.io/thin-edge/tedge-demo-main-s6:${VERSION:-latest}
+  image: ghcr.io/thin-edge/tedge-demo-s6:${VERSION:-latest}
   restart: always
   tmpfs:
     - /tmp
@@ -38,7 +38,6 @@ services:
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
       - C8Y_USER=${C8Y_USER:-}
       - C8Y_PASSWORD=${C8Y_PASSWORD:-}
-      - C8Y_MQTT_PORT=${C8Y_MQTT_PORT:-8883}
       - DEVICE_ID=${DEVICE_ID:-}
     volumes:
       - device-certs:/etc/tedge/device-certs
@@ -47,7 +46,7 @@ services:
       - tedge
 
   tedge-mapper-c8y:
-    image: ghcr.io/thin-edge/tedge-demo-main-s6:${VERSION:-latest}
+    image: ghcr.io/thin-edge/tedge-demo-s6:${VERSION:-latest}
     restart: always
     environment:
       - TEDGE_MQTT_CLIENT_HOST=mosquitto
@@ -95,6 +94,8 @@ services:
     # FIXME: Remove volume once https://github.com/thin-edge/thin-edge.io/issues/2390 is resolved
     volumes:
       - file-transfer:/var/tedge
+    # Use root user if you want to be able to add/remove apk packages inside the container
+    # user: root
 
   # child devices
   child01:
@@ -102,6 +103,8 @@ services:
     environment:
       <<: *device-env
       TEDGE_MQTT_DEVICE_TOPIC_ID: device/child01//
+    # Use root user if you want to be able to add/remove apk packages inside the container
+    # user: root
 
 volumes:
   device-certs:

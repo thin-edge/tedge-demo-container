@@ -1,19 +1,21 @@
 #!/bin/sh
 set -e
 
-TEDGE_C8Y_URL="${TEDGE_C8Y_URL:-}"
-C8Y_MQTT_PORT=${C8Y_MQTT_PORT:-8883}
 DEVICE_ID="${DEVICE_ID:-}"
 CREATE_CERT=${CREATE_CERT:-1}
+
+if ! command -V tedge >/dev/null 2>&1; then
+    echo "missing dependency: tedge must be installed!" >&2
+    exit 1
+fi
 
 #
 # Create device certificate
 if [ "$CREATE_CERT" = "1" ]; then
-    if command -V tedge >/dev/null 2>&1; then
-        if [ -n "$DEVICE_ID" ]; then
-            if [ ! -f /etc/tedge/device-certs/tedge-private-key.pem ]; then
-                tedge cert create --device-id "$DEVICE_ID"
-            fi
+    if [ -n "$DEVICE_ID" ]; then
+        PRIVATE_CERT=$(tedge config get device.key_path)
+        if [ ! -f "$PRIVATE_CERT" ]; then
+            tedge cert create --device-id "$DEVICE_ID"
         fi
     fi
 fi
