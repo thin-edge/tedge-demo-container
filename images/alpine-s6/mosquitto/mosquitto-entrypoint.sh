@@ -1,8 +1,6 @@
 #!/bin/sh
 set -e
 
-TEDGE_C8Y_URL="${TEDGE_C8Y_URL:-}"
-C8Y_MQTT_PORT=${C8Y_MQTT_PORT:-8883}
 DEVICE_ID="${DEVICE_ID:-}"
 CREATE_CERT=${CREATE_CERT:-1}
 
@@ -14,10 +12,10 @@ fi
 #
 # Create device certificate
 if [ "$CREATE_CERT" = "1" ]; then
-        if [ -n "$DEVICE_ID" ]; then
+    if [ -n "$DEVICE_ID" ]; then
         PRIVATE_CERT=$(tedge config get device.key_path)
         if [ ! -f "$PRIVATE_CERT" ]; then
-                tedge cert create --device-id "$DEVICE_ID"
+            tedge cert create --device-id "$DEVICE_ID"
         fi
     fi
 fi

@@ -42,7 +42,6 @@ services:
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
       - C8Y_USER=${C8Y_USER:-}
       - C8Y_PASSWORD=${C8Y_PASSWORD:-}
-      - C8Y_MQTT_PORT=${C8Y_MQTT_PORT:-8883}
       - DEVICE_ID=${DEVICE_ID:-}
     volumes:
       - device-certs:/etc/tedge/device-certs
