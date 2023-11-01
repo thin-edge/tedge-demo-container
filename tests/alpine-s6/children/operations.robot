@@ -23,7 +23,7 @@ Set Configuration
     Cumulocity.Should Support Configurations    tedge-configuration-plugin    tedge.toml    system.toml    tedge-log-plugin.toml
 
 Get Configuration
-    ${operation}=    Cumulocity.Get Configuration    typename=tedge.toml
+    ${operation}=    Cumulocity.Get Configuration    typename=tedge-configuration-plugin
     Operation Should Be SUCCESSFUL    ${operation}
 
 *** Keywords ***

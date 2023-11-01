@@ -50,5 +50,7 @@ COPY tedge-configuration-plugin.toml /etc/tedge/plugins/
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=30000
 
+ENV TEDGE_C8Y_PROXY_BIND_ADDRESS 0.0.0.0
+
 USER "tedge"
 ENTRYPOINT ["/init"]
