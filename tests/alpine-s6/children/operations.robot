@@ -26,6 +26,13 @@ Get Configuration
     ${operation}=    Cumulocity.Get Configuration    typename=tedge-configuration-plugin
     Operation Should Be SUCCESSFUL    ${operation}
 
+Restart Device
+    ${operation}=    Cumulocity.Restart Device
+    Operation Should Be SUCCESSFUL    ${operation}
+
+It Should List the Installed Software
+    Device Should Have Installed Software    tedge    tedge-agent
+
 *** Keywords ***
 
 Revert Configuration
