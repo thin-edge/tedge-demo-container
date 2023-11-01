@@ -33,6 +33,16 @@ Restart Device
 It Should List the Installed Software
     Device Should Have Installed Software    tedge    tedge-agent
 
+Install software (apk package)
+    ${operation}=    Install Software    jq,latest::apk
+    Operation Should Be SUCCESSFUL    ${operation}
+    Device Should Have Installed Software    jq
+
+Uninstall software (apk package)
+    ${operation}=     Uninstall Software    jq,latest::apk
+    Operation Should Be SUCCESSFUL    ${operation}
+    Device Should Not Have Installed Software    jq
+
 *** Keywords ***
 
 Revert Configuration
