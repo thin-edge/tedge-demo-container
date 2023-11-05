@@ -1,4 +1,4 @@
-FROM debian:11-slim
+FROM debian:12-slim
 
 ARG VERSION=
 
@@ -17,8 +17,6 @@ RUN apt-get -y update \
         systemd \
         systemd-sysv \
         ssh \
-        mosquitto \
-        mosquitto-clients \
         collectd-core \
         # extra collectd shared libraries
         libmnl0 \
