@@ -464,6 +464,9 @@ main() {
         done
     fi
 
+    # use startup notifier to send the startup message after bootstrapping to indicate that thin-edge.io is up and running
+    sudo systemctl restart startup-notifier >/dev/null 2>&1 ||:
+
     if [ "$BOOTSTRAP" = 1 ] || [ "$CONNECT" = 1 ]; then
         display_banner_c8y
     fi
