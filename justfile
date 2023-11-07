@@ -4,7 +4,7 @@ set dotenv-load
 
 # Control which demo setup to use
 # IMAGE := "alpine-s6"
-IMAGE := "debian-systemd"
+IMAGE := env_var_or_default("IMAGE", "debian-systemd")
 
 REGISTRY := "ghcr.io"
 REPO_OWNER := "thin-edge"
