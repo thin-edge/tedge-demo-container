@@ -50,12 +50,11 @@ services:
     restart: always
     environment:
       - TEDGE_MQTT_CLIENT_HOST=mosquitto
+      - TEDGE_HTTP_CLIENT_HOST=tedge
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
       #
       # Enable/disable specific services
       #
-      # Rename when https://github.com/thin-edge/thin-edge.io/issues/2391 is resolved
-      - FIXME_TEDGE_HTTP_CLIENT_HOST=tedge
       - SERVICE_TEDGE_MAPPER_C8Y=1
       # FIXME: remove once c8y-firmware-plugin has been made generic
       # Run c8y-firmware-plugin on the mapper as it needs access to the certificates and c8y.url
@@ -87,9 +86,6 @@ services:
     environment:
       <<: *device-env
       TEDGE_MQTT_DEVICE_TOPIC_ID: device/main//
-      # FIXME: Move environment variable to dockerfile once https://github.com/thin-edge/thin-edge.io/issues/2391 is resolved
-      # as the bind and client host addresses will be decoupled
-      TEDGE_HTTP_BIND_ADDRESS: "0.0.0.0"
 
     # FIXME: Remove volume once https://github.com/thin-edge/thin-edge.io/issues/2390 is resolved
     volumes:
