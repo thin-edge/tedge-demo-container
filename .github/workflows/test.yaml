@@ -80,11 +80,6 @@ jobs:
             just bootstrap --no-prompt
           fi
 
-          # FIXME: Debug why the mapper does not start up cleanly sometimes
-          # Is it just waiting for the token?
-          #sleep 20
-          #just shell systemctl restart tedge-mapper-c8y
-
       - name: Run tests
         run: just IMAGE=${{matrix.job.target}} test
 
