@@ -46,8 +46,6 @@ def bootstrap(config: Config, client: Client):
         config (Config): Connection configuration
         client (Client): MQTT client
     """
-    # TODO: Currently there is no way to register the c8y_Firmware operation
-    # time.sleep(5)
     client.publish(
         f"te/device/{config.device_id}///cmd/firmware_update", "{}", retain=True, qos=1
     )
