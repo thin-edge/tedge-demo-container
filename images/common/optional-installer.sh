@@ -13,7 +13,10 @@ install_container_management () {
         | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     
     sudo apt-get update
-    sudo apt-get install -y docker-ce-cli docker-compose-plugin tedge-container-plugin
+    sudo apt-get install -y --no-install-recommends \
+        docker-ce-cli \
+        docker-compose-plugin \
+        tedge-container-plugin
 
     # Disable services to prevent from starting too early
     # before thin-edge has been registered
