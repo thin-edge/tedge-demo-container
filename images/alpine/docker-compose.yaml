@@ -15,7 +15,9 @@ x-device-defaults: &defaults
     - tedge
   depends_on:
     - mosquitto
-  user: tedge
+  # Not recommended: Use root if you want to be able to install apk packages within the container at runtime
+  # otherwise just use tedge which is a non-root user.
+  user: root
 
 
 services:
