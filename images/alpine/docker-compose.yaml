@@ -43,6 +43,16 @@ services:
     volumes:
       - device-certs:/etc/tedge/device-certs
 
+  # FIXME: Remove once the following ticket is resolved and there is child operation supervision
+  # * https://github.com/thin-edge/thin-edge.io/issues/2453
+  c8y-firmware-plugin:
+    <<: *defaults
+    command: ["/usr/bin/c8y-firmware-plugin"]
+    environment:
+      - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
+    volumes:
+      - device-certs:/etc/tedge/device-certs
+
   # main device
   tedge:
     <<: *defaults
