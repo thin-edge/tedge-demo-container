@@ -21,9 +21,9 @@ Install software package
     Cumulocity.Device Should Have Installed Software    vim-tiny
 
 Uninstall software package
-    Skip    Missing Uninstall software keyword
-    ${operation}=    Cumulocity.Install Software    vim-tiny    timeout=90
+    ${operation}=    Cumulocity.Uninstall Software    vim-tiny,::apt    timeout=90
     Operation Should Be SUCCESSFUL    ${operation}
+    Cumulocity.Device Should Not Have Installed Software    vim-tiny
 
 Execute shell command
     ${operation}=    Cumulocity.Execute Shell Command    ls -l /etc/tedge
