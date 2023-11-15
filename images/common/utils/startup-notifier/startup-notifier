@@ -26,7 +26,7 @@ publish() {
     VERSION=$(tedge --version | cut -d' ' -f2)
     TOPIC_ROOT=$(tedge config get mqtt.topic_root)
     TOPIC_ID=$(tedge config get mqtt.device_topic_id)
-    tedge mqtt pub --qos 0 "$TOPIC_ROOT/$TOPIC_ID/e/startup" "$(printf '{"text": "tedge started up 🚀 version=%s"}' "$VERSION")"
+    tedge mqtt pub --qos 1 "$TOPIC_ROOT/$TOPIC_ID/e/startup" "$(printf '{"text": "tedge started up 🚀 version=%s"}' "$VERSION")"
 }
 
 # Keep trying forever until it is published
