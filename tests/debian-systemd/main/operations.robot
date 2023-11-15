@@ -21,7 +21,7 @@ Install software package
     Cumulocity.Device Should Have Installed Software    vim-tiny
 
 Uninstall software package
-    ${operation}=    Cumulocity.Uninstall Software    vim-tiny    timeout=90
+    ${operation}=    Cumulocity.Uninstall Software    vim-tiny,::apt    timeout=90
     Operation Should Be SUCCESSFUL    ${operation}
     Cumulocity.Device Should Not Have Installed Software    vim-tiny
 
