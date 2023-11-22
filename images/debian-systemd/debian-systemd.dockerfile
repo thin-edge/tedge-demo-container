@@ -77,6 +77,7 @@ RUN echo "running" \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/setup.deb.sh' | sudo -E bash \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
+        tedge-inventory-plugin \
         c8y-command-plugin
 
 # Optional installations
