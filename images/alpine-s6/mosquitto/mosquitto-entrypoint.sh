@@ -26,15 +26,13 @@ if [ -n "$C8Y_PASSWORD" ] && [ -n "$C8Y_USER" ]; then
     env C8YPASS="$C8Y_PASSWORD" tedge cert upload c8y --user "$C8Y_USER" ||:
 fi
 
-# Always disconnect to enforce re-creating the bridge configuration
-tedge disconnect c8y 2>&1 ||:
-
 # Wait until the device has been registered before starting the bridge,
 # otherwise the s/dat token will not receive any messages
 while true; do
     echo "Registering device"
 
-    if tedge connect c8y; then
+    # Check if already connected
+    if tedge connect c8y --test >/dev/null 2>&1 || tedge connect c8y; then
         break
     fi
     sleep 10
