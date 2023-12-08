@@ -1,5 +1,10 @@
 version: "3"
 
+# TODOS:
+# * Enable setting configuration update without sharing volumes between tedge-mapper-c8y and tedge
+#    * Related issue https://github.com/thin-edge/thin-edge.io/issues/2477
+#
+
 # device template
 x-device-defaults: &defaults
   build:
@@ -18,7 +23,6 @@ x-device-defaults: &defaults
   # Not recommended: Use root if you want to be able to install apk packages within the container at runtime
   # otherwise just use tedge which is a non-root user.
   user: root
-
 
 services:
   mosquitto:
@@ -43,25 +47,15 @@ services:
     volumes:
       - device-certs:/etc/tedge/device-certs
 
-  # FIXME: Remove once the following ticket is resolved and there is child operation supervision
-  # * https://github.com/thin-edge/thin-edge.io/issues/2453
-  c8y-firmware-plugin:
-    <<: *defaults
-    command: ["/usr/bin/c8y-firmware-plugin"]
-    environment:
-      - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
-    volumes:
-      - device-certs:/etc/tedge/device-certs
-
   # main device
   tedge:
     <<: *defaults
-    command: ["/usr/bin/tedge-agent-v1", "--mqtt-device-topic-id", "device/main//"]
+    command: ["/usr/bin/tedge-agent", "--mqtt-device-topic-id", "device/main//"]
 
   # child devices
   child01:
     <<: *defaults
-    command: ["/usr/bin/tedge-agent-v1", "--mqtt-device-topic-id", "device/child01//"]
+    command: ["/usr/bin/tedge-agent", "--mqtt-device-topic-id", "device/child01//"]
 
 volumes:
   device-certs:

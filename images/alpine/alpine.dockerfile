@@ -14,10 +14,7 @@ RUN curl -sSL thin-edge.io/install.sh | sh -s -- --channel main
 # Install additional community plugins
 RUN apk add --no-cache \
     c8y-command-plugin \
-    tedge-apk-plugin \
-    # Set permissions of all files under /etc/tedge
-    # FIXME: Remove once the following are solved: https://github.com/thin-edge/thin-edge.io/issues/2452
-    && chown tedge:tedge /etc/tedge/operations/c8y
+    tedge-apk-plugin
 
 # Add custom config
 COPY tedge-log-plugin.toml /etc/tedge/plugins/
@@ -28,6 +25,7 @@ ENV TEDGE_C8Y_PROXY_BIND_ADDRESS 0.0.0.0
 ENV TEDGE_HTTP_BIND_ADDRESS 0.0.0.0
 ENV TEDGE_MQTT_CLIENT_HOST mosquitto
 ENV TEDGE_HTTP_CLIENT_HOST tedge
+ENV TEDGE_C8Y_PROXY_CLIENT_HOST tedge-mapper-c8y
 
 USER "tedge"
-CMD [ "/usr/bin/tedge-agent-v1" ]
+CMD [ "/usr/bin/tedge-agent" ]
