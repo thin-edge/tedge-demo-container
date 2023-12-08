@@ -34,6 +34,10 @@ build-main-s6 OUTPUT_TYPE='oci,dest=tedge-demo-s6.tar' VERSION='latest':
 build-mosquitto OUTPUT_TYPE='oci,dest=tedge-mosquitto.tar' VERSION='latest':
     docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:latest -f images/alpine-s6/mosquitto/mosquitto.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
 
+# Show the device in Cumulocity IoT
+show-device:
+    c8y identity get --name "$DEVICE_ID" | c8y applications open --application devicemanagement --page device-info
+
 # Create .env file from the template
 create-env:
     test -f {{DEV_ENV}} || cp env.template {{DEV_ENV}}
