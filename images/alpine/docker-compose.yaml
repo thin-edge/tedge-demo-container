@@ -30,8 +30,6 @@ services:
     restart: always
     environment:
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
-      - C8Y_USER=${C8Y_USER:-}
-      - C8Y_PASSWORD=${C8Y_PASSWORD:-}
       - DEVICE_ID=${DEVICE_ID:-}
     volumes:
       - mosquitto:/mosquitto/data
