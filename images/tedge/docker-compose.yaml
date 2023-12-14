@@ -1,0 +1,74 @@
+version: "3"
+
+# device template
+x-device-defaults: &defaults
+  build:
+    dockerfile: Dockerfile
+    context: "."
+  pull_policy: always
+  restart: always
+  tmpfs:
+    - /tmp
+  depends_on:
+    - mqtt-broker
+  environment:
+    # Remove once: https://github.com/thin-edge/thin-edge.io/issues/2523
+    - TEDGE_ENABLE_SUDO=false
+
+services:
+  bootstrap:
+    image: ghcr.io/thin-edge/tedge-main:latest
+    stop_grace_period: "2s"
+    pull_policy: always
+    user: root
+    environment:
+      - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
+    command:
+      - sh
+      - -c
+      - "until [ -f /etc/tedge/mosquitto-conf/c8y-bridge.conf ]; do echo 'Waiting for bootstrapping'; sleep 5; done; echo Finished bootstrapping"
+    volumes:
+      - device-certs:/etc/tedge/device-certs
+      - mosquitto-conf:/etc/tedge/mosquitto-conf
+
+  mqtt-broker:
+    image: ghcr.io/thin-edge/tedge-mqtt-broker:${VERSION:-latest}
+    pull_policy: always
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+    restart: always
+    volumes:
+      - mosquitto:/mosquitto/data
+      - mosquitto-conf:/etc/tedge/mosquitto-conf
+      - device-certs:/etc/tedge/device-certs
+
+  tedge-mapper-c8y:
+    <<: *defaults
+    command: ["/usr/bin/tedge-mapper", "c8y"]
+    environment:
+      - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
+    volumes:
+      - device-certs:/etc/tedge/device-certs
+      # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
+      - tedge-data:/var/tedge
+
+  # main device
+  tedge:
+    <<: *defaults
+    command: ["/usr/bin/tedge-agent", "--mqtt-device-topic-id", "device/main//"]
+    volumes:
+      # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
+      - tedge-data:/var/tedge
+
+  # child devices
+  child01:
+    <<: *defaults
+    command: ["/usr/bin/tedge-agent", "--mqtt-device-topic-id", "device/child01//"]
+
+volumes:
+  device-certs:
+  mosquitto:
+  mosquitto-conf:
+  # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
+  tedge-data:

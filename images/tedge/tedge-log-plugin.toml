@@ -1,0 +1,19 @@
+[[files]]
+type = "software-management"
+path = "/var/log/tedge/agent/software-*"
+
+[[files]]
+type = "firmware_update"
+path = "/var/log/tedge/agent/workflow-firmware_update-*"
+
+[[files]]
+type = "restart"
+path = "/var/log/tedge/agent/workflow-restart-*"
+
+[[files]]
+type = "shell"
+path = "/var/log/tedge/agent/c8y_Command-*"
+
+[[files]]
+type = "all-workflows"
+path = "/var/log/tedge/agent/workflow-*"

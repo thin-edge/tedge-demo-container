@@ -2,7 +2,6 @@
 set -e
 
 DEVICE_ID="${DEVICE_ID:-}"
-CREATE_CERT=${CREATE_CERT:-1}
 
 if ! command -V tedge >/dev/null 2>&1; then
     echo "missing dependency: tedge must be installed!" >&2
@@ -11,12 +10,10 @@ fi
 
 #
 # Create device certificate
-if [ "$CREATE_CERT" = "1" ]; then
-    if [ -n "$DEVICE_ID" ]; then
-        PRIVATE_CERT=$(tedge config get device.key_path)
-        if [ ! -f "$PRIVATE_CERT" ]; then
-            tedge cert create --device-id "$DEVICE_ID"
-        fi
+if [ -n "$DEVICE_ID" ]; then
+    PRIVATE_CERT=$(tedge config get device.key_path)
+    if [ ! -f "$PRIVATE_CERT" ]; then
+        tedge cert create --device-id "$DEVICE_ID"
     fi
 fi
 
@@ -26,15 +23,13 @@ if [ -n "$C8Y_PASSWORD" ] && [ -n "$C8Y_USER" ]; then
     env C8YPASS="$C8Y_PASSWORD" tedge cert upload c8y --user "$C8Y_USER" ||:
 fi
 
-# Always disconnect to enforce re-creating the bridge configuration
-tedge disconnect c8y 2>&1 ||:
-
 # Wait until the device has been registered before starting the bridge,
 # otherwise the s/dat token will not receive any messages
 while true; do
     echo "Registering device"
 
-    if tedge connect c8y; then
+    # Check if already connected
+    if tedge connect c8y --test >/dev/null 2>&1 || tedge connect c8y; then
         break
     fi
     sleep 10

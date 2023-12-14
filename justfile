@@ -11,11 +11,16 @@ REPO_OWNER := "thin-edge"
 
 DEV_ENV := ".env"
 
+# Enabling running cross platform tools when building container images
+build-setup:
+    docker run --privileged --rm tonistiigi/binfmt --install all
+
 # Build the docker images
-build *ARGS:
+build *ARGS: build-setup
   just -f {{justfile()}} build-main-systemd {{ARGS}}
   just -f {{justfile()}} build-child {{ARGS}}
-  just -f {{justfile()}} build-main-s6 {{ARGS}}
+  just -f {{justfile()}} build-tedge {{ARGS}}
+  just -f {{justfile()}} build-tedge-containermgmt {{ARGS}}
   just -f {{justfile()}} build-mosquitto {{ARGS}}
 
 # Build the main systemd image
@@ -26,13 +31,21 @@ build-main-systemd OUTPUT_TYPE='oci,dest=tedge-demo-main.tar' VERSION='latest':
 build-child OUTPUT_TYPE='oci,dest=tedge-demo-child.tar' VERSION='latest':
     docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:latest -f images/child-device/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device
 
-# Build the alpine s6 image
-build-main-s6 OUTPUT_TYPE='oci,dest=tedge-demo-s6.tar' VERSION='latest':
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-s6:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-s6:latest -f images/alpine-s6/alpine-s6.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
+# Build the single process container image
+build-tedge OUTPUT_TYPE='oci,dest=tedge-demo.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo:latest -f images/tedge/Dockerfile --output=type={{OUTPUT_TYPE}} images/tedge
+
+# Build the single process container image with container management plugin
+build-tedge-containermgmt OUTPUT_TYPE='oci,dest=tedge-demo-containermgmt.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-containermgmt:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-containermgmt:latest -f images/tedge-containermgmt/Dockerfile --output=type={{OUTPUT_TYPE}} images/tedge-containermgmt
 
 # Build the mosquitto image (used with the alpine s6 image)
 build-mosquitto OUTPUT_TYPE='oci,dest=tedge-mosquitto.tar' VERSION='latest':
     docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:latest -f images/alpine-s6/mosquitto/mosquitto.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
+
+# Show the device in Cumulocity IoT
+show-device:
+    c8y identity get --name "$DEVICE_ID" | c8y applications open --application devicemanagement --page device-info
 
 # Create .env file from the template
 create-env:

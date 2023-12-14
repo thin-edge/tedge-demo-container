@@ -1,0 +1,13 @@
+[[files]]
+path = "/etc/tedge/tedge.toml"
+type = "tedge.toml"
+user = "tedge"
+group = "tedge"
+mode = 0o444
+
+[[files]]
+path = "/etc/tedge/system.toml"
+type = "system.toml"
+user = "tedge"
+group = "tedge"
+mode = 0o444
