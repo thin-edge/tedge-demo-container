@@ -3,7 +3,7 @@ version: "3"
 # device template
 x-device-defaults: &defaults
   build:
-    dockerfile: alpine.dockerfile
+    dockerfile: alpine.container.dockerfile
     context: "."
   pull_policy: always
   restart: always
@@ -14,6 +14,9 @@ x-device-defaults: &defaults
   environment:
     # Remove once: https://github.com/thin-edge/thin-edge.io/issues/2523
     - TEDGE_ENABLE_SUDO=false
+  # Not recommended: Use root if you want to be able to install apk packages within the container at runtime
+  # otherwise just use tedge which is a non-root user.
+  user: root
 
 services:
   bootstrap:
@@ -58,13 +61,18 @@ services:
     <<: *defaults
     command: ["/usr/bin/tedge-agent", "--mqtt-device-topic-id", "device/main//"]
     volumes:
+      # Enable docker from docker - But then this container has elevated access to system resources!
+      - /var/run/docker.sock:${DOCKER_SOCKET:-/var/run/docker.sock}:rw
       # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
       - tedge-data:/var/tedge
 
-  # child devices
-  child01:
+  # monitor container/container-groups and add services on the main device
+  tedge-container-monitor:
     <<: *defaults
-    command: ["/usr/bin/tedge-agent", "--mqtt-device-topic-id", "device/child01//"]
+    command: ["/usr/bin/tedge-container-monitor", "--interval", "60"]
+    volumes:
+      # Enable docker from docker - But then this container has elevated access to system resources!
+      - /var/run/docker.sock:${DOCKER_SOCKET:-/var/run/docker.sock}:ro
 
 volumes:
   device-certs:
