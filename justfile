@@ -20,7 +20,7 @@ build *ARGS: build-setup
   just -f {{justfile()}} build-main-systemd {{ARGS}}
   just -f {{justfile()}} build-child {{ARGS}}
   just -f {{justfile()}} build-tedge {{ARGS}}
-  just -f {{justfile()}} build-mosquitto {{ARGS}}
+  just -f {{justfile()}} build-tedge-containermgmt {{ARGS}}
 
 # Build the main systemd image
 build-main-systemd OUTPUT_TYPE='oci,dest=tedge-demo-main.tar' VERSION='latest':
@@ -30,13 +30,13 @@ build-main-systemd OUTPUT_TYPE='oci,dest=tedge-demo-main.tar' VERSION='latest':
 build-child OUTPUT_TYPE='oci,dest=tedge-demo-child.tar' VERSION='latest':
     docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:latest -f images/child-device/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device
 
-# Build the alpine image
+# Build the single process container image
 build-tedge OUTPUT_TYPE='oci,dest=tedge-demo.tar' VERSION='latest':
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo:latest -f images/alpine/alpine.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo:latest -f images/tedge/Dockerfile --output=type={{OUTPUT_TYPE}} images/tedge
 
-# Build the mosquitto image (used with the alpine s6 image)
-build-mosquitto OUTPUT_TYPE='oci,dest=tedge-mosquitto.tar' VERSION='latest':
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-mosquitto:latest -f images/alpine-s6/mosquitto/mosquitto.dockerfile --output=type={{OUTPUT_TYPE}} images/alpine-s6
+# Build the single process container image with container management plugin
+build-tedge-containermgmt OUTPUT_TYPE='oci,dest=tedge-demo-containermgmt.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-containermgmt:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-containermgmt:latest -f images/tedge-containermgmt/Dockerfile --output=type={{OUTPUT_TYPE}} images/tedge-containermgmt
 
 # Show the device in Cumulocity IoT
 show-device:

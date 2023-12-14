@@ -15,7 +15,6 @@ RUN wget -q -O - 'https://dl.cloudsmith.io/public/thinedge/community/rsa.B24635C
 # Add custom config
 COPY tedge-log-plugin.toml /etc/tedge/plugins/
 COPY tedge-configuration-plugin.toml /etc/tedge/plugins/
-COPY system.toml /etc/tedge/
 
 USER "tedge"
 CMD [ "/usr/bin/tedge-agent" ]
