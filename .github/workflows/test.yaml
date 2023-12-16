@@ -118,7 +118,7 @@ jobs:
                   UP_PID=$!
 
                   sleep 5
-                  just IMAGE=${{matrix.job.target}} bootstrap-container "$DEVICE_ID"
+                  just IMAGE=${{matrix.job.target}} bootstrap-container "$DEVICE_ID" </dev/null
                   
                   # Wait until bootstrap is ready
                   wait "$UP_PID"
