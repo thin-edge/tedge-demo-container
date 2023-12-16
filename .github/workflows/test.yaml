@@ -114,7 +114,7 @@ jobs:
               container)
                   just IMAGE=${{matrix.job.target}} prepare-up
                   # Wait for container to startup before doing bootstrapping
-                  just IMAGE=${{matrix.job.target}} up >/dev/null 2>&1 &
+                  just IMAGE=${{matrix.job.target}} up --build=false >/dev/null 2>&1 &
                   UP_PID=$!
 
                   sleep 5
