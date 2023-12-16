@@ -53,7 +53,7 @@ create-env:
 
 # Prepare up but don't start any containers
 prepare-up *args='':
-    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml up -d --build --no-start {{args}}
+    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml build {{args}}
 
 # Start the demo
 up *args='':
