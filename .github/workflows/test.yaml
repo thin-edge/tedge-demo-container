@@ -13,13 +13,23 @@ on:
     branches: [ main ]
   merge_group:
 jobs:
-  test:
-    name: Test ${{ matrix.job.target }}
+  approve:
+    name: Approve
     environment:
       # For security reasons, all pull requests need to be approved first before granting access to secrets
       # So the environment should be set to have a reviewer/s inspect it before approving it
       name: ${{ github.event_name == 'pull_request_target' && 'Test Pull Request' || 'Test Auto'  }}
     runs-on: ubuntu-20.04
+    steps:
+      - name: Wait for approval
+        run: echo "Approved"
+
+  test:
+    name: Test ${{ matrix.job.target }}
+    runs-on: ubuntu-20.04
+    needs: approve
+    environment:
+      name: Test Auto
     env:
       COMPOSE_PROJECT_NAME: ci_${{ matrix.job.target }}_${{github.run_id}}_${{github.run_attempt || '1'}}
       DEVICE_ID: ci_${{ matrix.job.target }}_${{github.run_id}}_${{github.run_attempt || '1'}}
@@ -49,9 +59,9 @@ jobs:
         run: |
           touch .env
           echo "DEVICE_ID=$DEVICE_ID" >> .env
+          echo 'C8Y_BASEURL="${{ secrets.C8Y_BASEURL }}"' >> .env
           C8Y_DOMAIN=$(echo "${{ secrets.C8Y_BASEURL }}" | sed -E 's|^https?://||g')
           echo "C8Y_DOMAIN=$C8Y_DOMAIN" >> .env
-          echo 'C8Y_BASEURL="${{ secrets.C8Y_BASEURL }}"' >> .env
           echo 'C8Y_USER="${{ secrets.C8Y_USER }}"' >> .env
           echo 'C8Y_PASSWORD="${{ secrets.C8Y_PASSWORD }}"' >> .env
           cat .env
