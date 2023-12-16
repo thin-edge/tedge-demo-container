@@ -11,9 +11,6 @@ x-device-defaults: &defaults
     - /tmp
   depends_on:
     - mqtt-broker
-  environment:
-    # Remove once: https://github.com/thin-edge/thin-edge.io/issues/2523
-    - TEDGE_ENABLE_SUDO=false
   # root is required in the default docker setup
   user: root
 
@@ -52,8 +49,6 @@ services:
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
     volumes:
       - device-certs:/etc/tedge/device-certs
-      # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
-      - tedge-data:/var/tedge
 
   # main device
   tedge:
@@ -62,8 +57,6 @@ services:
     volumes:
       # Enable docker from docker - But then this container has elevated access to system resources!
       - /var/run/docker.sock:${DOCKER_SOCKET:-/var/run/docker.sock}:rw
-      # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
-      - tedge-data:/var/tedge
 
   # monitor container/container-groups and add services on the main device
   tedge-container-monitor:
@@ -77,5 +70,3 @@ volumes:
   device-certs:
   mosquitto:
   mosquitto-conf:
-  # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
-  tedge-data:
