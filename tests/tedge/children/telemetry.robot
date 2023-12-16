@@ -15,6 +15,5 @@ Service status
 
 Workaround
     # WORKAROUND: Restart child device to ensure service status is updated
-    ${operation}=    Cumulocity.Execute Shell Command    tedge mqtt pub -r 'te/device/main///cmd/health/check' '{}'
-    # ${operation}=    Cumulocity.Restart Device
+    ${operation}=    Cumulocity.Restart Device
     Cumulocity.Operation Should Be SUCCESSFUL    ${operation}
