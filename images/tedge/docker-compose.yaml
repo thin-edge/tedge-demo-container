@@ -11,9 +11,6 @@ x-device-defaults: &defaults
     - /tmp
   depends_on:
     - mqtt-broker
-  environment:
-    # Remove once: https://github.com/thin-edge/thin-edge.io/issues/2523
-    - TEDGE_ENABLE_SUDO=false
 
 services:
   bootstrap:
@@ -50,16 +47,11 @@ services:
       - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
     volumes:
       - device-certs:/etc/tedge/device-certs
-      # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
-      - tedge-data:/var/tedge
 
   # main device
   tedge:
     <<: *defaults
     command: ["/usr/bin/tedge-agent", "--mqtt-device-topic-id", "device/main//"]
-    volumes:
-      # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
-      - tedge-data:/var/tedge
 
   # child devices
   child01:
@@ -70,5 +62,3 @@ volumes:
   device-certs:
   mosquitto:
   mosquitto-conf:
-  # Remove once https://github.com/thin-edge/thin-edge.io/issues/2477 is resolved
-  tedge-data:
