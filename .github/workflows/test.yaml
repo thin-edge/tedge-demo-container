@@ -39,8 +39,9 @@ jobs:
       max-parallel: 1
       matrix:
         job:
-          - { target: debian-systemd, bootstrap: true }
-          - { target: alpine-s6, bootstrap: false }
+          - { target: debian-systemd, bootstrap: "script" }
+          - { target: alpine-s6, bootstrap: "none" }
+          - { target: tedge, bootstrap: "container" }
 
     steps:
       # Checkout either the PR or the branch
@@ -55,6 +56,9 @@ jobs:
         if: ${{ github.event_name != 'pull_request_target' }}
 
       - uses: reubenmiller/setup-go-c8y-cli@main
+      - name: install c8y-tedge extension
+        run: c8y extension install thin-edge/c8y-tedge
+
       - name: create .env file
         run: |
           touch .env
@@ -101,12 +105,32 @@ jobs:
 
       - name: Start demo
         run: |
-          # just up-no-cache
-          just IMAGE=${{matrix.job.target}} up
+          case "${{matrix.job.bootstrap}}" in
+              script)
+                  just IMAGE=${{matrix.job.target}} up
+                  just IMAGE=${{matrix.job.target}} bootstrap --no-prompt
+                  ;;
 
-          if [ "${{matrix.job.bootstrap}}" = "true" ]; then
-            just bootstrap --no-prompt
-          fi
+              container)
+                  just IMAGE=${{matrix.job.target}} prepare-up
+                  # Wait for container to startup before doing bootstrapping
+                  just IMAGE=${{matrix.job.target}} up >/dev/null 2>&1 &
+                  UP_PID=$!
+
+                  sleep 5
+                  just IMAGE=${{matrix.job.target}} bootstrap-container "$DEVICE_ID"
+                  
+                  # Wait until bootstrap is ready
+                  wait "$UP_PID"
+                  echo "docker compose up is ready"
+                  sleep 5
+                  ;;
+
+              *)
+                  just IMAGE=${{matrix.job.target}} up
+                  echo "Skipping bootstrapping"
+                  ;;
+          esac
 
       - name: Run tests
         run: just IMAGE=${{matrix.job.target}} test

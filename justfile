@@ -51,6 +51,10 @@ show-device:
 create-env:
     test -f {{DEV_ENV}} || cp env.template {{DEV_ENV}}
 
+# Prepare up but don't start any containers
+prepare-up *args='':
+    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml up -d --build --no-start {{args}}
+
 # Start the demo
 up *args='':
     docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml up -d --build {{args}}
@@ -71,6 +75,10 @@ down-all:
 # Configure and register the device to the cloud
 bootstrap *ARGS:
     @docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec tedge env C8Y_USER=${C8Y_USER:-} C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} bootstrap.sh {{ARGS}}
+
+# Bootstrap container using the go-c8y-cli c8y-tedge extension
+bootstrap-container *ARGS="":
+    cd "images/{{IMAGE}}" && c8y tedge bootstrap-container bootstrap {{ARGS}}
 
 # Start a shell on the main device
 shell *args='bash':
