@@ -56,7 +56,25 @@ jobs:
           echo 'C8Y_PASSWORD="${{ secrets.C8Y_PASSWORD }}"' >> .env
           cat .env
 
-      - uses: actions/setup-python@v4
+      - name: Detect host architecture
+        run: |
+          arch=$(uname -m)
+          case "$arch" in
+            arm64|aarch64) NORMALIZED_ARCH=arm64; ;;
+            amd64|x86_64) NORMALIZED_ARCH=amd64; ;;
+            *) NORMALIZED_ARCH="$arch"; ;;
+          esac
+          echo "ARCH=$NORMALIZED_ARCH" >> "$GITHUB_ENV"
+
+
+      # Support running workflow locally on arm64 systems using act
+      # https://github.com/actions/setup-python/issues/705#issuecomment-1756948951
+      - if: ${{ env.ARCH == 'arm64' }}
+        uses: deadsnakes/action@v2.1.1
+        with:
+          python-version: "3.9"
+      - if: ${{ env.ARCH == 'amd64' }}
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip'
