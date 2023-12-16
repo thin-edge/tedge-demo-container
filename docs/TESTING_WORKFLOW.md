@@ -20,10 +20,8 @@ act push -s GITHUB_TOKEN=$(gh auth token)
 
 ## Tests
 
-The test workflow needs to be run using `linux/amd64` containers as the `setup-python` action only supports the amd64 platform.
-
 ```sh
-act push -j test -s GITHUB_TOKEN=$(gh auth token) --container-architecture linux/amd64 --secret-file .env --artifact-server-path ./tmp
+act push -j test -s GITHUB_TOKEN=$(gh auth token) --secret-file .env --artifact-server-path ./tmp
 ```
 
 ## FAQ
