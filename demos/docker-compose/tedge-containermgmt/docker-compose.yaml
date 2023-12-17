@@ -11,6 +11,8 @@ x-device-defaults: &defaults
     - mqtt-broker
   # root is required in the default docker setup
   user: root
+  networks:
+    - tedge
 
 services:
   bootstrap:
@@ -39,6 +41,8 @@ services:
       - mosquitto:/mosquitto/data
       - mosquitto-conf:/etc/tedge/mosquitto-conf
       - device-certs:/etc/tedge/device-certs
+    networks:
+      - tedge
 
   tedge-mapper-c8y:
     <<: *defaults
@@ -68,3 +72,7 @@ volumes:
   device-certs:
   mosquitto:
   mosquitto-conf:
+
+networks:
+  tedge:
+    name: tedge
