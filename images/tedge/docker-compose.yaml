@@ -11,6 +11,9 @@ x-device-defaults: &defaults
     - /tmp
   depends_on:
     - mqtt-broker
+  # Only required if you want to install apk packages at runtime via sm-plugin
+  # If this is not required then you can disable this
+  user: root
 
 services:
   bootstrap:

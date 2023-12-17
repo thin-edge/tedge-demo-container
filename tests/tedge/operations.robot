@@ -97,17 +97,15 @@ Check Software List
 
 Install software
     [Arguments]    ${device}
-    Skip    msg=TODO
     Cumulocity.Set Device    ${device}
-    ${operation}=    Install Software    jq,latest::apk
+    ${operation}=    Cumulocity.Install Software    jq,latest::apk
     Operation Should Be SUCCESSFUL    ${operation}
     Device Should Have Installed Software    jq
 
 Uninstall software
-    Skip    msg=TODO
     [Arguments]    ${device}
     Cumulocity.Set Device    ${device}
-    ${operation}=     Uninstall Software    jq,latest::apk
+    ${operation}=     Cumulocity.Uninstall Software    jq,latest::apk
     Operation Should Be SUCCESSFUL    ${operation}
     Device Should Not Have Installed Software    jq
 
