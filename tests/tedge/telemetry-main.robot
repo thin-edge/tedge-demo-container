@@ -1,5 +1,5 @@
 *** Settings ***
-Resource    ../../resources/common.robot
+Resource    ../resources/common.robot
 Library    Cumulocity
 Library    DeviceLibrary
 
@@ -18,6 +18,6 @@ Service status
     Cumulocity.Should Have Services    name=mosquitto-c8y-bridge         service_type=service    status=up
 
 Sends measurements
-    Skip    No automatic publishing publishing
     ${date_from}=    Get Test Start Time
-    Cumulocity.Device Should Have Measurements    minimum=1    after=${date_from}    timeout=120
+    Cumulocity.Execute Shell Command    tedge mqtt pub te/device/main///m/environment '{"temp":1.234}'
+    Cumulocity.Device Should Have Measurements    minimum=1    maximum=1    type=environment    after=${date_from}
