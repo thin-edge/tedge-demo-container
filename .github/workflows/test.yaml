@@ -41,6 +41,7 @@ jobs:
           - { target: debian-systemd, bootstrap: "script" }
           - { target: alpine-s6, bootstrap: "none" }
           - { target: tedge, bootstrap: "container" }
+          - { target: tedge-containermgmt, bootstrap: "container" }
 
     steps:
       # Checkout either the PR or the branch
