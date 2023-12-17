@@ -17,6 +17,7 @@ RUN apk update \
 # Add custom config
 COPY tedge-log-plugin.toml /etc/tedge/plugins/
 COPY tedge-configuration-plugin.toml /etc/tedge/plugins/
+COPY container-env /etc/tedge-container-plugin/env
 
 USER "tedge"
 CMD [ "/usr/bin/tedge-agent" ]
