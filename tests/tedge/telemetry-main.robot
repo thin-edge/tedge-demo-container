@@ -8,9 +8,7 @@ Suite Setup    Set Main Device
 *** Test Cases ***
 
 Child devices should be attached to the main device
-    Skip    Demo does not contain child devices
     Cumulocity.Should Be A Child Device Of Device    ${CHILD_DEVICE_1}
-    Cumulocity.Should Be A Child Device Of Device    ${CHILD_DEVICE_2}
 
 Service status
     Cumulocity.Should Have Services    name=tedge-mapper-c8y             service_type=service    status=up    timeout=90
