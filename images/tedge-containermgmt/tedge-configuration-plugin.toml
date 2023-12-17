@@ -11,3 +11,10 @@ type = "system.toml"
 user = "tedge"
 group = "tedge"
 mode = 0o444
+
+[[files]]
+path = "/etc/tedge-container-plugin/env"
+type = "tedge-container-plugin"
+user = "tedge"
+group = "tedge"
+mode = 0o644
