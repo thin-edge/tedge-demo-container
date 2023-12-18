@@ -16,8 +16,6 @@ services:
     stop_grace_period: "2s"
     pull_policy: always
     user: root
-    environment:
-      - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
     command:
       - sh
       - -c
@@ -25,6 +23,7 @@ services:
     volumes:
       - device-certs:/etc/tedge/device-certs
       - mosquitto-conf:/etc/tedge/mosquitto-conf
+      - tedge:/etc/tedge
 
   mqtt-broker:
     image: ghcr.io/thin-edge/tedge-mqtt-broker:${VERSION:-latest}
@@ -41,10 +40,10 @@ services:
   tedge-mapper-c8y:
     <<: *defaults
     command: ["/usr/bin/tedge-mapper", "c8y"]
-    environment:
-      - TEDGE_C8Y_URL=${C8Y_DOMAIN:-}
     volumes:
       - device-certs:/etc/tedge/device-certs
+      # Required only for the c8y.url
+      - tedge:/etc/tedge
 
   # main device
   tedge:
@@ -60,3 +59,4 @@ volumes:
   device-certs:
   mosquitto:
   mosquitto-conf:
+  tedge:
