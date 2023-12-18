@@ -26,7 +26,7 @@ RUN case ${TARGETARCH} in \
     && tar -C / -Jxpf /tmp/s6-overlay-${S6_ARCH}.tar.xz
 
 # Install tedge
-RUN curl -sSL thin-edge.io/install.sh | sh -s
+RUN curl -sSL thin-edge.io/install.sh | sh -s -- --channel main
 
 # Add custom service definitions
 RUN curl -sSL thin-edge.io/install-services.sh | sh -s \
