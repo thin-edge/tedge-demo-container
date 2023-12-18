@@ -29,15 +29,19 @@ After you have installed these, then you will also need to setup a go-c8y-cli se
     wget https://raw.githubusercontent.com/thin-edge/tedge-demo-container/main/demos/docker-compose/tedge/docker-compose.yaml
     ```
 
-2. Activate your go-c8y-cli session to connect to the Cumulocity IoT Instance
-
-3. Start the docker-compose project (in the background)
+2. Start the docker-compose project (in the background)
 
     ```sh
     docker compose up -d
     ```
 
-4. In a new console, set the same c8y session, then bootstrap the device
+3. Open a new console, and activate your go-c8y-cli session which points to the Cumulocity IoT Instance you wish to connect the device to
+
+    ```
+    set-session
+    ```
+
+4. Bootstrap the device
 
     ```sh
     c8y tedge bootstrap-container bootstrap example001
