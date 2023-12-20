@@ -442,8 +442,6 @@ main() {
             if [ -d /run/systemd/system ]; then
                 sudo systemctl start ssh
                 sudo systemctl restart tedge-agent
-                sudo systemctl restart tedge-configuration-plugin
-                sudo systemctl restart tedge-log-plugin
                 sudo systemctl restart c8y-firmware-plugin
 
                 sudo systemctl enable tedge-mapper-collectd
