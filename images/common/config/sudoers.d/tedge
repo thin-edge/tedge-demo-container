@@ -1,1 +1,1 @@
-tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /sbin/init, /sbin/shutdown, /bin/systemctl, /bin/journalctl, /usr/bin/on_shutdown.sh
+tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /usr/bin/tedge-write /etc/*, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /sbin/init, /sbin/shutdown, /bin/systemctl, /bin/journalctl, /usr/bin/on_shutdown.sh
