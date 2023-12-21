@@ -2,11 +2,9 @@
 import logging
 import json
 import time
-import re
 import os
 import threading
 from typing import Any, List
-import requests
 from paho.mqtt.client import Client, MQTTMessage
 from .config import Config
 from .topics import health_topic
@@ -17,22 +15,6 @@ from .management.operation import OperationStatus
 
 
 log = logging.getLogger(__file__)
-
-
-def update_url(url: str, replace_url: str) -> str:
-    """Modify the url by replacing any reference to a generic 0.0.0.0
-    ip or a loopback address with the real ip address of http server
-    hosted by thin-edge.io
-
-    Args:
-        url (str): Url to be modified
-    """
-    return re.sub(
-        r"^(https?://)?(0\.0\.0\.0|127\.0\.\d+\.\d+|localhost)(:\d+)?",
-        replace_url,
-        url,
-        1,
-    )
 
 
 class TedgeClient:
@@ -217,15 +199,6 @@ class TedgeClient:
                 return
 
             log.info("Adding job")
-            if isinstance(payload, dict):
-                if "url" in payload:
-                    payload["url"] = update_url(payload["url"], self.config.tedge.api)
-
-                if "tedgeUrl" in payload:
-                    payload["tedgeUrl"] = update_url(
-                        payload["tedgeUrl"], self.config.tedge.api
-                    )
-
             worker.put(self.config, client, JSONMessage(message.topic, payload))
 
         self.mqtt.message_callback_add(topic, add_job)

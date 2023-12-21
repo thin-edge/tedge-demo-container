@@ -139,9 +139,9 @@ def on_config_update_request(config: Config, client: Client, msg: JSONMessage):
         path = file_config["path"]
 
         # Download the config file update from tedge
-        log.info("Downloading configuration. url=%s", payload.tedgeUrl)
+        log.info("Downloading configuration. url=%s", payload.remoteUrl)
         response = requests.get(
-            payload.tedgeUrl, timeout=config.configuration.download_timeout
+            payload.remoteUrl, timeout=config.configuration.download_timeout
         )
         log.debug(
             "response: %s, status_code=%d", response.content, response.status_code

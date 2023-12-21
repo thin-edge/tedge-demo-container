@@ -1,6 +1,15 @@
 [mqtt]
-bind_address = "0.0.0.0"
-port = 1883
+bind.address = "0.0.0.0"
+bind.port = 1883
+client.host = "tedge"
+
+[http]
+bind.address = "0.0.0.0"
+client.host = "tedge"
+
+[c8y]
+proxy.bind.address = "0.0.0.0"
+proxy.client.host = "tedge"
 
 [apt]
 name = "(tedge|c8y|python|wget|vim|curl|apt|mosquitto|ssh|sudo).*"

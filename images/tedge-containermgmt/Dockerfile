@@ -1,4 +1,4 @@
-FROM ghcr.io/thin-edge/tedge-main:latest
+FROM ghcr.io/thin-edge/tedge:latest
 
 # Install additional community plugins
 USER root

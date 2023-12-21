@@ -403,8 +403,11 @@ post_configure() {
         sudo sh -c "echo '%sudo ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/all"
     fi
 
+    echo "Add tedge to the admin group to give it access to monitoring files"
+    usermod -a -G adm tedge ||:
+
     if [ ! -f /etc/sudoers.d/tedge ]; then
-        sudo sh -c "echo 'tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /sbin/init, /bin/systemctl, /bin/journalctl, /sbin/shutdown, /usr/bin/on_shutdown.sh' > /etc/sudoers.d/tedge"
+        sudo sh -c "echo 'tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /usr/bin/tedge-write /etc/*, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /sbin/init, /bin/systemctl, /bin/journalctl, /sbin/shutdown, /usr/bin/on_shutdown.sh' > /etc/sudoers.d/tedge"
     fi
 }
 
@@ -442,8 +445,6 @@ main() {
             if [ -d /run/systemd/system ]; then
                 sudo systemctl start ssh
                 sudo systemctl restart tedge-agent
-                sudo systemctl restart tedge-configuration-plugin
-                sudo systemctl restart tedge-log-plugin
                 sudo systemctl restart c8y-firmware-plugin
 
                 sudo systemctl enable tedge-mapper-collectd
