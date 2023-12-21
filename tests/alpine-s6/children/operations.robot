@@ -8,7 +8,7 @@ Suite Setup    Set Child Device1
 *** Test Cases ***
 
 It Should Show Supported Log File Types
-    Cumulocity.Should Have Services    name=tedge-log-plugin    status=up
+    Cumulocity.Should Have Services    name=tedge-agent    status=up
     Cumulocity.Should Support Log File Types    software-management    shell
 
 Get Log File
