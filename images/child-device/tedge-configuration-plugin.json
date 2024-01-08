@@ -1,6 +1,6 @@
 {
     "files": [
-        { "path": "/usr/src/app/config/connector.ini", "type": "connector"},
-        { "path": "/usr/src/app/config/modem.json", "type": "modem"}
+        { "path": "/data/config/connector.ini", "type": "connector"},
+        { "path": "/data/config/modem.json", "type": "modem"}
     ]
 }
