@@ -16,12 +16,12 @@ Restart device
     Cumulocity.Device Should Have Event/s    expected_text=tedge started up.+    minimum=1    maximum=1    type=startup    after=${date_from}
 
 Install software package
-    ${operation}=    Cumulocity.Install Software    vim-tiny,latest::apt
+    ${operation}=    Cumulocity.Install Software    {"name": "vim-tiny", "version": "latest", "softwareType": "apt"}
     Operation Should Be SUCCESSFUL    ${operation}    timeout=90
     Cumulocity.Device Should Have Installed Software    vim-tiny
 
 Uninstall software package
-    ${operation}=    Cumulocity.Uninstall Software    vim-tiny,::apt    timeout=90
+    ${operation}=    Cumulocity.Uninstall Software    {"name": "vim-tiny", "softwareType": "apt"}    timeout=90
     Operation Should Be SUCCESSFUL    ${operation}
     Cumulocity.Device Should Not Have Installed Software    vim-tiny
 
