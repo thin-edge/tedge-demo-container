@@ -47,12 +47,12 @@ jobs:
       # Checkout either the PR or the branch
       - name: Checkout PR
         if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }} # Check out the code of the PR. Only after the manual approval process
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: ${{ github.event_name != 'pull_request_target' }}
 
       - uses: reubenmiller/setup-go-c8y-cli@main
@@ -84,11 +84,11 @@ jobs:
       # Support running workflow locally on arm64 systems using act
       # https://github.com/actions/setup-python/issues/705#issuecomment-1756948951
       - if: ${{ env.ARCH == 'arm64' }}
-        uses: deadsnakes/action@v2.1.1
+        uses: deadsnakes/action@v3.1.0
         with:
           python-version: "3.9"
       - if: ${{ env.ARCH == 'amd64' }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -136,7 +136,7 @@ jobs:
         run: just IMAGE=${{matrix.job.target}} test
 
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: reports-${{matrix.job.target}}

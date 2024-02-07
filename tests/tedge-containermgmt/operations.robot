@@ -13,28 +13,28 @@ Get Configuration
 
 Install container-group package
     ${binary_url}=    Cumulocity.Create Inventory Binary    nginx    container-group    file=${CURDIR}/data/docker-compose.nginx.yaml
-    ${operation}=    Cumulocity.Install Software    nginx,1.0.0::container-group,${binary_url}
+    ${operation}=    Cumulocity.Install Software    {"name": "nginx", "version": "1.0.0", "softwareType": "container-group", "url": "${binary_url}"}
     Operation Should Be SUCCESSFUL    ${operation}
-    Device Should Have Installed Software    nginx,1.0.0
+    Device Should Have Installed Software    {"name": "nginx", "version": "1.0.0", "softwareType": "container-group"}
     ${operation}=    Cumulocity.Execute Shell Command    wget -O- nginx:80
     Operation Should Be SUCCESSFUL    ${operation}
     Should Contain    ${operation.to_json()["c8y_Command"]["result"]}    Welcome to nginx
 
 Uninstall container-group
-    ${operation}=     Cumulocity.Uninstall Software    nginx,1.0.0::container-group
+    ${operation}=     Cumulocity.Uninstall Software    {"name": "nginx", "version": "1.0.0", "softwareType": "container-group"}
     Operation Should Be SUCCESSFUL    ${operation}
     Device Should Not Have Installed Software    nginx
 
 Install container package
-    ${operation}=    Cumulocity.Install Software    webserver,httpd:2.4::container
+    ${operation}=    Cumulocity.Install Software    {"name": "webserver", "version": "httpd:2.4", "softwareType": "container"}
     Operation Should Be SUCCESSFUL    ${operation}
-    Device Should Have Installed Software    webserver,httpd:2.4
+    Device Should Have Installed Software    {"name": "webserver", "version": "httpd:2.4", "softwareType": "container"}
     ${operation}=    Cumulocity.Execute Shell Command    wget -O- webserver:80
     Operation Should Be SUCCESSFUL    ${operation}
     Should Contain    ${operation.to_json()["c8y_Command"]["result"]}    It works!
 
 Uninstall container package
-    ${operation}=     Cumulocity.Uninstall Software    webserver,httpd:2.4::container
+    ${operation}=     Cumulocity.Uninstall Software    {"name": "webserver", "version": "httpd:2.4", "softwareType": "container"}
     Operation Should Be SUCCESSFUL    ${operation}
     Device Should Not Have Installed Software    webserver
 
