@@ -74,7 +74,6 @@ RUN systemctl enable register-operations.service
 
 RUN echo "running" \
     && wget -O - thin-edge.io/install.sh | sh -s \
-    && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/setup.deb.sh' | sudo -E bash \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         tedge-inventory-plugin \
