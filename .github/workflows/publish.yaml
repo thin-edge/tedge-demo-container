@@ -31,9 +31,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: extractions/setup-just@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: taiki-e/install-action@just
 
       - name: Publish images
         run: just build registry ${{ inputs.VERSION || github.ref_name }}
