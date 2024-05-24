@@ -20,6 +20,9 @@ Install software package
     Operation Should Be SUCCESSFUL    ${operation}    timeout=90
     Cumulocity.Device Should Have Installed Software    vim-tiny
 
+    # lib* packages should be excluded by default due to the custom tedge.toml config
+    Cumulocity.Device Should Not Have Installed Software    libc-bin
+
 Uninstall software package
     ${operation}=    Cumulocity.Uninstall Software    {"name": "vim-tiny", "softwareType": "apt"}    timeout=90
     Operation Should Be SUCCESSFUL    ${operation}

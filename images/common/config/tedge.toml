@@ -11,5 +11,6 @@ client.host = "tedge"
 proxy.bind.address = "0.0.0.0"
 proxy.client.host = "tedge"
 
-[apt]
-name = "(tedge|c8y|python|wget|vim|curl|apt|mosquitto|ssh|sudo).*"
+[software.plugin]
+# Exclude uninteresting software management packages (regardless of type)
+exclude = "^(glibc|lib|kernel-|iptables-module).*"
