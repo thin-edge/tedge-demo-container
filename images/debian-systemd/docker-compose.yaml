@@ -25,9 +25,6 @@ services:
       - /var/run/docker.sock:${DOCKER_SOCKET:-/var/run/docker.sock}:rw
 
     restart: always
-    tmpfs:
-      - /run
-      - /tmp
     privileged: true
     networks:
       - tedge
