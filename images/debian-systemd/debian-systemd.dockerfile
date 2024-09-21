@@ -75,6 +75,8 @@ RUN echo "running" \
         tedge-inventory-plugin \
         c8y-command-plugin
 
+COPY common/config/sshd_config /etc/ssh/sshd_config
+
 # Optional installations
 COPY common/optional-installer.sh .
 RUN ./optional-installer.sh
