@@ -1,6 +1,6 @@
 [[files]]
 type = "software-management"
-path = "/var/log/tedge/agent/software-*"
+path = "/var/log/tedge/agent/workflow-software*"
 
 [[files]]
 type = "firmware_update"
