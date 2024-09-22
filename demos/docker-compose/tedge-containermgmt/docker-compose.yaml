@@ -1,5 +1,3 @@
-version: "3"
-
 # device template
 x-device-defaults: &defaults
   image: ghcr.io/thin-edge/tedge-demo-containermgmt:${VERSION:-latest}

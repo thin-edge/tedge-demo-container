@@ -1,5 +1,3 @@
-version: '3'
-
 # child device template
 x-child-defaults: &child-defaults
   build:
