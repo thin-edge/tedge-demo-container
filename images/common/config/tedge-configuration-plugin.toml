@@ -1,5 +1,6 @@
 files = [
     { path = '/etc/tedge/tedge.toml', type = 'tedge.toml', user = 'tedge', group = 'tedge', mode = 0o444 },
+    { path = '/etc/tedge/plugins/tedge-log-plugin.toml', type = 'tedge-log-plugin', user = 'tedge', group = 'tedge', mode = 0o644 },
     { path = '/etc/tedge/system.toml', type = 'system.toml', user = 'tedge', group = 'tedge', mode = 0o444 },
     { path = '/etc/mosquitto/conf.d/mosquitto.conf', type = 'mosquitto.conf', user = 'root', group = 'root', mode = 0o644 },
     { path = '/etc/collectd/collectd.conf', type = 'collectd.conf', user = 'root', group = 'root', mode = 0o644 },
