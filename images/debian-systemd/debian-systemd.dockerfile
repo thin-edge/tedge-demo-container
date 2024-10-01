@@ -73,13 +73,22 @@ RUN echo "running" \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         tedge-inventory-plugin \
-        c8y-command-plugin
+        c8y-command-plugin \
+        # Local PKI service for easy child device registration
+        tedge-pki-smallstep-ca \
+        tedge-pki-smallstep-client
 
 COPY common/config/sshd_config /etc/ssh/sshd_config
 
 # Optional installations
 COPY common/optional-installer.sh .
 RUN ./optional-installer.sh
+
+# Initialization service and scripts
+COPY common/utils/setup/runner.sh /usr/share/setup/
+COPY common/utils/setup/scripts.d/* /usr/share/setup/scripts.d/
+COPY common/utils/setup/setup.service /lib/systemd/system/
+RUN systemctl enable setup.service
 
 # Copy bootstrap script hooks
 COPY common/config/bootstrap /etc/bootstrap

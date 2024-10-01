@@ -1,0 +1,6 @@
+[software.plugin]
+# Exclude uninteresting software management packages (regardless of type)
+exclude = "^(glibc|lib|kernel-|iptables-module).*"
+# Default package type it it is not set.
+# Useful when applying device profiles as the softwareType info can be stripped from the software items
+default = "apt"

@@ -1,0 +1,11 @@
+[Unit]
+Description=Bootstrap container
+ExecCondition=sh -c '! test -f "(tedge config get device.cert_path)"'
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/enroll.sh
+WorkingDirectory=/etc
+
+[Install]
+WantedBy=multi-user.target

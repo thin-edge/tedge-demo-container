@@ -31,7 +31,9 @@ build-main-systemd OUTPUT_TYPE='oci,dest=tedge-demo-main.tar' VERSION='latest':
 
 # Build the child device image
 build-child OUTPUT_TYPE='oci,dest=tedge-demo-child.tar' VERSION='latest':
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:latest -f images/child-device/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child:latest -f images/child-device-container/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device-container
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-systemd:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-systemd:latest -f images/child-device-systemd/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device-systemd
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-python:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-python:latest -f images/child-device-python/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device-python
 
 # Build the single process container image
 build-tedge OUTPUT_TYPE='oci,dest=tedge-demo.tar' VERSION='latest':

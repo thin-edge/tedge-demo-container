@@ -1,0 +1,1 @@
+tedge  ALL = (ALL) NOPASSWD: /usr/bin/step-ca-admin.sh, /usr/bin/step-ca, /usr/sbin/update-ca-certificates
