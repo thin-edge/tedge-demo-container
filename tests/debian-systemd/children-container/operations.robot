@@ -3,12 +3,12 @@ Resource    ../../resources/common.robot
 Library    Cumulocity
 Library    DeviceLibrary
 
-Suite Setup    Set Child Device3
+Suite Setup    Set Child Device1
 
 *** Test Cases ***
 
 Install Firmware
-    Cumulocity.Should Have Services    name=connector    status=up    timeout=120
+    Cumulocity.Should Have Services    name=tedge-agent    status=up    timeout=120
     ${date_from}=    Get Test Start Time
     Sleep    1s
     ${binary_url}=    Cumulocity.Create Inventory Binary    iot-linux    child-firmware    contents=dummy_file
