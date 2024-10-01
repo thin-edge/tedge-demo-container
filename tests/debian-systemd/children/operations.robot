@@ -8,6 +8,7 @@ Suite Setup    Set Child Device3
 *** Test Cases ***
 
 Install Firmware
+    Skip    python child agent is disabled for now
     Cumulocity.Should Have Services    name=connector    status=up    timeout=120
     ${date_from}=    Get Test Start Time
     Sleep    1s
@@ -19,10 +20,12 @@ Install Firmware
     Cumulocity.Device Should Have Event/s    expected_text=Finished applying firmware: iot-linux=1.0.0, duration=0:00:10    minimum=1    maximum=1    type=firmware_update_done    after=${date_from}
 
 Set Configuration
+    Skip    python child agent is disabled for now
     ${binary_url}=    Cumulocity.Create Inventory Binary    modem_v2    child-modem-config    contents={"version":"2"}
     ${operation}=    Cumulocity.Set Configuration    typename=modem    url=${binary_url}
     Operation Should Be SUCCESSFUL    ${operation}
 
 Get Configuration
+    Skip    python child agent is disabled for now
     ${operation}=    Cumulocity.Get Configuration    typename=modem
     Operation Should Be SUCCESSFUL    ${operation}
