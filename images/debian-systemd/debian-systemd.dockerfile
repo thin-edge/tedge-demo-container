@@ -62,21 +62,16 @@ RUN chmod a+x /usr/bin/startup-notifier \
 # Shutdown handler
 COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 
-# register-operations service
-# WORKAROUND: Remove once the firmware_update command can be registered via MQTT
-COPY common/utils/register-operations/register-operations.service /lib/systemd/system/
-COPY common/utils/register-operations/register-operations.sh /usr/bin/register-operations
-RUN systemctl enable register-operations.service
-
 RUN echo "running" \
-    && wget -O - thin-edge.io/install.sh | sh -s \
+    && wget -O - thin-edge.io/install.sh | sh -s -- --channel main \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         tedge-inventory-plugin \
         c8y-command-plugin \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-ca \
-        tedge-pki-smallstep-client
+        tedge-pki-smallstep-client \
+    && systemctl disable c8y-firmware-plugin.service
 
 COPY common/config/sshd_config /etc/ssh/sshd_config
 
@@ -99,6 +94,7 @@ COPY common/config/system.toml /etc/tedge/
 COPY common/config/tedge.toml /etc/tedge/
 COPY common/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
 COPY common/config/tedge-log-plugin.toml /etc/tedge/plugins/
+COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 COPY common/config/collectd.conf /etc/collectd/collectd.conf
 COPY common/config/collectd.conf.d /etc/collectd/collectd.conf.d
 

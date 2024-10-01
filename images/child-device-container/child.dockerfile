@@ -1,4 +1,4 @@
-FROM ghcr.io/thin-edge/tedge:latest
+FROM ghcr.io/thin-edge/tedge-main:latest
 
 USER root
 RUN apk add --no-cache \

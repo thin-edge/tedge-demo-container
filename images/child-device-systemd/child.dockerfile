@@ -34,7 +34,7 @@ COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 RUN echo "running" \
     # FIXME: remove mosquitto dependency from the tedge package
     && mkdir -p /run/mosquitto \
-    && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/tedge-release/setup.deb.sh' | sudo -E bash \
+    && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/tedge-main/setup.deb.sh' | sudo -E bash \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/setup.deb.sh' | sudo -E bash \
     # && wget -O - thin-edge.io/install.sh | sh -s \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
@@ -67,6 +67,7 @@ COPY child-device-systemd/config/tedge.toml /etc/tedge/
 COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 COPY child-device-systemd/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
 COPY child-device-systemd/config/tedge-log-plugin.toml /etc/tedge/plugins/
+COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 
 # sudoers
 COPY common/config/sudoers.d/* /etc/sudoers.d/
