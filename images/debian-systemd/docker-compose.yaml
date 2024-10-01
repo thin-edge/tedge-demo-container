@@ -29,7 +29,7 @@ services:
       - DEVICE_ID=${DEVICE_ID:-}
       - C8Y_BASEURL=${C8Y_BASEURL:-}
       - C8Y_USER=${C8Y_USER:-}
-      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-}
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
     volumes:
       - etc:/etc
 
@@ -46,13 +46,13 @@ services:
   child01:
     <<: *child-container
     environment:
-      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-}
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
     hostname: child01
 
   child02:
     <<: *child-device-systemd
     environment:
-      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-}
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
     hostname: child02
 
 volumes:
