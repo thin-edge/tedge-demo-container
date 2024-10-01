@@ -17,6 +17,7 @@ RUN apk add --no-cache \
     && chown -R tedge:tedge /etc/step-ca
 
 USER tedge
+COPY child-device-container/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
 COPY common/utils/enroll/enroll.sh /usr/bin/
 COPY child-device-container/entrypoint.sh /app/
 ENV TEDGE_MQTT_CLIENT_HOST=tedge
