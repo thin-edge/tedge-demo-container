@@ -40,18 +40,16 @@ if [ -n "$PROVISION_PASSWORD" ]; then
 fi
 
 enroll_device() {
-    # Download root cert (this can be trusted when running in a controlled container env)
-    curl -k -s https://tedge:8443/roots.pem > root.pem
-
+    # Enable downloading of root cert (this can be trusted when running in a controlled container env)
     if [ -f "$PROVISION_PASSWORD_FILE" ]; then
         /usr/bin/step-ca-admin.sh enroll "$(hostname)" \
             --ca-url https://tedge:8443 \
-            --root root.pem \
+            --allow-insecure-root \
             --provisioner-password-file "$PROVISION_PASSWORD_FILE"
     else
         /usr/bin/step-ca-admin.sh enroll "$(hostname)" \
         --ca-url https://tedge:8443 \
-        --root root.pem
+        --allow-insecure-root
     fi
 }
 
