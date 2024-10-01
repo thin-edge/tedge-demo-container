@@ -5,11 +5,11 @@ action = "proceed"
 on_success = "scheduled"
 
 [scheduled]
-script = "/usr/bin/sleep 1"
+script = "sleep 1"
 on_success = "executing"
 
 [executing]
-script = "/usr/bin/sleep 1"
+script = "sleep 1"
 on_success = "restart"
 
 [restart]
@@ -22,11 +22,12 @@ on_success = "verify"
 on_error = { status = "failed", reason = "fail to restart"}
 
 [verify]
-script = "/usr/bin/sleep 1"
+script = "sleep 1"
 on_success = "commit"
+on_kill = "verify"
 
 [commit]
-script = "/usr/bin/sleep 1"
+script = "sleep 1"
 on_success = "successful"
 
 [successful]
