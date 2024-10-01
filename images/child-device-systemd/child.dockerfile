@@ -64,6 +64,7 @@ RUN ./optional-installer.sh
 
 COPY child-device-systemd/config/system.toml /etc/tedge/
 COPY child-device-systemd/config/tedge.toml /etc/tedge/
+COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 COPY child-device-systemd/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
 COPY child-device-systemd/config/tedge-log-plugin.toml /etc/tedge/plugins/
 

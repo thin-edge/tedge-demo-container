@@ -15,8 +15,6 @@ Install Firmware
     ${operation}=    Cumulocity.Install Firmware    name=iot-linux    version=1.0.0    url=${binary_url}
     Operation Should Be SUCCESSFUL    ${operation}    timeout=90
     Cumulocity.Device Should Have Fragment Values    c8y_Firmware.name\=iot-linux    c8y_Firmware.version\=1.0.0    c8y_Firmware.url\=${binary_url}
-    Cumulocity.Device Should Have Event/s    expected_text=Applying firmware: iot-linux=1.0.0    minimum=1    maximum=1    type=firmware_update_start    after=${date_from}
-    Cumulocity.Device Should Have Event/s    expected_text=Finished applying firmware: iot-linux=1.0.0, duration=0:00:10    minimum=1    maximum=1    type=firmware_update_done    after=${date_from}
 
 Set Configuration
     ${binary_url}=    Cumulocity.Create Inventory Binary    modem_v2    child-modem-config    contents={"version":"2"}

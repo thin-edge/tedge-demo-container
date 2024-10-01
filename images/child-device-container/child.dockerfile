@@ -20,6 +20,7 @@ USER tedge
 COPY child-device-container/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
 COPY common/utils/enroll/enroll.sh /usr/bin/
 COPY child-device-container/entrypoint.sh /app/
+COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 ENV TEDGE_MQTT_CLIENT_HOST=tedge
 ENV TEDGE_HTTP_CLIENT_HOST=tedge
 ENV TEDGE_C8Y_PROXY_CLIENT_HOST=tedge
