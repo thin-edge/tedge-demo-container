@@ -48,15 +48,25 @@ services:
     environment:
       - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
     hostname: child01
+    volumes:
+      - child01_etc:/etc
+      - child01_logs:/var/log/tedge
 
   child02:
     <<: *child-device-systemd
     environment:
       - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
     hostname: child02
+    volumes:
+      - child02_etc:/etc
+      - child02_logs:/var/log/tedge
 
 volumes:
   etc:
+  child01_etc:
+  child01_logs:
+  child02_etc:
+  child02_logs:
 
 networks:
   tedge:
