@@ -5,3 +5,6 @@ TOPIC_ID=$(tedge config get mqtt.device_topic_id)
 tedge mqtt pub --qos 1 "$TOPIC_ROOT/$TOPIC_ID/e/reboot_event" "$(printf '{"text": "❗️❗️❗️ Warning: device is about to reboot ❗️❗️❗️", "type": "device_reboot"}')" 2>/dev/null
 sleep 5
 sudo shutdown -r now
+
+# Wait to be killed by the shutdown
+sleep 90
