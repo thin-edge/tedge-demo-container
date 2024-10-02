@@ -74,7 +74,7 @@ down:
 
 # Stop the demo and destroy the data
 down-all:
-    [ "{{IMAGE}}" = "debian-systemd" ] && just -f {{justfile()}} IMAGE={{IMAGE}} collect-logs output/logs
+    [ "{{IMAGE}}" = "debian-systemd" ] && just -f {{justfile()}} IMAGE={{IMAGE}} collect-logs output/logs || true
     docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml down -v
 
 # Configure and register the device to the cloud
