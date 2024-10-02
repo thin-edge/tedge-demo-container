@@ -24,11 +24,13 @@ on_error = { status = "failed", reason = "fail to restart"}
 [verify]
 script = "sleep 1"
 on_success = "commit"
-on_kill = "verify"
+on_error = "failed"
+# on_kill = "verify"
 
 [commit]
 script = "sleep 1"
 on_success = "successful"
+on_error = "failed"
 
 [successful]
 action = "cleanup"
