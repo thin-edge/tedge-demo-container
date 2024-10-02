@@ -139,6 +139,7 @@ collect-logs output="output/logs":
     docker compose -f images/{{IMAGE}}/docker-compose.yaml logs > {{output}}/child01/container.log ||:
 
     docker compose -f images/{{IMAGE}}/docker-compose.yaml exec child02 journalctl -u tedge-agent --no-pager > {{output}}/child02/tedge-agent.log ||:
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec child02 journalctl --no-pager > {{output}}/child02/tedge-agent.log ||:
     docker compose -f images/{{IMAGE}}/docker-compose.yaml cp child02:/var/log/tedge/agent/ {{output}}/child02/ ||:
 
     tar cvf {{output}}/output.tar {{output}}/main {{output}}/child01 {{output}}/child02
