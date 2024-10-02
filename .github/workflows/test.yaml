@@ -133,17 +133,16 @@ jobs:
       - name: Run tests
         run: just IMAGE=${{matrix.job.target}} test
 
+      - name: Stop demo
+        if: always()
+        run: just IMAGE=${{matrix.job.target}} down-all
+
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: reports-${{matrix.job.target}}
           path: output
-
-      - name: Stop demo
-        if: always()
-        run: just IMAGE=${{matrix.job.target}} down-all
-
 
       - name: Cleanup Devices
         if: always()
