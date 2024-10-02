@@ -1,2 +1,5 @@
 [system]
 reboot = ["/usr/bin/on_shutdown.sh"]
+
+[log]
+tedge-agent = "debug"
