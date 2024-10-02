@@ -3,7 +3,7 @@ Description=Bootstrap container
 
 [Service]
 Type=oneshot
-ExecCondition=sh -c '! test -f "(tedge config get device.cert_path)"'
+ExecCondition=sh -c '! test -f "$(tedge config get device.cert_path)"'
 ExecStart=/usr/bin/enroll.sh
 WorkingDirectory=/etc
 
