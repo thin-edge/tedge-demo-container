@@ -15,7 +15,6 @@ Install Firmware on SystemD
     ${operation}=    Cumulocity.Install Firmware    name=iot-linux    version=1.0.0    url=${binary_url}
     Operation Should Be SUCCESSFUL    ${operation}    timeout=180
     Cumulocity.Device Should Have Fragment Values    c8y_Firmware.name\=iot-linux    c8y_Firmware.version\=1.0.0    c8y_Firmware.url\=${binary_url}
-    [Teardown]    Collect Logs
 
 Set Configuration
     ${binary_url}=    Cumulocity.Create Inventory Binary    modem_v2    child-modem-config    contents={"version":"2"}
