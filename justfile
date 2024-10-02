@@ -126,16 +126,20 @@ release:
     @echo
 
 # Collect logs
-collect-logs output="logs":
+collect-logs output="output/logs":
+    #!/bin/sh
     mkdir -p {{output}}/main
     mkdir -p {{output}}/child01
     mkdir -p {{output}}/child02
-    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge journalctl -u tedge-mapper-c8y --no-pager > {{output}}/main/tedge-mapper-c8y.log
-    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge journalctl -u tedge-agent --no-pager > {{output}}/main/tedge-agent.log
-    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge journalctl -u mqtt-logger --no-pager > {{output}}/main/mqtt-logger.log
-    docker compose -f images/{{IMAGE}}/docker-compose.yaml cp tedge:/var/log/tedge/agent/ {{output}}/main/
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge journalctl -u tedge-mapper-c8y --no-pager > {{output}}/main/tedge-mapper-c8y.log ||:
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge journalctl -u tedge-agent --no-pager > {{output}}/main/tedge-agent.log ||:
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge journalctl -u mqtt-logger --no-pager > {{output}}/main/mqtt-logger.log ||:
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml cp tedge:/var/log/tedge/agent/ {{output}}/main/ ||:
 
-    docker compose -f images/{{IMAGE}}/docker-compose.yaml logs > {{output}}/child01/container.log
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml logs > {{output}}/child01/container.log ||:
 
-    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec child02 journalctl -u tedge-agent --no-pager > {{output}}/child02/tedge-agent.log
-    docker compose -f images/{{IMAGE}}/docker-compose.yaml cp child02:/var/log/tedge/agent/ {{output}}/child02/
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml exec child02 journalctl -u tedge-agent --no-pager > {{output}}/child02/tedge-agent.log ||:
+    docker compose -f images/{{IMAGE}}/docker-compose.yaml cp child02:/var/log/tedge/agent/ {{output}}/child02/ ||:
+
+    tar cvf {{output}}/output.tar.gz {{output}}/
+    rm -rf {{output}}/
