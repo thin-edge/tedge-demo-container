@@ -1,9 +1,9 @@
 [Unit]
 Description=One-time setup scripts
-ExecCondition=sh -c '! test -f /etc/setup_ran'
 
 [Service]
 Type=oneshot
+ExecCondition=sh -c '! test -f /etc/setup_ran'
 ExecStart=/usr/share/setup/runner.sh /usr/share/setup/scripts.d/
 ExecStartPost=touch /etc/setup_ran
 WorkingDirectory=/etc
