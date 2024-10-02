@@ -15,6 +15,7 @@ Install Firmware on SystemD
     ${operation}=    Cumulocity.Install Firmware    name=iot-linux    version=1.0.0    url=${binary_url}
     Operation Should Be SUCCESSFUL    ${operation}    timeout=180
     Cumulocity.Device Should Have Fragment Values    c8y_Firmware.name\=iot-linux    c8y_Firmware.version\=1.0.0    c8y_Firmware.url\=${binary_url}
+    [Teardown]    Collect Logs
 
 Set Configuration
     ${binary_url}=    Cumulocity.Create Inventory Binary    modem_v2    child-modem-config    contents={"version":"2"}
@@ -24,3 +25,23 @@ Set Configuration
 Get Configuration
     ${operation}=    Cumulocity.Get Configuration    typename=modem
     Operation Should Be SUCCESSFUL    ${operation}
+
+*** Keywords ***
+
+Collect Logs
+    Get Workflow Logs    firmware_update
+    Get System Logs    tedge-agent
+
+Get Workflow Logs
+    [Arguments]    ${workflow}
+    ${operation}=    Cumulocity.Execute Shell Command
+    ...    find "$(tedge config get logs.path)" -type f -name "workflow-${workflow}*.log" -exec ls -t1 {} + | head -1 | xargs tail -c 15000
+    ${operation}=    Cumulocity.Operation Should Be SUCCESSFUL    ${operation}
+    Log    ${operation["c8y_Command"]["result"]}
+
+Get System Logs
+    [Arguments]    ${service}
+    ${operation}=    Cumulocity.Execute Shell Command
+    ...    journalctl -n 100 -u ${service} | xargs tail -c 15000
+    ${operation}=    Cumulocity.Operation Should Be SUCCESSFUL    ${operation}
+    Log    ${operation["c8y_Command"]["result"]}
