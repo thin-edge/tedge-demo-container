@@ -71,7 +71,8 @@ RUN echo "running" \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-ca \
         tedge-pki-smallstep-client \
-    && systemctl disable c8y-firmware-plugin.service
+    && systemctl disable c8y-firmware-plugin.service \
+    && systemctl mask c8y-firmware-plugin.service
 
 COPY common/config/sshd_config /etc/ssh/sshd_config
 
