@@ -27,6 +27,7 @@ services:
       - DEVICE_ID=${DEVICE_ID:-}
       - C8Y_BASEURL=${C8Y_BASEURL:-}
       - C8Y_USER=${C8Y_USER:-}
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
     volumes:
       - etc:/etc
 
@@ -43,7 +44,7 @@ services:
   child01:
     <<: *child-container
     environment:
-      - TEDGE_MQTT_DEVICE_TOPIC_ID=device/child01//
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
     hostname: child01
     volumes:
       - child01_etc:/etc
@@ -52,6 +53,8 @@ services:
   child02:
     <<: *child-device-systemd
     hostname: child02
+    environment:
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
     volumes:
       - child02_etc:/etc
       - child02_logs:/var/log/tedge

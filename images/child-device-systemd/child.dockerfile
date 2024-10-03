@@ -42,6 +42,8 @@ RUN echo "running" \
         tedge-agent \
         tedge-apt-plugin \
         tedge-inventory-plugin \
+        # Local PKI service for easy child device registration
+        tedge-pki-smallstep-client \
     # Disable mosquitto as it is not needed on a child device
     && systemctl disable mosquitto.service \
     && systemctl mask mosquitto.service \
@@ -60,6 +62,12 @@ COPY common/utils/configure-device/runner.sh /usr/share/configure-device/
 COPY common/utils/configure-device/scripts.d/* /usr/share/configure-device/scripts.d/
 COPY common/utils/configure-device/configure-device.service /lib/systemd/system/
 RUN systemctl enable configure-device.service
+
+# add mtls enablement script. Store script under /usr/bin so it can also be manually called
+COPY common/utils/enroll/enroll.sh /usr/bin/
+RUN ln -sf /usr/bin/enroll.sh /usr/share/configure-device/scripts.d/70_enable_mtls
+# COPY common/utils/enroll/enroll.service /usr/lib/systemd/system/
+# RUN systemctl enable enroll.service
 
 COPY child-device-systemd/config/system.toml /etc/tedge/
 COPY child-device-systemd/config/tedge.toml /etc/tedge/

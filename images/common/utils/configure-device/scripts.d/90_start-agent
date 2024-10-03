@@ -2,4 +2,4 @@
 set -ex
 
 systemctl enable tedge-agent
-systemctl restart tedge-agent
+systemctl start tedge-agent

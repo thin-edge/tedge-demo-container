@@ -74,6 +74,8 @@ RUN echo "running" \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         tedge-inventory-plugin \
         c8y-command-plugin \
+        # Local PKI service for easy child device registration
+        tedge-pki-smallstep-ca \
     && systemctl disable c8y-firmware-plugin.service \
     && systemctl mask c8y-firmware-plugin.service
 
@@ -82,6 +84,15 @@ COPY common/config/sshd_config /etc/ssh/sshd_config
 # Optional installations
 COPY common/optional-installer.sh .
 RUN ./optional-installer.sh
+
+# Device bootstrap (to run one-off commands on first boot)
+COPY common/utils/configure-device/runner.sh /usr/share/configure-device/
+COPY common/utils/configure-device/configure-device.service /lib/systemd/system/
+RUN mkdir -p /usr/share/configure-device/scripts.d/ \
+    && systemctl enable configure-device.service
+
+# Configure device hooks
+COPY common/utils/init-pki/init-pki.sh /usr/share/configure-device/scripts.d/30_init-pki
 
 # Copy bootstrap script hooks
 COPY common/config/bootstrap /etc/bootstrap
