@@ -70,8 +70,9 @@ up-no-cache *args='':
 down:
     docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml down
 
-# Stop the demo and destroy the data
+# Collect logs files then stop and destroy the demo and all of its data
 down-all:
+    just -f {{justfile()}} DEV_ENV={{DEV_ENV}} IMAGE={{IMAGE}} collect-logs ||:
     docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml down -v
 
 # Configure and register the device to the cloud
@@ -121,3 +122,7 @@ release:
     @echo
     @echo "Created release (tag): {{RELEASE_VERSION}}"
     @echo
+
+# Collect logs
+collect-logs output="output/logs":
+    COMPOSE_FILE="images/{{IMAGE}}/docker-compose.yaml" ./scripts/collect-logs.sh
