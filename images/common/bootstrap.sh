@@ -71,7 +71,6 @@ USE_RANDOM_ID=${USE_RANDOM_ID:-0}
 SHOULD_PROMPT=${SHOULD_PROMPT:-1}
 CAN_PROMPT=0
 UPLOAD_CERT_WAIT=${UPLOAD_CERT_WAIT:-1}
-CONFIGURE_TEST_SETUP=${CONFIGURE_TEST_SETUP:-1}
 TEST_USER=${TEST_USER:-iotadmin}
 PREFIX=${PREFIX:-tedge_}
 C8Y_BASEURL=${C8Y_BASEURL:-}
@@ -414,16 +413,6 @@ main() {
     # ---------------------------------------
     # Post setup
     # ---------------------------------------
-    if [ "$CONFIGURE_TEST_SETUP" = 1 ]; then
-        # Add additional tools
-        if command_exists systemctl; then
-            if [ -d /run/systemd/system ]; then
-                sudo systemctl restart tedge-agent
-                sudo systemctl restart c8y-firmware-plugin
-            fi
-        fi
-    fi
-
     # Run optional post bootstrap scripts
     if [ -d "$BOOTSTRAP_POSTINST_DIR" ]; then
         for script in "$BOOTSTRAP_POSTINST_DIR"/*.sh; do
