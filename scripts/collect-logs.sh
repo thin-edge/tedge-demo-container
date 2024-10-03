@@ -19,7 +19,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-if [ "$DEBUG" = 1 ]; then
+if [ "$DEBUG" = 1 ] || [ -n "$CI" ]; then
     set -x
 fi
 
