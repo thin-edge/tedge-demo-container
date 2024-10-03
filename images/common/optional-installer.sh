@@ -52,8 +52,13 @@ configure_users() {
 
 configure_services() {
     if command_exists systemctl; then
-        sudo systemctl enable ssh
-        sudo systemctl enable tedge-mapper-collectd
+        if sudo systemctl list-unit-files ssh.service >/dev/null >&2; then
+            sudo systemctl enable ssh.service
+        fi
+
+        if sudo systemctl list-unit-files tedge-mapper-collectd.service >/dev/null >&2; then
+            sudo systemctl enable tedge-mapper-collectd.service
+        fi
     fi
 }
 
