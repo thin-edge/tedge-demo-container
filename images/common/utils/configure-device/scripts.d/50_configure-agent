@@ -1,0 +1,26 @@
+#!/bin/sh
+set -ex
+#
+# Set topic id used by tedge-agent
+#
+
+# Create env file from PID 1
+# (as this is the old service which inherits the container environment variables)
+echo "Loading environment from PID 1"
+tr '\0' '\n' </proc/1/environ \
+| grep -v "^\(_\|HOME\|PATH\|TERM\|HOSTNAME\|PWD\|SHLVL\)=" | tee /etc/container.env
+
+# Load and export env
+set -a
+# shellcheck disable=SC1091
+. /etc/container.env
+set +a
+
+TOPIC_ID="device/$(hostname)//"
+echo "Setting mqtt.device_topic_id to '$TOPIC_ID'" >&2
+tedge config set mqtt.device_topic_id "$TOPIC_ID"
+
+tedge config set device.type thin-edge.io_systemd
+tedge config set c8y.proxy.client.host tedge
+tedge config set mqtt.client.host tedge
+tedge config set http.client.host tedge

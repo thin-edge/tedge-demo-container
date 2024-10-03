@@ -1,0 +1,52 @@
+operation = "firmware_update"
+
+[init]
+action = "proceed"
+on_success = "scheduled"
+
+[scheduled]
+script = "sleep 1"
+on_success = "executing"
+
+[executing]
+script = "sleep 1"
+on_success = "restart"
+
+[restart]
+operation = "restart"
+on_exec = "waiting_for_restart"
+
+[waiting_for_restart]
+action = "await-operation-completion"
+on_success = "verify"
+on_error = { status = "failed", reason = "fail to restart"}
+
+[verify]
+script = "sleep 1"
+on_success = "commit"
+on_error = "rollback"
+
+[rollback]
+script = "sleep 1"
+on_success = "rollback_restart"
+on_error = "rollback_restart"
+
+[rollback_restart]
+operation = "restart"
+on_exec = "waiting_for_rollback_restart"
+
+[waiting_for_rollback_restart]
+action = "await-operation-completion"
+on_success = { status = "failed", reason = "firmware update failed but rollback was successful"}
+on_error = { status = "failed", reason = "fail to restart"}
+
+[commit]
+script = "sleep 1"
+on_success = "successful"
+on_error = "failed"
+
+[successful]
+action = "cleanup"
+
+[failed]
+action = "cleanup"

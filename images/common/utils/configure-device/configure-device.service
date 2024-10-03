@@ -1,0 +1,12 @@
+[Unit]
+Description=Device configuration service which is only run once on first run
+
+[Service]
+Type=oneshot
+ExecCondition=sh -c '! test -f /etc/configure-device-ran'
+ExecStart=/usr/share/configure-device/runner.sh /usr/share/configure-device/scripts.d/
+ExecStartPost=touch /etc/configure-device-ran
+WorkingDirectory=/etc
+
+[Install]
+WantedBy=multi-user.target

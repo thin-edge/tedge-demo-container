@@ -1,0 +1,5 @@
+#!/bin/sh
+set -ex
+
+systemctl enable tedge-agent
+systemctl restart tedge-agent
