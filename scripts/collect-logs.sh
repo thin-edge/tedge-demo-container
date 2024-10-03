@@ -57,8 +57,14 @@ collect_logs() {
 collect_workflow_logs() {
     name="$1"
     output_dir="$2"
-    LOG_PATH=$(docker compose exec "$name" tedge config get logs.path)
-    docker compose cp "$name":"$LOG_PATH/agent/" "$output_dir/" >&2 ||:
+    # Try and get the thin-edge.io log path. It could fail if the container
+    # does not have tedge installed
+    LOG_PATH=$(docker compose exec "$name" tedge config get logs.path ||:)
+    if [ -n "$LOG_PATH" ]; then
+        echo "Copying thin-edge.io workflow files" >&2
+        # Don't fail if there are no files to collect
+        docker compose cp "$name":"$LOG_PATH/agent/" "$output_dir/" >&2 ||:
+    fi
 }
 
 collect_logs_collated() {
