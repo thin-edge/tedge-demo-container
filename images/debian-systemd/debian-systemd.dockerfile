@@ -73,7 +73,9 @@ RUN echo "running" \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         tedge-inventory-plugin \
-        c8y-command-plugin
+        c8y-command-plugin \
+    && systemctl disable c8y-firmware-plugin.service \
+    && systemctl mask c8y-firmware-plugin.service
 
 COPY common/config/sshd_config /etc/ssh/sshd_config
 
@@ -90,6 +92,7 @@ COPY common/config/system.toml /etc/tedge/
 COPY common/config/tedge.toml /etc/tedge/
 COPY common/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
 COPY common/config/tedge-log-plugin.toml /etc/tedge/plugins/
+COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 COPY common/config/collectd.conf /etc/collectd/collectd.conf
 COPY common/config/collectd.conf.d /etc/collectd/collectd.conf.d
 
