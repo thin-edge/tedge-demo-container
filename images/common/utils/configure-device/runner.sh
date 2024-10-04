@@ -13,7 +13,8 @@ if [ $# -ge 2 ]; then
 fi
 
 _NEWLINE=$(printf '\n')
-find "$RUN_PARTS" -type f -name "$NAME_FILTER" -perm 755 | while IFS="$_NEWLINE" read -r file
+# Use -L to allow scripts to be a symlink, but this requires the results to be sorted afterwards
+find -L "$RUN_PARTS" -type f -name "$NAME_FILTER" -perm 755 | sort | while IFS="$_NEWLINE" read -r file
 do
     echo "Executing script: $file" >&2
     set +e
