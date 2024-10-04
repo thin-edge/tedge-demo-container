@@ -34,7 +34,7 @@ COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 RUN echo "running" \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/tedge-release/setup.deb.sh' | sudo -E bash \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/setup.deb.sh' | sudo -E bash \
-    && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
+    && DEBIAN_FRONTEND=noninteractive apt-get -y install \
         tedge-agent \
         tedge-inventory-plugin \
         # Local PKI service for easy child device registration
