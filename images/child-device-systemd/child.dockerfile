@@ -32,22 +32,13 @@ WORKDIR /root
 COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 
 RUN echo "running" \
-    # FIXME: remove mosquitto dependency from the tedge package once https://github.com/thin-edge/thin-edge.io/pull/3151 is merged
-    && mkdir -p /run/mosquitto \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/tedge-release/setup.deb.sh' | sudo -E bash \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/setup.deb.sh' | sudo -E bash \
-    # && wget -O - thin-edge.io/install.sh | sh -s \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
-        tedge \
         tedge-agent \
-        tedge-apt-plugin \
         tedge-inventory-plugin \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-client \
-    # Disable mosquitto as it is not needed on a child device
-    && systemctl disable mosquitto.service \
-    && systemctl mask mosquitto.service \
-    && rm -rd /run/mosquitto \
     # Disable tedge-agent as it needs to be setup before it can start
     && systemctl disable tedge-agent
 
@@ -66,8 +57,6 @@ RUN systemctl enable configure-device.service
 # add mtls enablement script. Store script under /usr/bin so it can also be manually called
 COPY common/utils/enroll/enroll.sh /usr/bin/
 RUN ln -sf /usr/bin/enroll.sh /usr/share/configure-device/scripts.d/70_enable_mtls
-# COPY common/utils/enroll/enroll.service /usr/lib/systemd/system/
-# RUN systemctl enable enroll.service
 
 COPY child-device-systemd/config/system.toml /etc/tedge/
 COPY child-device-systemd/config/tedge.toml /etc/tedge/

@@ -11,9 +11,6 @@ client.host = "tedge"
 proxy.bind.address = "0.0.0.0"
 proxy.client.host = "tedge"
 
-# FIXME: Remove once thin-edge.io 1.3.1 is released
-enable.firmware_update = true
-
 [software.plugin]
 # Exclude uninteresting software management packages (regardless of type)
 exclude = "^(glibc|lib|kernel-|iptables-module).*"
