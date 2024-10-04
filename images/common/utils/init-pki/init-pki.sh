@@ -16,4 +16,12 @@ set -a
 . /etc/container.env
 set +a
 
-step-ca-init.sh
+has_feature() { echo "${FEATURES:-}" | grep -qw "$1"; }
+
+if has_feature "pki"; then
+    echo "Initializing pki" >&2
+    step-ca-init.sh
+else
+    echo "The 'pki' feature is not enabled" >&2
+fi
+
