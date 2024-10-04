@@ -24,3 +24,11 @@ Set Configuration
 Get Configuration
     ${operation}=    Cumulocity.Get Configuration    typename=modem
     Operation Should Be SUCCESSFUL    ${operation}
+
+Install software package
+    ${operation}=    Cumulocity.Install Software    {"name": "vim-tiny", "version": "latest", "softwareType": "apt"}
+    Operation Should Be SUCCESSFUL    ${operation}    timeout=90
+    Cumulocity.Device Should Have Installed Software    vim-tiny
+
+    # lib* packages should be excluded by default due to the custom tedge.toml config
+    Cumulocity.Device Should Not Have Installed Software    libc-bin

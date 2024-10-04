@@ -24,3 +24,8 @@ Set Configuration
 Get Configuration
     ${operation}=    Cumulocity.Get Configuration    typename=modem
     Operation Should Be SUCCESSFUL    ${operation}
+
+Install software package
+    ${operation}=    Cumulocity.Install Software    {"name": "jq", "version": "latest", "softwareType": "apk"}
+    Operation Should Be SUCCESSFUL    ${operation}    timeout=90
+    Cumulocity.Device Should Have Installed Software    jq
