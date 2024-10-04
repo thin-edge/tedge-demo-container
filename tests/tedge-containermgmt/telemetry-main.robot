@@ -11,8 +11,7 @@ Service status
     Cumulocity.Should Have Services    name=tedge-mapper-c8y             service_type=service    status=up    timeout=90
     Cumulocity.Should Have Services    name=tedge-agent                  service_type=service    status=up
     Cumulocity.Should Have Services    name=mosquitto-c8y-bridge         service_type=service    status=up
-    # FIXME: Enable once https://github.com/thin-edge/tedge-container-plugin/issues/37 is fixed
-    # Cumulocity.Should Have Services    name=tedge-container-monitor      service_type=service    status=up
+    Cumulocity.Should Have Services    name=tedge-container-monitor      service_type=service    status=up
 
 Sends measurements
     ${date_from}=    Get Test Start Time
