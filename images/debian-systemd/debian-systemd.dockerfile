@@ -62,12 +62,6 @@ RUN chmod a+x /usr/bin/startup-notifier \
 # Shutdown handler
 COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 
-# register-operations service
-# WORKAROUND: Remove once the firmware_update command can be registered via MQTT
-COPY common/utils/register-operations/register-operations.service /lib/systemd/system/
-COPY common/utils/register-operations/register-operations.sh /usr/bin/register-operations
-RUN systemctl enable register-operations.service
-
 RUN echo "running" \
     && wget -O - thin-edge.io/install.sh | sh -s \
     && systemctl enable collectd \
