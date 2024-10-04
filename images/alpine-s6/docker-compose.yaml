@@ -72,8 +72,6 @@ services:
       - SERVICE_MOSQUITTO=0
     volumes:
       - device-certs:/etc/tedge/device-certs
-      # FIXME: Remove volume once https://github.com/thin-edge/thin-edge.io/issues/2390 is resolved
-      - file-transfer:/var/tedge
     tmpfs:
       - /tmp
     # Support reaching other services from the host, e.g. curl http://host.docker.internal:8888
@@ -83,9 +81,6 @@ services:
       - tedge
     depends_on:
       - mosquitto
-    # FIXME: Remove volume once https://github.com/thin-edge/thin-edge.io/issues/2390 is resolved
-    # However this is only required if the tedge container is running under the root user
-    user: root
 
   # main device
   tedge:
@@ -93,10 +88,6 @@ services:
     environment:
       <<: *device-env
       TEDGE_MQTT_DEVICE_TOPIC_ID: device/main//
-
-    # FIXME: Remove volume once https://github.com/thin-edge/thin-edge.io/issues/2390 is resolved
-    volumes:
-      - file-transfer:/var/tedge
     user: root
 
   # child devices
@@ -110,7 +101,6 @@ services:
 volumes:
   device-certs:
   mosquitto:
-  file-transfer:
 
 networks:
   tedge:
