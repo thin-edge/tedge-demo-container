@@ -1,6 +1,15 @@
-files = [
-    { type = "software-management", path = "/var/log/tedge/agent/workflow-software*" },
-    { type = "shell", path = "/var/log/tedge/agent/c8y_Command-*" },
-    { type = "dpkg", path = "/var/log/dpkg.log" },
-    { type = "apt-terminal-log", path = "/var/log/apt/term.log" },
-]
+[[files]]
+type = "software-management"
+path = "/var/log/tedge/agent/workflow-software*"
+
+[[files]]
+type = "shell"
+path = "/var/log/tedge/agent/c8y_Command-*"
+
+[[files]]
+type = "dpkg"
+path = "/var/log/dpkg.log"
+
+[[files]]
+type = "apt-terminal-log"
+path = "/var/log/apt/term.log"
