@@ -10,7 +10,8 @@ RUN apk add --no-cache \
         tedge-apk-plugin \
         tedge-pki-smallstep-client \
     && echo "tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /usr/bin/tedge-write /etc/*, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /bin/kill" > /etc/sudoers.d/tedge \
-    && echo "tedge  ALL = (ALL) NOPASSWD: /usr/bin/step-ca-admin.sh, /usr/bin/enroll.sh, /usr/sbin/update-ca-certificates" > /etc/sudoers.d/step-ca \
+    && echo "Defaults        env_keep += \"FEATURES\"" > /etc/sudoers.d/step-ca \
+    && echo "tedge  ALL = (ALL) NOPASSWD: /usr/bin/step-ca-admin.sh, /usr/bin/enroll.sh, /usr/sbin/update-ca-certificates" >> /etc/sudoers.d/step-ca \
     # Allow tedge user to control this folder
     && mkdir -p /etc/step-ca \
     && chown -R tedge:tedge /etc/step-ca

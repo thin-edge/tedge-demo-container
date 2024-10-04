@@ -7,6 +7,8 @@ if [ -n "$PROVISION_PASSWORD" ]; then
     printf -- '%s' "$PROVISION_PASSWORD" > "$PROVISION_PASSWORD_FILE"
     chmod 600 "$PROVISION_PASSWORD_FILE"
 fi
+
+# Note: The FEATURES variable MUST BE included in the env_keep seting of the sudoers file
 (cd /tmp && sudo /usr/bin/enroll.sh --no-inherit-env --provisioner-password-file "$PROVISION_PASSWORD_FILE")
 rm -f "$PROVISION_PASSWORD_FILE"
 
