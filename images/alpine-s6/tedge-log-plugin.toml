@@ -1,4 +1,7 @@
-files = [
-    { type = "software-management", path = "/var/log/tedge/agent/workflow-software*" },
-    { type = "shell", path = "/var/log/tedge/agent/c8y_Command-*" },
-]
+[[files]]
+type = "software-management"
+path = "/var/log/tedge/agent/workflow-software*"
+
+[[files]]
+type = "shell"
+path = "/var/log/tedge/agent/c8y_Command-*"
