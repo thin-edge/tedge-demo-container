@@ -14,7 +14,9 @@ RUN apk add --no-cache \
     && echo "tedge  ALL = (ALL) NOPASSWD: /usr/bin/step-ca-admin.sh, /usr/bin/enroll.sh, /usr/sbin/update-ca-certificates" >> /etc/sudoers.d/step-ca \
     # Allow tedge user to control this folder
     && mkdir -p /etc/step-ca \
-    && chown -R tedge:tedge /etc/step-ca
+    && chown -R tedge:tedge /etc/step-ca \
+    # Add dummy configuration files
+    && echo '{"connectionType":"4G"}' > /etc/modem.json
 
 USER tedge
 COPY child-device-container/config/tedge-configuration-plugin.toml /etc/tedge/plugins/

@@ -40,7 +40,9 @@ RUN echo "running" \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-client \
     # Disable tedge-agent as it needs to be setup before it can start
-    && systemctl disable tedge-agent
+    && systemctl disable tedge-agent \
+    # Add dummy configuration files
+    && echo '{"connectionType":"4G"}' > /etc/modem.json
 
 COPY child-device-systemd/config/sshd_config /etc/ssh/sshd_config
 
