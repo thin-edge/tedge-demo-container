@@ -20,7 +20,8 @@ build-setup:
 # Build the docker images
 build *ARGS: build-setup
   just -f {{justfile()}} build-main-systemd {{ARGS}}
-  just -f {{justfile()}} build-child {{ARGS}}
+  just -f {{justfile()}} build-child-container {{ARGS}}
+  just -f {{justfile()}} build-child-systemd {{ARGS}}
   just -f {{justfile()}} build-tedge {{ARGS}}
   just -f {{justfile()}} build-tedge-containermgmt {{ARGS}}
   just -f {{justfile()}} build-mosquitto {{ARGS}}
@@ -29,10 +30,13 @@ build *ARGS: build-setup
 build-main-systemd OUTPUT_TYPE='oci,dest=tedge-demo-main.tar' VERSION='latest':
     docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-systemd:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-main-systemd:latest -f images/debian-systemd/debian-systemd.dockerfile --output=type={{OUTPUT_TYPE}} images
 
-# Build the child device image
-build-child OUTPUT_TYPE='oci,dest=tedge-demo-child-container.tar' VERSION='latest':
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-container:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-container:latest -f images/child-device-container/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device-container
-    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-systemd:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-systemd:latest -f images/child-device-systemd/child.dockerfile --output=type={{OUTPUT_TYPE}} images/child-device-systemd
+# Build the child device container image
+build-child-container OUTPUT_TYPE='oci,dest=tedge-demo-child-container.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-container:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-container:latest -f images/child-device-container/child.dockerfile --output=type={{OUTPUT_TYPE}} images
+
+# Build the child device systemd image
+build-child-systemd OUTPUT_TYPE='oci,dest=tedge-demo-child-systemd.tar' VERSION='latest':
+    docker buildx build --platform linux/amd64,linux/arm64 -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-systemd:{{VERSION}} -t {{REGISTRY}}/{{REPO_OWNER}}/tedge-demo-child-systemd:latest -f images/child-device-systemd/child.dockerfile --output=type={{OUTPUT_TYPE}} images
 
 # Build the single process container image
 build-tedge OUTPUT_TYPE='oci,dest=tedge-demo.tar' VERSION='latest':
