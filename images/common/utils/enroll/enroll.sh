@@ -37,7 +37,7 @@ fi
 has_feature() { echo "${FEATURES:-}" | grep -qw "$1"; }
 
 if ! has_feature "pki"; then
-    echo "Enrolling device without mtls" >&2
+    echo "Enrolling device without mtls. FEATURES=$FEATURES" >&2
     if [ -z "$TEDGE_MQTT_DEVICE_TOPIC_ID" ]; then
         TOPIC_ID="device/$(hostname)//"
         echo "Setting mqtt.device_topic_id based on hostname: $TOPIC_ID" >&2
