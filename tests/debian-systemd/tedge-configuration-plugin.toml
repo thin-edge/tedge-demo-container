@@ -1,0 +1,34 @@
+[[files]]
+path = "/etc/tedge/tedge.toml"
+type = "tedge.toml"
+user = "tedge"
+group = "tedge"
+mode = 0o444
+
+[[files]]
+path = "/etc/tedge/system.toml"
+type = "system.toml"
+user = "tedge"
+group = "tedge"
+mode = 0o444
+
+[[files]]
+path = "/etc/modem.json"
+type = "modem"
+user = "tedge"
+group = "tedge"
+mode = 0o444
+
+[[files]]
+path = '/etc/tedge/plugins/tedge-log-plugin.toml'
+type = 'tedge-log-plugin'
+user = 'tedge'
+group = 'tedge'
+mode = 0o644
+
+[[files]]
+path = '/etc/container.env'
+type = 'container.env'
+user = 'root'
+group = 'root'
+mode = 0o644
