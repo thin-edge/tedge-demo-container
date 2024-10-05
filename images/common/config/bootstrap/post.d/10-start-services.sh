@@ -19,8 +19,6 @@ control_service() {
 }
 
 sleep 5
-control_service tedge-container-monitor start
-control_service ssh start
 
 # Restart collectd as sometimes it fail with the error:
 # mqtt plugin: mosquitto_connect failed: Cannot assign requested address
