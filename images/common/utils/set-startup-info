@@ -1,4 +1,11 @@
 #!/bin/sh
 set -e
 TARGET="$(tedge config get mqtt.topic_root)/$(tedge config get mqtt.device_topic_id)"
+
+# firmware
 tedge mqtt pub --qos 1 "$TARGET/twin/firmware" "$(printf '{"name": "iot-linux", "version": "1.0.0"}')"
+
+# Trigger inventory service on startup
+if command -V systemd; then
+    systemctl start tedge-inventory.service ||:
+fi

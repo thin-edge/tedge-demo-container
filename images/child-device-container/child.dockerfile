@@ -8,6 +8,7 @@ RUN apk add --no-cache \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/config.alpine.txt?distro=alpine&codename=v3.8' >> /etc/apk/repositories \
     && apk add --no-cache \
         tedge-apk-plugin \
+        tedge-inventory-plugin \
         tedge-pki-smallstep-client \
     && echo "tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /usr/bin/tedge-write /etc/*, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /bin/kill" > /etc/sudoers.d/tedge \
     && echo "Defaults        env_keep += \"FEATURES\"" > /etc/sudoers.d/step-ca \
@@ -23,6 +24,11 @@ COPY child-device-container/config/tedge-configuration-plugin.toml /etc/tedge/pl
 COPY common/utils/enroll/enroll.sh /usr/bin/
 COPY child-device-container/entrypoint.sh /app/
 COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
+
+# Configure device (to run one-off commands on first boot)
+COPY common/utils/configure-device/runner.sh /usr/share/configure-device/
+COPY common/utils/set-startup-info /usr/share/configure-device/scripts.d/90_set-startup-info
+
 ENV TEDGE_MQTT_CLIENT_HOST=tedge
 ENV TEDGE_HTTP_CLIENT_HOST=tedge
 ENV TEDGE_C8Y_PROXY_CLIENT_HOST=tedge
