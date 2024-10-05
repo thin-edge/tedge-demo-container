@@ -12,6 +12,15 @@ fi
 (cd /tmp && sudo /usr/bin/enroll.sh --no-inherit-env --provisioner-password-file "$PROVISION_PASSWORD_FILE")
 rm -f "$PROVISION_PASSWORD_FILE"
 
+# FIXME: Remove once tedge-agent register the agent automatically
+# or there is a dedicate "tedge register device" command
+TOPIC_ROOT=$(tedge config get mqtt.topic_root)
+TOPIC_ID=$(tedge config get mqtt.device_topic_id)
+DEVICE_TYPE=$(tedge config get device.type)
+while ! tedge mqtt pub --retain --qos 1 "$TOPIC_ROOT/$TOPIC_ID" "$(printf '{"@type":"child-device","type":"%s","name":"%s"}' "$DEVICE_TYPE" "$(hostname)")"; do
+    sleep 5
+done
+
 # configure device scripts (run once)
 if [ ! -f /etc/tedge/.configure-device-ran ]; then
     /usr/share/configure-device/runner.sh
