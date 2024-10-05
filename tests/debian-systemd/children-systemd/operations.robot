@@ -7,6 +7,9 @@ Suite Setup    Set Child Device2
 
 *** Test Cases ***
 
+Firmware information should be shown on startup
+    Cumulocity.Managed Object Should Have Fragment Values    c8y_Firmware.name\=iot-linux    c8y_Firmware.version\=1.0.0
+
 Install Firmware
     Cumulocity.Should Have Services    name=tedge-agent    status=up
     ${date_from}=    Get Test Start Time
