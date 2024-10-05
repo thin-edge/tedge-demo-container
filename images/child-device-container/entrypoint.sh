@@ -12,5 +12,14 @@ fi
 (cd /tmp && sudo /usr/bin/enroll.sh --no-inherit-env --provisioner-password-file "$PROVISION_PASSWORD_FILE")
 rm -f "$PROVISION_PASSWORD_FILE"
 
+# configure device scripts (run once)
+if [ ! -f /etc/tedge/.configure-device-ran ]; then
+    /usr/share/configure-device/runner.sh
+    touch /etc/tedge/.configure-device-ran
+fi
+
+# Note: inventory scripts are run on every startup
+/usr/share/tedge-inventory/runner.sh
+
 # start agent
 exec /usr/bin/tedge-agent
