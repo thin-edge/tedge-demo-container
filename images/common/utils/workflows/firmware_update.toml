@@ -42,6 +42,11 @@ on_error = { status = "failed", reason = "fail to restart"}
 
 [commit]
 script = "sleep 1"
+on_success = "publish"
+on_error = "failed"
+
+[publish]
+script = "tedge mqtt pub --retain --qos 1 ${.topic.root_prefix}/${.topic.target}/twin/firmware '{\"name\":\"${.payload.name}\",\"version\":\"${.payload.version}\",\"url\":\"${.payload.url}\"}'"
 on_success = "successful"
 on_error = "failed"
 
