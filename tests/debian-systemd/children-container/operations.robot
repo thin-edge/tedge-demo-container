@@ -32,3 +32,43 @@ Install software package
     ${operation}=    Cumulocity.Install Software    {"name": "jq", "version": "latest", "softwareType": "apk"}
     Operation Should Be SUCCESSFUL    ${operation}    timeout=90
     Cumulocity.Device Should Have Installed Software    jq
+
+Install device profile
+    ${config_url}=    Create Inventory Binary
+    ...    tedge-configuration-plugin
+    ...    tedge-configuration-plugin
+    ...    file=${CURDIR}/../tedge-configuration-plugin.toml
+
+    ${PROFILE_NAME}=    Set Variable    Test Profile
+    ${PROFILE_PAYLOAD}=    Catenate    SEPARATOR=\n    {
+    ...      "firmware": {
+    ...        "name":"iot-linux",
+    ...        "version":"3.0.0",
+    ...        "url":"https://abc.com/some/firmware/url"
+    ...      },
+    ...      "software":[
+    ...        {
+    ...          "name":"jq",
+    ...          "action":"install",
+    ...          "version":"latest",
+    ...          "url":""
+    ...        }
+    ...      ],
+    ...      "configuration":[
+    ...        {
+    ...          "name":"tedge-configuration-plugin",
+    ...          "type":"tedge-configuration-plugin",
+    ...          "url":"${config_url}"
+    ...        }
+    ...      ]
+    ...    }
+
+    ${profile}=    Cumulocity.Create Device Profile    ${PROFILE_NAME}    ${PROFILE_PAYLOAD}
+    ${operation}=    Cumulocity.Install Device Profile    ${profile["id"]}
+    ${operation}=    Cumulocity.Operation Should Be SUCCESSFUL    ${operation}
+    Cumulocity.Should Have Device Profile Installed    ${profile["id"]}
+
+    # Check meta information
+    Cumulocity.Managed Object Should Have Fragment Values    c8y_Firmware.name\=iot-linux    c8y_Firmware.version\=3.0.0
+    Cumulocity.Device Should Have Installed Software    {"name":"jq"}
+    Cumulocity.Should Support Configurations    container.env    includes=${True}
