@@ -1,4 +1,8 @@
 [[files]]
+type = "device_profile"
+path = "/var/log/tedge/agent/workflow-device_profile-*"
+
+[[files]]
 type = "software-management"
 path = "/var/log/tedge/agent/workflow-software*"
 

@@ -1,6 +1,22 @@
 [[files]]
+type = "device_profile"
+path = "/var/log/tedge/agent/workflow-device_profile-*"
+
+[[files]]
 type = "software-management"
 path = "/var/log/tedge/agent/workflow-software*"
+
+[[files]]
+type = "firmware_update"
+path = "/var/log/tedge/agent/workflow-firmware_update-*"
+
+[[files]]
+type = "restart"
+path = "/var/log/tedge/agent/workflow-restart-*"
+
+[[files]]
+type = "all-workflows"
+path = "/var/log/tedge/agent/workflow-*"
 
 [[files]]
 type = "shell"
