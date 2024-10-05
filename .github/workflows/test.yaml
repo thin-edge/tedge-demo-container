@@ -9,8 +9,6 @@ on:
   # Reference: https://dev.to/petrsvihlik/using-environment-protection-rules-to-secure-secrets-when-building-external-forks-with-pullrequesttarget-hci
   pull_request_target:
     branches: [ main ]
-  push:
-    branches: [ main ]
   merge_group:
 jobs:
   approve:
@@ -45,15 +43,11 @@ jobs:
 
     steps:
       # Checkout either the PR or the branch
-      - name: Checkout PR
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }} # Check out the code of the PR. Only after the manual approval process
-
       - name: Checkout
         uses: actions/checkout@v4
-        if: ${{ github.event_name != 'pull_request_target' }}
+        with:
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
+          fetch-depth: 0
 
       - uses: reubenmiller/setup-go-c8y-cli@main
       - name: install c8y-tedge extension
@@ -106,7 +100,7 @@ jobs:
           case "${{matrix.job.bootstrap}}" in
               script)
                   just IMAGE=${{matrix.job.target}} prepare-up
-                  just IMAGE=${{matrix.job.target}} up
+                  just IMAGE=${{matrix.job.target}} up --build=false
                   just IMAGE=${{matrix.job.target}} bootstrap --no-prompt
                   ;;
 
@@ -127,7 +121,7 @@ jobs:
 
               *)
                   just IMAGE=${{matrix.job.target}} prepare-up
-                  just IMAGE=${{matrix.job.target}} up
+                  just IMAGE=${{matrix.job.target}} up --build=false
                   echo "Skipping bootstrapping"
                   ;;
           esac

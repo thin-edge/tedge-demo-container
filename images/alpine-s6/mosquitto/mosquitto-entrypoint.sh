@@ -20,7 +20,7 @@ fi
 #
 # Upload cert if credentials are available
 if [ -n "$C8Y_PASSWORD" ] && [ -n "$C8Y_USER" ]; then
-    env C8YPASS="$C8Y_PASSWORD" tedge cert upload c8y --user "$C8Y_USER" ||:
+    tedge cert upload c8y --user "$C8Y_USER" ||:
 fi
 
 # Wait until the device has been registered before starting the bridge,

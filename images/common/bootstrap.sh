@@ -332,19 +332,8 @@ bootstrap_c8y() {
     echo "Setting c8y.url to $C8Y_BASEURL"
     sudo tedge config set c8y.url "$C8Y_BASEURL"
 
-    C8Y_USER=$(prompt_value "Enter your Cumulocity user" "$C8Y_USER")
-
-    if [ -n "$C8Y_USER" ]; then
-        echo "Uploading certificate to Cumulocity using tedge"
-        if [ -n "$C8Y_PASSWORD" ]; then
-            C8YPASS="$C8Y_PASSWORD" tedge cert upload c8y --user "$C8Y_USER"
-        else
-            echo ""
-            tedge cert upload c8y --user "$C8Y_USER"
-        fi
-    else
-        fail "When manually bootstrapping you have to upload the certificate again as the device certificate is recreated"
-    fi
+    echo "Uploading certificate to Cumulocity using tedge"
+    tedge cert upload c8y
 
     # Grace period for the server to process the certificate
     # but it is not critical for the connection, as the connection
