@@ -30,6 +30,11 @@ COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 COPY common/utils/configure-device/runner.sh /usr/share/configure-device/
 COPY common/utils/set-startup-info /usr/share/configure-device/scripts.d/90_set-startup-info
 
+# Inventory scripts
+# FIXME: tedge should support this out of the box, but currently the c8y_Agent fragment
+# is published by the mapper and not the tedge-agent, so it needs a mapping rule.
+COPY common/utils/set-agent-info /usr/share/tedge-inventory/scripts.d/50_c8y_Agent
+
 ENV TEDGE_MQTT_CLIENT_HOST=tedge
 ENV TEDGE_HTTP_CLIENT_HOST=tedge
 ENV TEDGE_C8Y_PROXY_CLIENT_HOST=tedge
