@@ -48,7 +48,8 @@ COPY child-device-systemd/config/sshd_config /etc/ssh/sshd_config
 
 # Optional installations
 COPY common/optional-installer.sh .
-RUN ./optional-installer.sh
+RUN ./optional-installer.sh \
+    && rm optional-installer.sh
 
 # Device bootstrap (to run one-off commands on first boot)
 COPY common/utils/configure-device/runner.sh /usr/share/configure-device/

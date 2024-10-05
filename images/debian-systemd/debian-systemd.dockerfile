@@ -44,7 +44,7 @@ RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
     && chmod +x /usr/sbin/policy-rc.d
 
 # Install base files to help with bootstrapping and common settings
-WORKDIR /setup
+WORKDIR /root
 COPY common/bootstrap.sh /usr/bin/bootstrap.sh
 
 # mqtt-logger
@@ -77,7 +77,8 @@ COPY common/config/sshd_config /etc/ssh/sshd_config
 
 # Optional installations
 COPY common/optional-installer.sh .
-RUN ./optional-installer.sh
+RUN ./optional-installer.sh \
+    && rm optional-installer.sh
 
 # Device bootstrap (to run one-off commands on first boot)
 COPY common/utils/configure-device/runner.sh /usr/share/configure-device/
