@@ -56,9 +56,11 @@ COPY common/utils/configure-device/scripts.d/* /usr/share/configure-device/scrip
 COPY common/utils/configure-device/configure-device.service /lib/systemd/system/
 RUN systemctl enable configure-device.service
 
+# Configure device hooks
 # add mtls enablement script. Store script under /usr/bin so it can also be manually called
 COPY common/utils/enroll/enroll.sh /usr/bin/
 RUN ln -sf /usr/bin/enroll.sh /usr/share/configure-device/scripts.d/70_enable_mtls
+COPY common/utils/set-firmware-version /usr/share/configure-device/scripts.d/90_set-firmware
 
 COPY child-device-systemd/config/system.toml /etc/tedge/
 COPY child-device-systemd/config/tedge.toml /etc/tedge/

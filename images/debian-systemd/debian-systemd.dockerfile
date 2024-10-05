@@ -87,6 +87,7 @@ RUN mkdir -p /usr/share/configure-device/scripts.d/ \
 
 # Configure device hooks
 COPY common/utils/init-pki/init-pki.sh /usr/share/configure-device/scripts.d/30_init-pki
+COPY common/utils/set-firmware-version /usr/share/configure-device/scripts.d/90_set-firmware
 
 # Copy bootstrap script hooks
 COPY common/config/bootstrap /etc/bootstrap
