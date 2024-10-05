@@ -21,6 +21,7 @@ RUN apk add --no-cache \
 
 USER tedge
 COPY child-device-container/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
+COPY child-device-container/config/tedge-log-plugin.toml /etc/tedge/plugins/
 COPY common/utils/enroll/enroll.sh /usr/bin/
 COPY child-device-container/entrypoint.sh /app/
 COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
