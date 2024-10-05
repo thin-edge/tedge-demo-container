@@ -105,6 +105,7 @@ jobs:
         run: |
           case "${{matrix.job.bootstrap}}" in
               script)
+                  just IMAGE=${{matrix.job.target}} prepare-up
                   just IMAGE=${{matrix.job.target}} up
                   just IMAGE=${{matrix.job.target}} bootstrap --no-prompt
                   ;;
@@ -125,6 +126,7 @@ jobs:
                   ;;
 
               *)
+                  just IMAGE=${{matrix.job.target}} prepare-up
                   just IMAGE=${{matrix.job.target}} up
                   echo "Skipping bootstrapping"
                   ;;
