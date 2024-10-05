@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+TEDGE_VERSION="$(tedge --version | cut -d' ' -f2- ||:)"
+printf 'name="%s"\n' "thin-edge.io"
+printf 'url="%s"\n' "https://thin-edge.io"
+printf 'version="%s"\n' "${TEDGE_VERSION:-unknown}"

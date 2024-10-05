@@ -63,6 +63,11 @@ COPY common/utils/enroll/enroll.sh /usr/bin/
 RUN ln -sf /usr/bin/enroll.sh /usr/share/configure-device/scripts.d/70_enroll
 COPY common/utils/set-startup-info /usr/share/configure-device/scripts.d/90_set-startup-info
 
+# Inventory scripts
+# FIXME: tedge should support this out of the box, but currently the c8y_Agent fragment
+# is published by the mapper and not the tedge-agent, so it needs a mapping rule.
+COPY common/utils/set-agent-info /usr/share/tedge-inventory/scripts.d/50_c8y_Agent
+
 COPY child-device-systemd/config/system.toml /etc/tedge/
 COPY child-device-systemd/config/tedge.toml /etc/tedge/
 COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
