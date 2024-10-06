@@ -117,14 +117,14 @@ The following features are covered by the demo.
 
 **Main device**
 
+* [x] Availability Monitoring
 * [x] Configuration management
 * [x] mqtt-logger (to better understand what messages are going in and out)
 * [x] Device reboot
-* [x] Events
-    * [x] On boot-up service: sends an event on startup
+* [x] Device Profile
+* [x] Firmware Update (simulated)
 * [x] Log management
     * [x] log files
-* [x] Measurements (via collectd)
 * [x] Remote Access
     * [x] SSH
 * [x] Services
@@ -134,15 +134,24 @@ The following features are covered by the demo.
     * [x] apt
     * [x] container (docker, docker-compose)
 * [x] Telemetry
-    * [x] Collectd
+    * [x] Measurements (via collectd)
+    * [x] Events
+        * [x] On boot-up service: sends an event on startup
 
 **Child devices**
 
+* [x] Availability Monitoring
 * [x] Configuration management
-* [x] Firmware management
-    * [x] Sending events before and after the operation transition are being delayed and sent at once
-* [x] Measurements
+* [x] Device reboot
+* [x] Device Profile
+* [x] Firmware Update (simulated)
+* [x] Log management
+    * [x] log files
 * [x] Services
+    * [x] tedge services
+* [x] Software management
+    * [x] apk (Alpine based image)
+    * [x] apt (Debian based image)
 
 ## Known issues
 

@@ -1,8 +1,18 @@
-# child device template
-x-child-defaults: &child-defaults
-  image: ghcr.io/thin-edge/tedge-demo-child:${VERSION:-latest}
+# child device templates
+x-child-agent: &child-container
+  image: ghcr.io/thin-edge/tedge-demo-child-container:${VERSION:-latest}
   pull_policy: always
   restart: always
+  tmpfs:
+    - /tmp
+  networks:
+    - tedge
+
+x-child-defaults: &child-device-systemd
+  image: ghcr.io/thin-edge/tedge-demo-child-systemd:${VERSION:-latest}
+  pull_policy: always
+  restart: always
+  privileged: true
   networks:
     - tedge
 
@@ -12,34 +22,45 @@ services:
     image: ghcr.io/thin-edge/tedge-demo-main-systemd:${VERSION:-latest}
     pull_policy: always
     volumes:
-      - etc:/etc
+      - main_etc:/etc
       # Enable docker from docker - But then this container has elevated access to system resources!
       - /var/run/docker.sock:${DOCKER_SOCKET:-/var/run/docker.sock}:rw
     restart: always
-    tmpfs:
-      - /run
-      - /tmp
     privileged: true
     environment:
-      - DEVICE_ID=${DEVICE_ID:-}
-      - C8Y_BASEURL=${C8Y_BASEURL:-}
-      - C8Y_USER=${C8Y_USER:-}
+      - FEATURES=${FEATURES:-pki}
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
+    hostname: tedge
     networks:
       - tedge
 
   # child devices
   child01:
-    <<: *child-defaults
+    <<: *child-container
     environment:
-      - CONNECTOR_DEVICE_ID=child01
+      - FEATURES=${FEATURES:-pki}
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
+    hostname: child01
+    volumes:
+      - child01_etc:/etc
+      - child01_logs:/var/log/tedge
 
   child02:
-    <<: *child-defaults
+    <<: *child-device-systemd
+    hostname: child02
     environment:
-      - CONNECTOR_DEVICE_ID=child02
+      - FEATURES=${FEATURES:-pki}
+      - PROVISION_PASSWORD=${PROVISION_PASSWORD:-dummy}
+    volumes:
+      - child02_etc:/etc
+      - child02_logs:/var/log/tedge
 
 volumes:
-  etc:
+  main_etc:
+  child01_etc:
+  child01_logs:
+  child02_etc:
+  child02_logs:
 
 networks:
   tedge:
