@@ -75,9 +75,11 @@ archive() {
     SRC_DIR="$1"
     OUTPUT_DIR="$2"
     TMP_FILE="$(mktemp).tar.gz"
-    (cd "$SRC_DIR" && tar czvf "$TMP_FILE" .)
+    if [ -d "$SRC_DIR" ]; then
+        (cd "$SRC_DIR" && tar czvf "$TMP_FILE" .)
+    fi
 
-    rm -r "$SRC_DIR"
+    rm -rf "$SRC_DIR"
     mkdir -p "$OUTPUT_DIR"
     ARCHIVE_FILE="$OUTPUT_DIR/logs.tar.gz"
     echo "Creating log archive: $ARCHIVE_FILE" >&2
