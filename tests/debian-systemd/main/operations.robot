@@ -92,6 +92,11 @@ Install device profile
     Cumulocity.Device Should Have Installed Software    {"name":"jq"}
     Cumulocity.Should Support Configurations    container.env    includes=${True}
 
+Install container package
+    ${operation}=    Cumulocity.Install Software    {"name": "nginx", "version": "nginx:latest", "softwareType": "container", "url": ""}
+    Operation Should Be SUCCESSFUL    ${operation}    timeout=60
+    Cumulocity.Device Should Have Installed Software    nginx
+
 *** Keywords ***
 
 Get Logfile Request
