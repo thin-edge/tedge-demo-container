@@ -32,9 +32,6 @@ services:
     volumes:
       - etc:/etc
 
-      # Enable docker from docker - But then this container has elevated access to system resources!
-      - /var/run/docker.sock:${DOCKER_SOCKET:-/var/run/docker.sock}:rw
-
     restart: always
     privileged: true
     hostname: tedge
