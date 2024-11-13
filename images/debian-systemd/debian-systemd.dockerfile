@@ -86,6 +86,9 @@ COPY common/optional-installer.sh .
 RUN ./optional-installer.sh \
     && rm optional-installer.sh
 
+# Podman config
+COPY common/config/podman/docker.conf /etc/containers/registries.conf.d/
+
 # Device bootstrap (to run one-off commands on first boot)
 COPY common/utils/configure-device/runner.sh /usr/share/configure-device/
 COPY common/utils/configure-device/configure-device.service /lib/systemd/system/
