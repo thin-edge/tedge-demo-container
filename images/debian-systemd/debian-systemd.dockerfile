@@ -114,6 +114,7 @@ COPY common/config/collectd.conf.d /etc/collectd/collectd.conf.d
 
 # Custom mosquitto config
 COPY common/config/mosquitto.conf /etc/mosquitto/conf.d/
+COPY common/config/mosquitto-conf/tedge-networkcontainer.conf /etc/tedge/mosquitto-conf/
 
 # sudoers
 COPY common/config/sudoers.d/* /etc/sudoers.d/
