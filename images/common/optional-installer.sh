@@ -15,8 +15,7 @@ install_container_management () {
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
         podman \
         podman-compose \
-        tedge-container-plugin-ng \
-        unzip
+        tedge-container-plugin-ng
 
     # create systemd-tmpfiles config to create a symlink for docker to the podman socket
     # which allows using docker and docker compose without having to set the DOCKER_HOST variable
