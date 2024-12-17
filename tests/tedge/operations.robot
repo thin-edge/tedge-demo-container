@@ -98,16 +98,16 @@ Check Software List
 Install software
     [Arguments]    ${device}
     Cumulocity.Set Device    ${device}
-    ${operation}=    Cumulocity.Install Software    {"name": "jq", "version": "latest", "softwareType": "apk"}
+    ${operation}=    Cumulocity.Install Software    {"name": "htop", "version": "latest", "softwareType": "apk"}
     Operation Should Be SUCCESSFUL    ${operation}
-    Device Should Have Installed Software    jq
+    Device Should Have Installed Software    htop
 
 Uninstall software
     [Arguments]    ${device}
     Cumulocity.Set Device    ${device}
-    ${operation}=     Cumulocity.Uninstall Software    {"name": "jq", "version": "latest", "softwareType": "apk"}
+    ${operation}=     Cumulocity.Uninstall Software    {"name": "htop", "version": "latest", "softwareType": "apk"}
     Operation Should Be SUCCESSFUL    ${operation}
-    Device Should Not Have Installed Software    jq
+    Device Should Not Have Installed Software    htop
 
 Execute shell command
     [Arguments]    ${device}

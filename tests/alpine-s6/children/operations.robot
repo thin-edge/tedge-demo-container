@@ -34,14 +34,14 @@ It Should List the Installed Software
     Device Should Have Installed Software    tedge    tedge-agent
 
 Install software (apk package)
-    ${operation}=    Install Software    {"name": "jq", "version": "latest", "softwareType": "apk"}
+    ${operation}=    Install Software    {"name": "htop", "version": "latest", "softwareType": "apk"}
     Operation Should Be SUCCESSFUL    ${operation}
-    Device Should Have Installed Software    {"name": "jq", "softwareType": "apk"}
+    Device Should Have Installed Software    {"name": "htop", "softwareType": "apk"}
 
 Uninstall software (apk package)
-    ${operation}=     Uninstall Software    {"name": "jq", "version": "latest", "softwareType": "apk"}
+    ${operation}=     Uninstall Software    {"name": "htop", "version": "latest", "softwareType": "apk"}
     Operation Should Be SUCCESSFUL    ${operation}
-    Device Should Not Have Installed Software    {"name": "jq", "softwareType": "apk"}
+    Device Should Not Have Installed Software    {"name": "htop", "softwareType": "apk"}
 
 *** Keywords ***
 
