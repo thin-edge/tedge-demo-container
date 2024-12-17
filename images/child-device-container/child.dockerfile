@@ -8,6 +8,7 @@ RUN apk add --no-cache \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/config.alpine.txt?distro=alpine&codename=v3.8' >> /etc/apk/repositories \
     && apk add --no-cache \
         tedge-apk-plugin \
+        tedge-command-plugin \
         tedge-inventory-plugin \
         tedge-pki-smallstep-client \
     && echo "tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /usr/bin/tedge-write /etc/*, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /bin/kill" > /etc/sudoers.d/tedge \

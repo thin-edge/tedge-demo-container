@@ -72,3 +72,8 @@ Install device profile
     Cumulocity.Managed Object Should Have Fragment Values    c8y_Firmware.name\=iot-linux    c8y_Firmware.version\=3.0.0
     Cumulocity.Device Should Have Installed Software    {"name":"jq"}
     Cumulocity.Should Support Configurations    container.env    includes=${True}
+
+Execute shell command
+    ${operation}=    Cumulocity.Execute Shell Command    ls -l /etc/tedge
+    ${operation}=    Operation Should Be SUCCESSFUL    ${operation}
+    Should Not Be Empty    ${operation["c8y_Command"]["result"]}

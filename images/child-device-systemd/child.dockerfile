@@ -36,6 +36,7 @@ RUN echo "running" \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/setup.deb.sh' | sudo -E bash \
     && DEBIAN_FRONTEND=noninteractive apt-get -y install \
         tedge-agent \
+        tedge-command-plugin \
         tedge-inventory-plugin \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-client \
