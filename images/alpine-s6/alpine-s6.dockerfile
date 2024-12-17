@@ -32,7 +32,7 @@ RUN curl -sSL thin-edge.io/install.sh | sh -s
 RUN curl -sSL thin-edge.io/install-services.sh | sh -s \
     # Install additional community plugins
     && apk add --no-cache \
-        c8y-command-plugin \
+        tedge-command-plugin \
         tedge-apk-plugin
 
 # Set permissions of all files under /etc/tedge
