@@ -3,6 +3,8 @@ set -e
 TARGET="$(tedge config get mqtt.topic_root)/$(tedge config get mqtt.device_topic_id)"
 
 # firmware
+# TODO: Remove dumb sleep and find out way the firmware is not always published to the cloud
+sleep 5
 tedge mqtt pub -r --qos 1 "$TARGET/twin/firmware" "$(printf '{"name": "iot-linux", "version": "1.0.0"}')"
 
 # Trigger inventory service on startup

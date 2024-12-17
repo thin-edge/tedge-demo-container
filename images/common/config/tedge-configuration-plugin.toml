@@ -34,7 +34,7 @@ group = 'root'
 mode = 0o644
 
 [[files]]
-path = '/etc/c8y-command-plugin/env'
+path = '/etc/tedge-command-plugin/env'
 type = 'shell'
 user = 'tedge'
 group = 'tedge'
