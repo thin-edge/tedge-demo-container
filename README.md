@@ -149,6 +149,7 @@ The following features are covered by the demo.
     * [x] log files
 * [x] Services
     * [x] tedge services
+* [x] Shell
 * [x] Software management
     * [x] apk (Alpine based image)
     * [x] apt (Debian based image)
