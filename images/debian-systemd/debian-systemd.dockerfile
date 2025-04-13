@@ -74,6 +74,7 @@ RUN echo "running" \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         tedge-inventory-plugin \
         tedge-command-plugin \
+        tedge-monit-setup \
         tedge-nodered-plugin-ng \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-ca \
