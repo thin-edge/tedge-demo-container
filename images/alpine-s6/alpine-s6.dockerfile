@@ -1,6 +1,7 @@
 FROM alpine:3.18
 ARG TARGETARCH
 ARG S6_OVERLAY_VERSION=3.1.5.0
+ARG TEDGE_CHANNEL=release
 
 # Notes: ca-certificates is required for the initial connection with c8y, otherwise the c8y cert is not trusted
 # to test out the connection. But this is only needed for the initial connection, so it seems unnecessary
@@ -26,7 +27,7 @@ RUN case ${TARGETARCH} in \
     && tar -C / -Jxpf /tmp/s6-overlay-${S6_ARCH}.tar.xz
 
 # Install tedge
-RUN curl -sSL thin-edge.io/install.sh | sh -s
+RUN curl -sSL thin-edge.io/install.sh | sh -s -- --channel "$TEDGE_CHANNEL"
 
 # Add custom service definitions
 RUN curl -sSL thin-edge.io/install-services.sh | sh -s \
