@@ -23,23 +23,24 @@ jobs:
         run: echo "Approved"
 
   test:
-    name: Test ${{ matrix.job.target }}
+    name: Test ${{ matrix.job.target }} ${{ matrix.job.channel }}
     runs-on: ubuntu-20.04
     needs: approve
     environment:
       name: Test Auto
     env:
-      COMPOSE_PROJECT_NAME: ci_${{ matrix.job.target }}_${{github.run_id}}_${{github.run_attempt || '1'}}
-      DEVICE_ID: ci_${{ matrix.job.target }}_${{github.run_id}}_${{github.run_attempt || '1'}}
+      COMPOSE_PROJECT_NAME: ci_${{ matrix.job.target }}_${{ matrix.job.channel }}_${{github.run_id}}_${{github.run_attempt || '1'}}
+      DEVICE_ID: ci_${{ matrix.job.target }}_${{ matrix.job.channel }}_${{github.run_id}}_${{github.run_attempt || '1'}}
 
     strategy:
       fail-fast: false
       matrix:
         job:
-          - { target: debian-systemd, bootstrap: "script" }
-          - { target: alpine-s6, bootstrap: "none" }
-          - { target: tedge, bootstrap: "container" }
-          - { target: tedge-containermgmt, bootstrap: "container" }
+          - { target: debian-systemd, bootstrap: "script", channel: "release" }
+          - { target: debian-systemd, bootstrap: "script", channel: "main" }
+          - { target: alpine-s6, bootstrap: "none", channel: "release" }
+          - { target: tedge, bootstrap: "container", channel: "release" }
+          - { target: tedge-containermgmt, bootstrap: "container", channel: "release" }
 
     steps:
       # Checkout either the PR or the branch
@@ -96,6 +97,8 @@ jobs:
           just venv
 
       - name: Start demo
+        env:
+          TEDGE_CHANNEL: ${{ matrix.job.channel || 'release' }}
         run: |
           case "${{matrix.job.bootstrap}}" in
               script)
@@ -137,7 +140,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: reports-${{matrix.job.target}}
+          name: reports-${{matrix.job.target}}-${{ matrix.job.channel }}
           path: output
 
       - name: Cleanup Devices

@@ -7,6 +7,7 @@ RELEASE_VERSION := env_var_or_default("RELEASE_VERSION", `date +'%Y%m%d.%H%M'`)
 # Control which demo setup to use
 # IMAGE := "alpine-s6"
 IMAGE := env_var_or_default("IMAGE", "debian-systemd")
+TEDGE_CHANNEL := env_var_or_default("TEDGE_CHANNEL", "release")
 
 REGISTRY := "ghcr.io"
 REPO_OWNER := "thin-edge"
@@ -60,7 +61,7 @@ create-env:
 
 # Prepare up but don't start any containers
 prepare-up *args='':
-    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml build {{args}}
+    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml build --build-arg TEDGE_CHANNEL={{TEDGE_CHANNEL}} {{args}}
 
 # Start the demo
 up *args='':
@@ -68,7 +69,7 @@ up *args='':
 
 # Start the demo and build without caching
 up-no-cache *args='':
-    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml build --no-cache {{args}}
+    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml build --build-arg TEDGE_CHANNEL={{TEDGE_CHANNEL}} --no-cache {{args}}
     just -f {{justfile()}} DEV_ENV={{DEV_ENV}} IMAGE={{IMAGE}} up {{args}}
 
 # Stop the demo (but keep the data)

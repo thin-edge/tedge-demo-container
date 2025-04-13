@@ -1,6 +1,7 @@
 FROM debian:12-slim
 
 ARG VERSION=
+ARG TEDGE_CHANNEL=release
 
 ENV INSTALL="false"
 # ENV BOOTSTRAP="false"
@@ -69,7 +70,7 @@ RUN chmod a+x /usr/bin/startup-notifier \
 COPY common/utils/on_shutdown.sh /usr/bin/on_shutdown.sh
 
 RUN echo "running" \
-    && wget -O - thin-edge.io/install.sh | sh -s \
+    && wget -O - thin-edge.io/install.sh | sh -s -- --channel "$TEDGE_CHANNEL" \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         tedge-inventory-plugin \
