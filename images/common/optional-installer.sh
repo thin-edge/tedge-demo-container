@@ -7,7 +7,7 @@ TEST_USER=${TEST_USER:-iotadmin}
 command_exists() { command -v "$1" >/dev/null 2>&1; }
 
 install_container_management () {
-    # Install with all recommended packages as this is simplier to maintain
+    # Install with all recommended packages as this is simpler to maintain
     # Note: Use podman instead of docker-ce as docker-ce fails at build time. See https://github.com/docker/cli/issues/4807
     mkdir -p /etc/containers/
     touch /etc/containers/nodocker
