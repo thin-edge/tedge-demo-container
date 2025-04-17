@@ -17,14 +17,14 @@ jobs:
       # For security reasons, all pull requests need to be approved first before granting access to secrets
       # So the environment should be set to have a reviewer/s inspect it before approving it
       name: ${{ github.event_name == 'pull_request_target' && 'Test Pull Request' || 'Test Auto'  }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Wait for approval
         run: echo "Approved"
 
   test:
     name: Test ${{ matrix.job.target }} ${{ matrix.job.channel }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: approve
     environment:
       name: Test Auto
