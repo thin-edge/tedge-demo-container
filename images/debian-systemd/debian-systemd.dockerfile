@@ -115,6 +115,10 @@ COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 COPY common/config/collectd.conf /etc/collectd/collectd.conf
 COPY common/config/collectd.conf.d /etc/collectd/collectd.conf.d
 
+# Add additional ca certificates used by various Cumulocity instances
+COPY common/config/certificates/*.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates -f
+
 # Custom mosquitto config
 COPY common/config/mosquitto.conf /etc/mosquitto/conf.d/
 COPY common/config/mosquitto-conf/tedge-networkcontainer.conf /etc/tedge/mosquitto-conf/
