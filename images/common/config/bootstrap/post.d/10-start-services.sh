@@ -9,10 +9,8 @@ control_service() {
     name="$1"
     action="$2"
     if command -v systemctl >/dev/null 2>&1; then
-        echo "Enable/$action $name"
-        sudo systemctl enable "$name"
-
-        if [ -d /run/systemd/system ]; then
+        echo "$action $name"
+        if [ -d /run/systemd/system ] && systemctl -q is-enabled "$name"; then
             sudo systemctl "$action" "$name"
         fi
     fi
