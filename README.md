@@ -11,6 +11,41 @@ The following pre-requisites are required before you can get started:
 
 Check out the list of [known working setups](./docs/USER_GUIDE.md#known-working-environments) to see what software you can use for your Operating Systemd to meet the pre-requisites.
 
+## Starting a demo container using go-c8y-cli
+
+If you're a Cumulocity user, then you can use the [Cumulocity CLI tool, go-c8y-cli](https://goc8ycli.netlify.app/) and the thin-edge.io extension for it ([c8y-tedge](https://github.com/thin-edge/c8y-tedge)), to quickly launch demo containers without having to checkout this project.
+
+First, you'll need to install go-c8y-cli (in addition to having docker and docker compose already installed):
+
+* [Install go-c8y-cli](https://goc8ycli.netlify.app/docs/installation/)
+
+Then, install the [c8y-tedge](https://github.com/thin-edge/c8y-tedge) extension:
+
+```sh
+c8y extensions install thin-edge/c8y-tedge
+
+# or update it to the latest version
+c8y extensions update tedge
+```
+
+Launch a new container demo using (note: this will also open your web browser to the device after it is onboarded):
+
+```sh
+c8y tedge demo start mydemo01
+```
+
+Like most cli commands, you can view extra options by looking at the help, using the `--help` flag on any given command.
+
+```sh
+c8y tedge demo start --help
+```
+
+Afterwards, you can stop the demo and delete the related devices in the cloud using:
+
+```sh
+c8y tedge demo stop
+```
+
 ## Getting started
 
 1. Download the docker compose file from the repository
