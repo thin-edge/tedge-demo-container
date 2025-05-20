@@ -85,12 +85,16 @@ down-all:
 bootstrap *ARGS:
     @docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec tedge env C8Y_USER=${C8Y_USER:-} C8Y_PASSWORD=${C8Y_PASSWORD:-} DEVICE_ID=${DEVICE_ID:-} bootstrap.sh {{ARGS}}
 
+# Configure and register the device to the cloud using go-c8y- c8y-tedge extension
+bootstrap-c8y *ARGS:
+    cd "images/{{IMAGE}}" && c8y tedge bootstrap-container tedge {{ARGS}}
+
 # Bootstrap container using the go-c8y-cli c8y-tedge extension
 bootstrap-container *ARGS="":
     cd "images/{{IMAGE}}" && c8y tedge bootstrap-container bootstrap {{ARGS}}
 
 # Start a shell on the main device
-shell *args='bash':
+shell *args='zsh':
     docker compose -f images/{{IMAGE}}/docker-compose.yaml exec tedge {{args}}
 
 # Start a shell on the child device
