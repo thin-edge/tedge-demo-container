@@ -56,8 +56,42 @@ configure_services() {
     fi
 }
 
+set_zsh_defaults() {
+    cat <<EOT >> "$1"
+autoload -U compinit; compinit
+# zsh styling to make the completion menu easier to read and use
+zstyle ':completion:*' menu select
+# bind shift+tab to reverse menu complete
+zmodload zsh/complist
+bindkey -M menuselect '^[[Z' reverse-menu-complete
+EOT
+}
+
+configure_shells() {    
+    # Enable tab completions (note: fish does not require any changes)
+
+    # bash
+    echo '[ -f /etc/bash_completion ] && source /etc/bash_completion' >> /etc/profile.d/load_completions.sh
+    echo '. /etc/profile' >> ~/.bashrc
+    echo '. /etc/profile' >> "/home/$TEST_USER/.bashrc"
+    if [ ! -e /etc/bash_completion ]; then
+        ln -sf /usr/share/bash-completion/bash_completion /etc/bash_completion
+    fi
+    
+    # zsh
+    set_zsh_defaults ~/.zshrc
+    set_zsh_defaults "/home/$TEST_USER/.zshrc"
+    
+    # set default shell to zsh
+    # echo "/usr/bin/zsh" >> /etc/shells
+    if command -V zsh >/dev/null 2>&1; then
+        chsh -s "$(which zsh)"
+    fi
+}
+
 main() {
     configure_users
+    configure_shells
     configure_services
     install_container_management
 }

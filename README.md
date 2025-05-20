@@ -81,6 +81,12 @@ Once you have [just](https://github.com/casey/just) installed, you can proceed w
 
     You will be prompted for the required details. You can hit `<enter>` to accept the default values. The default values are provided via the `.env` file from the first step.
 
+    Alternatively, if you're a [go-c8y-cli](https://goc8ycli.netlify.app/) user, and have the [c8y-tedge](https://github.com/thin-edge/c8y-tedge) extension installed, then you can bootstrap the device using:
+
+    ```sh
+    just bootstrap-c8y
+    ```
+
 4. Click on the device link shown on your console
 
 5. That's it 🚀

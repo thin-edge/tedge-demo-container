@@ -7,7 +7,7 @@ ENV INSTALL="false"
 # ENV BOOTSTRAP="false"
 
 # Install
-RUN apt-get -y update \
+RUN apt-get -y update --allow-releaseinfo-change \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         wget \
         curl \
@@ -18,6 +18,11 @@ RUN apt-get -y update \
         systemd \
         systemd-sysv \
         ssh \
+        # shells
+        bash \
+        bash-completion \
+        zsh \
+        fish \
         collectd-core \
         # extra collectd shared libraries
         libmnl0 \
