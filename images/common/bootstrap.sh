@@ -75,7 +75,7 @@ TEST_USER=${TEST_USER:-iotadmin}
 PREFIX=${PREFIX:-tedge_}
 C8Y_BASEURL=${C8Y_BASEURL:-}
 BOOTSTRAP_POSTINST_DIR="${BOOTSTRAP_POSTINST_DIR:-/etc/bootstrap/post.d}"
-
+AUTH_METHOD=${AUTH_METHOD:-}
 
 get_debian_arch() {
     arch=
@@ -303,7 +303,7 @@ prompt_value() {
     echo "$value"
 }
 
-bootstrap_c8y() {
+bootstrap_c8y_cert() {
     # If bootstrapping is called, then it assumes the full bootstrapping
     # needs to be done.
 
@@ -339,6 +339,77 @@ bootstrap_c8y() {
     # but it is not critical for the connection, as the connection
     # supports automatic retries, but it can improve the first connection success rate
     sleep "$UPLOAD_CERT_WAIT"
+}
+
+bootstrap_c8y_basic() {
+    sudo tedge config set c8y.auth_method basic
+    # Device id
+    DEVICE_ID=$(prompt_value "Enter the device.id" "$DEVICE_ID")
+    # Cumulocity URL
+    C8Y_BASEURL=$(prompt_value "Enter the Cumulocity IoT url" "$C8Y_BASEURL")
+    if [ -n "$C8Y_BASEURL" ]; then
+        C8Y_BASEURL=$(parse_domain "$C8Y_BASEURL")
+    fi
+    # Cumulocity username & password
+    C8Y_DEVICE_USER=$(prompt_value "Enter the Cumulocity device username (e.g. t12345/device_example):" "$C8Y_DEVICE_USER")
+    if [ "$SHOULD_PROMPT" = 1 ] && [ "$CAN_PROMPT" = 1 ]; then
+        printf "Enter the Cumulocity password: " >&2
+        stty -echo
+        read -r C8Y_DEVICE_PASSWORD
+        stty echo
+        echo
+    fi
+    # Set device id and url
+    sudo tedge config set c8y.device.id "$DEVICE_ID"
+    sudo tedge config set c8y.url "$C8Y_BASEURL"
+    
+    if ! echo "[c8y]
+        username = \"$C8Y_DEVICE_USER\"
+        password = \"$C8Y_DEVICE_PASSWORD\"
+        " | sudo tee /etc/tedge/credentials.toml > /dev/null; then
+        echo "Error: Could not write to /etc/tedge/credentials.toml. Please check permissions." >&2
+        exit 1
+    fi
+
+    sudo chmod 600 /etc/tedge/credentials.toml
+
+    # Connect to Cumulocity
+    sudo tedge connect c8y
+}
+
+bootstrap_c8y() {
+    # Check authentication method
+    if [ -z "$AUTH_METHOD" ]; then
+        if [ "$SHOULD_PROMPT" = 1 ] && [ "$CAN_PROMPT" = 1 ]; then
+            echo
+            echo "Which authentication method do you want to use?"
+            echo "  1) Certificate (recommended, default)"
+            echo "  2) Basic Auth (username/password)"
+            printf "Please choose (1/2) [1]: " >&2
+            read -r auth_input
+            # Default to 1 (Cert) if no input is given
+            case "$auth_input" in
+                2)
+                    AUTH_METHOD="basic"
+                    ;;
+                *)
+                    AUTH_METHOD="cert"
+                    ;;
+            esac
+        else
+            AUTH_METHOD="cert"
+        fi
+    fi
+    
+    if [ "$AUTH_METHOD" = "basic" ]; then
+        bootstrap_c8y_basic
+        return
+    fi
+
+    if [ "$AUTH_METHOD" = "cert" ]; then
+        bootstrap_c8y_cert
+        return
+    fi
 }
 
 connect_mappers() {
