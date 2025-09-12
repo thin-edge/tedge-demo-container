@@ -3,6 +3,7 @@ FROM debian:12-slim
 # Install
 RUN apt-get -y update \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
+        locales \
         wget \
         curl \
         gnupg2 \

@@ -9,6 +9,7 @@ ENV INSTALL="false"
 # Install
 RUN apt-get -y update --allow-releaseinfo-change \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
+        locales \
         wget \
         curl \
         gnupg2 \

@@ -64,6 +64,22 @@ zstyle ':completion:*' menu select
 # bind shift+tab to reverse menu complete
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete
+
+# enable utf-8
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export LANGUAGE=C.UTF-8
+EOT
+}
+
+set_bash_defaults() {
+    cat <<EOT
+. /etc/profile
+
+# enable utf-8
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export LANGUAGE=C.UTF-8
 EOT
 }
 
@@ -72,8 +88,9 @@ configure_shells() {
 
     # bash
     echo '[ -f /etc/bash_completion ] && source /etc/bash_completion' >> /etc/profile.d/load_completions.sh
-    echo '. /etc/profile' >> ~/.bashrc
-    echo '. /etc/profile' >> "/home/$TEST_USER/.bashrc"
+    set_bash_defaults >> ~/.bashrc
+    set_bash_defaults >> "/home/$TEST_USER/.bashrc"
+
     if [ ! -e /etc/bash_completion ]; then
         ln -sf /usr/share/bash-completion/bash_completion /etc/bash_completion
     fi
