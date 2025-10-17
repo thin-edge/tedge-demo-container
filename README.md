@@ -28,7 +28,14 @@ c8y extensions install thin-edge/c8y-tedge
 c8y extensions update tedge
 ```
 
-Launch a new container demo using (note: this will also open your web browser to the device after it is onboarded):
+Before you can launch the container demo, you'll need to activate a go-c8y-cli session, using `set-session`. This will will configure which Cumulocity instance you wish to use with the demo. If you don't have an existing session then please follow the [go-c8y-cli Getting Started guide](https://goc8ycli.netlify.app/docs/gettingstarted/).
+
+```sh
+# Activate the go-c8y-cli session
+set-session
+```
+
+Now you can launch a new container demo using (note: this will also open your web browser to the device after it is onboarded):
 
 ```sh
 c8y tedge demo start mydemo01
