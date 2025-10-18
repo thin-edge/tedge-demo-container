@@ -10,6 +10,10 @@ on:
   pull_request_target:
     branches: [ main ]
   merge_group:
+
+permissions:
+  contents: read
+
 jobs:
   approve:
     name: Approve
@@ -26,6 +30,11 @@ jobs:
     name: Test ${{ matrix.job.target }} ${{ matrix.job.channel }}
     runs-on: ubuntu-24.04
     needs: approve
+    permissions:
+      # Required to publish system test results to the PR
+      issues: write
+      pull-requests: write
+      contents: read
     environment:
       name: Test Auto
     env:
@@ -149,7 +158,8 @@ jobs:
           just cleanup "$DEVICE_ID"
 
       - name: Send report to commit
-        uses: joonvena/robotframework-reporter-action@v2.3
+        uses: joonvena/robotframework-reporter-action@v2.5
+        if: always() && github.event_name == 'pull_request_target'
         with:
           gh_access_token: ${{ secrets.GITHUB_TOKEN }}
           report_path: 'output'
