@@ -74,10 +74,13 @@ collect_logs_collated() {
 archive() {
     SRC_DIR="$1"
     OUTPUT_DIR="$2"
-    TMP_FILE="$(mktemp).tar.gz"
-    if [ -d "$SRC_DIR" ]; then
-        (cd "$SRC_DIR" && tar czvf "$TMP_FILE" .)
+    if [ ! -d "$SRC_DIR" ]; then
+        echo "Skipping archive creation as source directory does not exist. path=$SRC_DIR" >&2
+        return 0
     fi
+
+    TMP_FILE="$(mktemp).tar.gz"
+    (cd "$SRC_DIR" && tar czvf "$TMP_FILE" .)
 
     rm -rf "$SRC_DIR"
     mkdir -p "$OUTPUT_DIR"
