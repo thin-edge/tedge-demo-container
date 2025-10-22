@@ -26,6 +26,9 @@ RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
     && echo "exit 0" | tee /usr/sbin/policy-rc.d \
     && chmod +x /usr/sbin/policy-rc.d
 
+# journald settings
+COPY common/config/journald/storage-limits.conf /etc/systemd/journald.conf.d/config.conf
+
 # Install base files to help with bootstrapping and common settings
 WORKDIR /root
 
