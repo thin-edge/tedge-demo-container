@@ -129,7 +129,7 @@ COPY common/config/certificates/*.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates -f
 
 # Custom mosquitto config
-COPY common/config/mosquitto.conf /etc/mosquitto/conf.d/
+COPY common/config/mosquitto.conf /etc/mosquitto/mosquitto.conf
 COPY common/config/mosquitto-conf/tedge-networkcontainer.conf /etc/tedge/mosquitto-conf/
 
 # sudoers
