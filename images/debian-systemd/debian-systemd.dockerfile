@@ -19,6 +19,7 @@ RUN apt-get -y update --allow-releaseinfo-change \
         systemd \
         systemd-sysv \
         ssh \
+        logrotate \
         # shells
         bash \
         bash-completion \
