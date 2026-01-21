@@ -13,6 +13,7 @@ RUN apt-get -y update \
         systemd \
         systemd-sysv \
         ssh \
+        logrotate \
         vim.tiny
 
 # Remove unnecessary systemd services
