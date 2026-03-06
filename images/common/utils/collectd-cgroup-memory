@@ -1,0 +1,50 @@
+#!/bin/sh
+# Report per-service resident memory using cgroup accounting.
+# This is more accurate than ps_rss because each physical page is counted once,
+# matching what systemd shows in `systemctl status`.
+#
+# Supports both cgroup v2 (memory.current) and cgroup v1 (memory.usage_in_bytes).
+
+HOSTNAME="${COLLECTD_HOSTNAME:-$(hostname)}"
+INTERVAL="${COLLECTD_INTERVAL:-60}"
+
+# read_cgroup_memory <service>
+# Prints the memory usage in bytes for the given systemd service name, or nothing
+# if the service is not running or the cgroup path does not exist.
+read_cgroup_memory() {
+    _v2="/sys/fs/cgroup/system.slice/${1}.service/memory.current"
+    _v1="/sys/fs/cgroup/memory/system.slice/${1}.service/memory.usage_in_bytes"
+    if [ -f "$_v2" ]; then
+        cat "$_v2"
+    elif [ -f "$_v1" ]; then
+        cat "$_v1"
+    fi
+}
+
+# emit <plugin_instance> <value>
+# Writes a collectd PUTVAL line; skips empty values and cgroup "max" sentinel.
+emit() {
+    # "max" means no memory limit is set; empty means service is not running — skip both
+    if [ -n "$2" ] && [ "$2" != "max" ]; then
+        echo "PUTVAL \"${HOSTNAME}/cgroup-${1}/memory\" interval=${INTERVAL} N:${2}"
+    fi
+}
+
+# mosquitto standalone
+emit "mosquitto" "$(read_cgroup_memory mosquitto)"
+
+# sum all tedge-related services into a single "tedge-all" value
+tedge_total=0
+tedge_found=false
+for svc in tedge-mapper-c8y tedge-mapper-aws tedge-mapper-az tedge-agent \
+           c8y-firmware-plugin c8y-log-plugin c8y-configuration-plugin; do
+    _val="$(read_cgroup_memory "$svc")"
+    if [ -n "$_val" ] && [ "$_val" != "max" ]; then
+        tedge_total=$((tedge_total + _val))
+        tedge_found=true
+    fi
+done
+
+if [ "$tedge_found" = "true" ]; then
+    emit "tedge-all" "$tedge_total"
+fi

@@ -124,6 +124,9 @@ COPY common/config/tedge-log-plugin.toml /etc/tedge/plugins/
 COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
 COPY common/config/collectd.conf /etc/collectd/collectd.conf
 COPY common/config/collectd.conf.d /etc/collectd/collectd.conf.d
+COPY common/utils/collectd-cgroup-memory /usr/share/collectd/cgroup-memory
+COPY common/utils/collectd-cgroup-cpu /usr/share/collectd/cgroup-cpu
+RUN chmod a+x /usr/share/collectd/cgroup-memory /usr/share/collectd/cgroup-cpu
 
 # Add additional ca certificates used by various Cumulocity instances
 COPY common/config/certificates/*.crt /usr/local/share/ca-certificates/
