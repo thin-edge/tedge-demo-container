@@ -14,6 +14,9 @@ REPO_OWNER := "thin-edge"
 
 DEV_ENV := ".env"
 
+# generate a random one-time password
+DEVICE_ONE_TIME_PASSWORD := `c8y template execute --template '_.Password(32)' -o csv`
+
 # Enabling running cross platform tools when building container images
 build-setup:
     docker run --privileged --rm tonistiigi/binfmt --install all
@@ -92,6 +95,12 @@ bootstrap-c8y *ARGS:
 # Bootstrap container using the go-c8y-cli c8y-tedge extension
 bootstrap-container *ARGS="":
     cd "images/{{IMAGE}}" && c8y tedge bootstrap-container bootstrap {{ARGS}}
+
+# Bootstrap the mapper container (single process per container)
+bootstrap-container-mapper container_name="tedge-mapper-c8y" *ARGS="":
+    @c8y deviceregistration register-ca --id "$DEVICE_ID" --one-time-password "{{DEVICE_ONE_TIME_PASSWORD}}" -f >/dev/null
+    @docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec {{container_name}} tedge cert download c8y --device-id "$DEVICE_ID" --one-time-password "{{DEVICE_ONE_TIME_PASSWORD}}" --retry-every 5s
+    @docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec {{container_name}} tedge reconnect c8y
 
 # Start a shell on the main device
 shell *args='zsh':
