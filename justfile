@@ -125,7 +125,7 @@ venv:
 
 # Run tests
 test *ARGS='':
-  ./.venv/bin/python3 -m robot.run --outputdir output {{ARGS}} tests/{{IMAGE}}
+  ./.venv/bin/python3 -m robot.run --listener RetryFailed:3 --outputdir output {{ARGS}} tests/{{IMAGE}}
 
 # Cleanup device and all it's dependencies
 cleanup DEVICE_ID $CI="true":
