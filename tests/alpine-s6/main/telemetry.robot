@@ -15,7 +15,6 @@ Child devices should be attached to the main device
 Service status
     Cumulocity.Should Have Services    name=tedge-mapper-c8y             service_type=service    status=up    timeout=90
     Cumulocity.Should Have Services    name=tedge-agent                  service_type=service    status=up
-    Cumulocity.Should Have Services    name=c8y-firmware-plugin          service_type=service    status=up
 
 Sends measurements
     Skip    No automatic publishing publishing

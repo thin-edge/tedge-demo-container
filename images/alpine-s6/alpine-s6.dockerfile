@@ -8,6 +8,7 @@ ARG TEDGE_CHANNEL=release
 RUN apk update \
     && apk add --no-cache \
         ca-certificates \
+        sudo \
         bash \
         curl \
         wget \
