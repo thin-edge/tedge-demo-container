@@ -47,7 +47,7 @@ jobs:
         job:
           - { target: debian-systemd, bootstrap: "script", channel: "release" }
           - { target: debian-systemd, bootstrap: "script", channel: "main" }
-          - { target: alpine-s6, bootstrap: "none", channel: "release" }
+          - { target: alpine-s6, bootstrap: "bootstrap-container-mapper", channel: "release" }
           - { target: tedge, bootstrap: "container", channel: "release" }
           - { target: tedge-containermgmt, bootstrap: "container", channel: "release" }
 
@@ -129,6 +129,11 @@ jobs:
                   wait "$UP_PID"
                   echo "docker compose up is ready"
                   sleep 5
+                  ;;
+
+              bootstrap-container-mapper)
+                  just IMAGE=${{matrix.job.target}} up --build=false
+                  just IMAGE=${{matrix.job.target}} bootstrap-container-mapper
                   ;;
 
               *)
