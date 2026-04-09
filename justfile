@@ -15,7 +15,7 @@ REPO_OWNER := "thin-edge"
 DEV_ENV := ".env"
 
 # generate a random one-time password
-DEVICE_ONE_TIME_PASSWORD := `c8y template execute -n --template '_.PasswordUrlSafe(32)' -o csv`
+DEVICE_ONE_TIME_PASSWORD := `command -V c8y >/dev/null 2>&1 && c8y template execute -n --template '_.PasswordUrlSafe(32)' -o csv ||:`
 
 # Enabling running cross platform tools when building container images
 build-setup:
