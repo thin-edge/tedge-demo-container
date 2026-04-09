@@ -10,7 +10,7 @@ Suite Setup    Set Main Device
 Service status
     Cumulocity.Should Have Services    name=tedge-mapper-c8y             service_type=service    status=up    timeout=90
     Cumulocity.Should Have Services    name=tedge-agent                  service_type=service    status=up
-    Cumulocity.Should Have Services    name=mosquitto-c8y-bridge         service_type=service    status=up
+    Cumulocity.Should Have Services    name=tedge-mapper-bridge-c8y         service_type=service    status=up
     Cumulocity.Should Have Services    name=tedge-container-monitor      service_type=service    status=up
 
 Sends measurements
