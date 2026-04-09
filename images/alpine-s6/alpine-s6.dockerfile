@@ -8,8 +8,10 @@ ARG TEDGE_CHANNEL=release
 RUN apk update \
     && apk add --no-cache \
         ca-certificates \
+        sudo \
         bash \
         curl \
+        wget \
         # GNU sed (to provide the unbuffered streaming option used in the log parsing)
         sed
 
@@ -51,12 +53,12 @@ COPY tedge-configuration-plugin.toml /etc/tedge/plugins/
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=30000
 
-ENV TEDGE_C8Y_PROXY_BIND_ADDRESS 0.0.0.0
-ENV TEDGE_HTTP_BIND_ADDRESS 0.0.0.0
+ENV TEDGE_C8Y_PROXY_BIND_ADDRESS=0.0.0.0
+ENV TEDGE_HTTP_BIND_ADDRESS=0.0.0.0
 
-ENV TEDGE_MQTT_CLIENT_HOST mosquitto
-ENV TEDGE_HTTP_CLIENT_HOST tedge
-ENV TEDGE_C8Y_PROXY_CLIENT_HOST tedge-mapper-c8y
+ENV TEDGE_MQTT_CLIENT_HOST=mosquitto
+ENV TEDGE_HTTP_CLIENT_HOST=tedge
+ENV TEDGE_C8Y_PROXY_CLIENT_HOST=tedge-mapper-c8y
 
 USER "tedge"
 ENTRYPOINT ["/init"]

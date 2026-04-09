@@ -6,7 +6,7 @@
 
 Before starting the project please install the following dependencies:
 
-* [go-c8y-cli](https://goc8ycli.netlify.app/), and setup the `set-session` shell helper
+* [go-c8y-cli](https://c8y.app/), and setup the `set-session` shell helper
 * Install the go-c8y-cli extension for thin-edge.io
 
     ```sh

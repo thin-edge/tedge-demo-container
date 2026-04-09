@@ -11,9 +11,14 @@ RUN apk add --no-cache \
         tedge-command-plugin \
         tedge-inventory-plugin \
         tedge-pki-smallstep-client \
-    && echo "tedge  ALL = (ALL) NOPASSWD: /usr/bin/tedge, /usr/bin/tedge-write /etc/*, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /bin/kill" > /etc/sudoers.d/tedge \
+    && echo "tedge  ALL = (ALL) NOPASSWD:SETENV: /usr/bin/tedge, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /bin/kill" > /etc/sudoers.d/tedge \
+    && echo "tedge    ALL = (ALL) NOPASSWD:SETENV: /usr/bin/tedge-write /etc/*" >> /etc/sudoers.d/tedge \
+    && echo "tedge    ALL = (ALL) NOPASSWD:SETENV: /usr/share/tedge/log-plugins/[a-zA-Z0-9]*" >> /etc/sudoers.d/tedge \
+    && echo "tedge    ALL = (ALL) NOPASSWD:SETENV: /usr/share/tedge/config-plugins/[a-zA-Z0-9]*" >> /etc/sudoers.d/tedge \
     && echo "Defaults        env_keep += \"FEATURES\"" > /etc/sudoers.d/step-ca \
     && echo "tedge  ALL = (ALL) NOPASSWD: /usr/bin/step-ca-admin.sh, /usr/bin/enroll.sh, /usr/sbin/update-ca-certificates" >> /etc/sudoers.d/step-ca \
+    # add flows sm-plugin
+    && ln -sf $(which tedge-flows-plugin) /etc/tedge/sm-plugins/flow \
     # Allow tedge user to control this folder
     && mkdir -p /etc/step-ca \
     && chown -R tedge:tedge /etc/step-ca \
@@ -40,5 +45,6 @@ ENV TEDGE_MQTT_CLIENT_HOST=tedge
 ENV TEDGE_HTTP_CLIENT_HOST=tedge
 ENV TEDGE_C8Y_PROXY_CLIENT_HOST=tedge
 ENV TEDGE_DEVICE_TYPE=thin-edge.io_container
+ENV TEDGE_SOFTWARE_PLUGIN_DEFAULT=apk
 
 CMD [ "/app/entrypoint.sh" ]
