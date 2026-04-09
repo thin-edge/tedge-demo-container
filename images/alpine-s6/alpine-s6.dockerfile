@@ -10,6 +10,7 @@ RUN apk update \
         ca-certificates \
         bash \
         curl \
+        wget \
         # GNU sed (to provide the unbuffered streaming option used in the log parsing)
         sed
 
