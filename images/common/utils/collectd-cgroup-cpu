@@ -1,0 +1,68 @@
+#!/bin/sh
+# Report per-service CPU usage as a percentage (%) using cgroup accounting.
+# On the first run a baseline is recorded and nothing is emitted; from the
+# second run onwards a rolling CPU% is emitted for each interval.
+#
+# Supports both cgroup v2 (cpu.stat / usage_usec) and
+# cgroup v1 (cpuacct/cpuacct.usage in nanoseconds).
+
+HOSTNAME="${COLLECTD_HOSTNAME:-$(hostname)}"
+INTERVAL="${COLLECTD_INTERVAL:-60}"
+STATE_DIR="/tmp/collectd-cgroup-cpu"
+
+mkdir -p "$STATE_DIR"
+
+# read_cgroup_cpu_usec <service>
+# Prints cumulative CPU time in microseconds, or nothing if unavailable.
+read_cgroup_cpu_usec() {
+    _v2="/sys/fs/cgroup/system.slice/${1}.service/cpu.stat"
+    _v1="/sys/fs/cgroup/cpuacct/system.slice/${1}.service/cpuacct.usage"
+    if [ -f "$_v2" ]; then
+        grep '^usage_usec' "$_v2" | awk '{print $2}'
+    elif [ -f "$_v1" ]; then
+        # v1 is in nanoseconds; convert to microseconds
+        awk '{print int($1 / 1000)}' "$_v1"
+    fi
+}
+
+# emit_cpu_percent <instance> <cpu_usec>
+# Computes CPU% against the previous sample, emits a PUTVAL line, then saves state.
+# Skips emission on the first run (no previous state).
+emit_cpu_percent() {
+    _instance="$1"
+    _cpu_usec="$2"
+    _wall_sec="$(date +%s)"
+    _state_file="${STATE_DIR}/${_instance}"
+
+    if [ -f "$_state_file" ]; then
+        read -r _prev_cpu _prev_wall < "$_state_file"
+        _pct="$(awk -v dc="$((_cpu_usec - _prev_cpu))" \
+                    -v dw="$((_wall_sec  - _prev_wall))" \
+                'BEGIN { if (dw > 0) printf "%.1f", (dc / 1e6) / dw * 100; else print "0.0" }')"
+        echo "PUTVAL \"${HOSTNAME}/cgroup-${_instance}/percent-cpu\" interval=${INTERVAL} N:${_pct}"
+    fi
+
+    printf '%s %s\n' "$_cpu_usec" "$_wall_sec" > "$_state_file"
+}
+
+# mosquitto standalone
+_val="$(read_cgroup_cpu_usec mosquitto)"
+if [ -n "$_val" ]; then
+    emit_cpu_percent "mosquitto" "$_val"
+fi
+
+# sum all tedge-related services into a single "tedge-all" value
+tedge_total=0
+tedge_found=false
+for svc in tedge-mapper-c8y tedge-mapper-aws tedge-mapper-az tedge-agent \
+           c8y-firmware-plugin c8y-log-plugin c8y-configuration-plugin; do
+    _val="$(read_cgroup_cpu_usec "$svc")"
+    if [ -n "$_val" ]; then
+        tedge_total=$((tedge_total + _val))
+        tedge_found=true
+    fi
+done
+
+if [ "$tedge_found" = "true" ]; then
+    emit_cpu_percent "tedge-all" "$tedge_total"
+fi
