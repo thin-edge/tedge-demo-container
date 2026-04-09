@@ -20,7 +20,7 @@ Set Configuration
     ${binary_url}=    Cumulocity.Create Inventory Binary    tedge-configuration-plugin-2.toml    tedge-configuration-plugin    file=${CURDIR}/tedge-configuration-plugin-2.toml
     ${operation}=    Cumulocity.Set Configuration    typename=tedge-configuration-plugin    url=${binary_url}
     Operation Should Be SUCCESSFUL    ${operation}
-    Cumulocity.Should Support Configurations    tedge-configuration-plugin    tedge.toml    system.toml    tedge-log-plugin.toml
+    Cumulocity.Should Contain Supported Configuration Types    tedge-configuration-plugin    tedge.toml    system.toml    tedge-log-plugin.toml
 
 Get Configuration
     ${operation}=    Cumulocity.Get Configuration    typename=tedge-configuration-plugin
