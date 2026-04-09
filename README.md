@@ -13,11 +13,11 @@ Check out the list of [known working setups](./docs/USER_GUIDE.md#known-working-
 
 ## Starting a demo container using go-c8y-cli
 
-If you're a Cumulocity user, then you can use the [Cumulocity CLI tool, go-c8y-cli](https://goc8ycli.netlify.app/) and the thin-edge.io extension for it ([c8y-tedge](https://github.com/thin-edge/c8y-tedge)), to quickly launch demo containers without having to checkout this project.
+If you're a Cumulocity user, then you can use the [Cumulocity CLI tool, go-c8y-cli](https://c8y.app/) and the thin-edge.io extension for it ([c8y-tedge](https://github.com/thin-edge/c8y-tedge)), to quickly launch demo containers without having to checkout this project.
 
 First, you'll need to install go-c8y-cli (in addition to having docker and docker compose already installed):
 
-* [Install go-c8y-cli](https://goc8ycli.netlify.app/docs/installation/)
+* [Install go-c8y-cli](https://c8y.app/docs/installation/)
 
 Then, install the [c8y-tedge](https://github.com/thin-edge/c8y-tedge) extension:
 
@@ -28,7 +28,7 @@ c8y extensions install thin-edge/c8y-tedge
 c8y extensions update tedge
 ```
 
-Before you can launch the container demo, you'll need to activate a go-c8y-cli session, using `set-session`. This will will configure which Cumulocity instance you wish to use with the demo. If you don't have an existing session then please follow the [go-c8y-cli Getting Started guide](https://goc8ycli.netlify.app/docs/gettingstarted/).
+Before you can launch the container demo, you'll need to activate a go-c8y-cli session, using `set-session`. This will will configure which Cumulocity instance you wish to use with the demo. If you don't have an existing session then please follow the [go-c8y-cli Getting Started guide](https://c8y.app/docs/gettingstarted/).
 
 ```sh
 # Activate the go-c8y-cli session
@@ -123,7 +123,7 @@ Once you have [just](https://github.com/casey/just) installed, you can proceed w
 
     You will be prompted for the required details. You can hit `<enter>` to accept the default values. The default values are provided via the `.env` file from the first step.
 
-    Alternatively, if you're a [go-c8y-cli](https://goc8ycli.netlify.app/) user, and have the [c8y-tedge](https://github.com/thin-edge/c8y-tedge) extension installed, then you can bootstrap the device using:
+    Alternatively, if you're a [go-c8y-cli](https://c8y.app/) user, and have the [c8y-tedge](https://github.com/thin-edge/c8y-tedge) extension installed, then you can bootstrap the device using:
 
     ```sh
     just bootstrap-c8y
