@@ -54,7 +54,7 @@ jobs:
     steps:
       # Checkout either the PR or the branch
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
           fetch-depth: 0
@@ -84,17 +84,9 @@ jobs:
           esac
           echo "ARCH=$NORMALIZED_ARCH" >> "$GITHUB_ENV"
 
-
-      # Support running workflow locally on arm64 systems using act
-      # https://github.com/actions/setup-python/issues/705#issuecomment-1756948951
-      - if: ${{ env.ARCH == 'arm64' }}
-        uses: deadsnakes/action@v3.1.0
+      - uses: actions/setup-python@v6
         with:
-          python-version: "3.9"
-      - if: ${{ env.ARCH == 'amd64' }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
+          python-version-file: tests/.python-version
           cache: 'pip'
           cache-dependency-path: |
             tests/requirements.txt
@@ -151,7 +143,7 @@ jobs:
         run: just IMAGE=${{matrix.job.target}} down-all
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: reports-${{matrix.job.target}}-${{ matrix.job.channel }}
