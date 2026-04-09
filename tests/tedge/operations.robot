@@ -61,7 +61,7 @@ Check Supported Log File Types
     [Arguments]    ${device}
     Cumulocity.Set Device    ${device}
     Cumulocity.Should Have Services    name=tedge-agent    status=up
-    Cumulocity.Should Support Log File Types    software-management    shell
+    Cumulocity.Should Contain Supported Log Types    software-management    shell
 
 Get Log File
     [Arguments]    ${device}

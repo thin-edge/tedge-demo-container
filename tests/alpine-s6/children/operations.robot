@@ -9,7 +9,7 @@ Suite Setup    Set Child Device1
 
 It Should Show Supported Log File Types
     Cumulocity.Should Have Services    name=tedge-agent    status=up
-    Cumulocity.Should Support Log File Types    software-management    shell
+    Cumulocity.Should Contain Supported Log Types    software-management    shell
 
 Get Log File
     ${operation}=     Cumulocity.Get Log File    type=software-management
