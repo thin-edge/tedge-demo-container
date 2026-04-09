@@ -15,7 +15,7 @@ REPO_OWNER := "thin-edge"
 DEV_ENV := ".env"
 
 # generate a random one-time password
-DEVICE_ONE_TIME_PASSWORD := `c8y template execute --template '_.PasswordUrlSafe(32)' -o csv`
+DEVICE_ONE_TIME_PASSWORD := `c8y template execute -n --template '_.PasswordUrlSafe(32)' -o csv`
 
 # Enabling running cross platform tools when building container images
 build-setup:
@@ -98,7 +98,7 @@ bootstrap-container *ARGS="":
 
 # Bootstrap the mapper container (single process per container)
 bootstrap-container-mapper container_name="tedge-mapper-c8y" *ARGS="":
-    c8y deviceregistration register-ca --id "$DEVICE_ID" --one-time-password '{{DEVICE_ONE_TIME_PASSWORD}}' -f >/dev/null
+    c8y deviceregistration register-ca -n --id "$DEVICE_ID" --one-time-password '{{DEVICE_ONE_TIME_PASSWORD}}' -f >/dev/null
     docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec {{container_name}} tedge cert download c8y --device-id "$DEVICE_ID" --one-time-password '{{DEVICE_ONE_TIME_PASSWORD}}' --retry-every 5s
     docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec {{container_name}} tedge reconnect c8y
 
