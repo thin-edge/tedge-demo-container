@@ -7,10 +7,6 @@ client.host = "tedge"
 bind.address = "0.0.0.0"
 client.host = "tedge"
 
-[c8y]
-proxy.bind.address = "0.0.0.0"
-proxy.client.host = "tedge"
-
 [software.plugin]
 # Exclude uninteresting software management packages (regardless of type)
 exclude = "^(glibc|lib|kernel-|iptables-module).*"

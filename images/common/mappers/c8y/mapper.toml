@@ -1,0 +1,5 @@
+cloud_type = "c8y"
+
+[proxy]
+bind.address = "0.0.0.0"
+client.host = "tedge"
