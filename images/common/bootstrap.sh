@@ -65,7 +65,7 @@ banner() {
 DEVICE_ID=${DEVICE_ID:-}
 BOOTSTRAP=${BOOTSTRAP:-}
 CONNECT=${CONNECT:-1}
-MAX_CONNECT_ATTEMPTS=${MAX_CONNECT_ATTEMPTS:-2}
+MAX_CONNECT_ATTEMPTS=${MAX_CONNECT_ATTEMPTS:-5}
 TEDGE_MAPPER=${TEDGE_MAPPER:-c8y}
 USE_RANDOM_ID=${USE_RANDOM_ID:-0}
 SHOULD_PROMPT=${SHOULD_PROMPT:-1}
@@ -419,17 +419,17 @@ connect_mappers() {
     CONNECT_ATTEMPT=0
     while true; do
         CONNECT_ATTEMPT=$((CONNECT_ATTEMPT + 1))
-        if sudo tedge connect "$TEDGE_MAPPER"; then
+        if sudo tedge reconnect "$TEDGE_MAPPER"; then
             break
-        else
-            if [ "$CONNECT_ATTEMPT" -ge "$MAX_CONNECT_ATTEMPTS" ]; then
-                echo "Failed after $CONNECT_ATTEMPT connection attempts. Giving up"
-                exit 2
-            fi
         fi
 
-        echo "WARNING: Connection attempt failed ($CONNECT_ATTEMPT of $MAX_CONNECT_ATTEMPTS)! Retrying to connect in 2s"
-        sleep 2
+        if [ "$CONNECT_ATTEMPT" -ge "$MAX_CONNECT_ATTEMPTS" ]; then
+            echo "Failed after $CONNECT_ATTEMPT connection attempts. Giving up"
+            exit 2
+        fi
+
+        echo "WARNING: Connection attempt failed ($CONNECT_ATTEMPT of $MAX_CONNECT_ATTEMPTS) Retrying to connect in 5s"
+        sleep 5
     done
 }
 
