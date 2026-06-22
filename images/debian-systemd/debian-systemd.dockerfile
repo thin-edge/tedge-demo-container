@@ -86,7 +86,7 @@ RUN echo "running" \
         tedge-inventory-plugin \
         tedge-command-plugin \
         tedge-monit-setup \
-        tedge-nodered-plugin-ng \
+        tedge-nodered-plugin \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-ca \
     && systemctl disable c8y-firmware-plugin.service \
