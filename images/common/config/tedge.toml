@@ -1,3 +1,6 @@
+[config]
+version = "2"
+
 [mqtt]
 bind.address = "0.0.0.0"
 bind.port = 1883

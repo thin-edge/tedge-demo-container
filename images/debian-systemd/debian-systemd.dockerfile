@@ -1,4 +1,4 @@
-FROM debian:12-slim
+FROM debian:13-slim
 
 ARG VERSION=
 ARG TEDGE_CHANNEL=release
@@ -119,7 +119,7 @@ COPY common/config/tedge-container-plugin.env /etc/tedge-container-plugin/env
 
 COPY common/config/system.toml /etc/tedge/
 COPY common/config/tedge.toml /etc/tedge/
-COPY common/mappers /etc/tedge/
+COPY common/mappers /etc/tedge/mappers/
 COPY common/config/tedge-configuration-plugin.toml /etc/tedge/plugins/
 COPY common/config/tedge-log-plugin.toml /etc/tedge/plugins/
 COPY common/utils/workflows/firmware_update.toml /etc/tedge/operations/
