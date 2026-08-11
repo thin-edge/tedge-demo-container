@@ -1,5 +1,5 @@
 *** Settings ***
-Resource    ../../resources/common.robot
+Resource    ../../resources/common.resource
 Library    Cumulocity
 Library    DeviceLibrary
 
@@ -11,6 +11,7 @@ Firmware information should be shown on startup
     Cumulocity.Managed Object Should Have Fragment Values    c8y_Firmware.name\=iot-linux    c8y_Firmware.version\=1.0.0
 
 Install Firmware
+    # Flaky test
     Cumulocity.Should Have Services    name=tedge-agent    status=up
     ${date_from}=    Get Test Start Time
     Sleep    1s
