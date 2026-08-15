@@ -22,6 +22,10 @@ install_container_management () {
     # Source: podman-docker debian package
     echo 'L+  %t/docker.sock   -    -    -     -   %t/podman/podman.sock' | tee /usr/lib/tmpfiles.d/podman-docker-socket.conf
     systemd-tmpfiles --create podman-docker.conf >/dev/null || true
+
+    # enable the service by default instead of using a socket activated service
+    # so it is can be auto detected by tedge-container-plugin
+    sudo systemctl enable podman.service
 }
 
 configure_users() {
