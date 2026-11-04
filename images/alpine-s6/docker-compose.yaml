@@ -78,6 +78,8 @@ services:
       - tedge
     depends_on:
       - mosquitto
+    labels:
+      - device-test-core.role=main
 
   # main device
   tedge:
