@@ -1,9 +1,8 @@
 *** Settings ***
 Resource    ../../resources/common.resource
-Library    Cumulocity
-Library    DeviceLibrary
 
-Suite Setup    Set Main Device
+Suite Setup    Setup Device
+Suite Teardown    Collect Logs
 
 *** Test Cases ***
 
@@ -12,7 +11,7 @@ Restart device
     Sleep    1s
     ${operation}=    Cumulocity.Restart Device
     # Cumulocity.Device Should Have Event/s    expected_text=.*Warning: device is about to reboot.*    minimum=1    maximum=1    type=device_reboot    after=${date_from}
-    Operation Should Be SUCCESSFUL    ${operation}    timeout=120
+    Cumulocity.Operation Should Be SUCCESSFUL    ${operation}    timeout=120
 
 # Get Logfile Request
 #     [Template]    Get Logfile Request
@@ -23,5 +22,5 @@ Restart device
 Get Logfile Request
     [Arguments]    ${name}
     ${operation}=    Cumulocity.Create Operation    description=Get Log File    fragments={"c8y_LogfileRequest": {"dateFrom": "2023-05-08T20:46:56+0200","dateTo": "2023-05-09T20:46:56+0200","logFile": "${name}","maximumLines": 1000,"searchText": ""}}
-    ${operation}=    Operation Should Be SUCCESSFUL    ${operation}
+    ${operation}=    Cumulocity.Operation Should Be SUCCESSFUL    ${operation}
     Should Not Be Empty    ${operation["c8y_LogfileRequest"]["file"]}

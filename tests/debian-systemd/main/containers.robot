@@ -1,9 +1,8 @@
 *** Settings ***
 Resource    ../../resources/common.resource
-Library    Cumulocity
-Library    DeviceLibrary
 
-Suite Setup    Set Main Device
+Suite Setup    Setup Device
+Suite Teardown    Collect Logs
 
 *** Test Cases ***
 
