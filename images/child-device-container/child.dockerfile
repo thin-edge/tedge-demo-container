@@ -8,9 +8,12 @@ RUN apk add --no-cache \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/config.alpine.txt?distro=alpine&codename=v3.8' >> /etc/apk/repositories \
     && apk add --no-cache \
         tedge-apk-plugin \
-        tedge-command-plugin \
         tedge-inventory-plugin \
         tedge-pki-smallstep-client \
+    # Only install tedge-command-plugin when tedge does not provide the shell_execute operation itself
+    && if ! tedge config get agent.enable.shell_execute >/dev/null 2>&1; then \
+        apk add --no-cache tedge-command-plugin; \
+    fi \
     && echo "tedge  ALL = (ALL) NOPASSWD:SETENV: /usr/bin/tedge, /etc/tedge/sm-plugins/[a-zA-Z0-9]*, /bin/sync, /bin/kill" > /etc/sudoers.d/tedge \
     && echo "tedge    ALL = (ALL) NOPASSWD:SETENV: /usr/bin/tedge-write /etc/*" >> /etc/sudoers.d/tedge \
     && echo "tedge    ALL = (ALL) NOPASSWD:SETENV: /usr/share/tedge/log-plugins/[a-zA-Z0-9]*" >> /etc/sudoers.d/tedge \

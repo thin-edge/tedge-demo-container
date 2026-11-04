@@ -84,11 +84,14 @@ RUN echo "running" \
     && systemctl enable collectd \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         tedge-inventory-plugin \
-        tedge-command-plugin \
         tedge-monit-setup \
         tedge-nodered-plugin \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-ca \
+    # Only install tedge-command-plugin when tedge does not provide the shell_execute operation itself
+    && if ! tedge config get agent.enable.shell_execute >/dev/null 2>&1; then \
+        DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install tedge-command-plugin; \
+    fi \
     && systemctl disable c8y-firmware-plugin.service \
     && systemctl mask c8y-firmware-plugin.service
 
