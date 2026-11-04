@@ -41,10 +41,13 @@ RUN echo "running" \
     && curl -1sLf 'https://dl.cloudsmith.io/public/thinedge/community/setup.deb.sh' | sudo -E bash \
     && DEBIAN_FRONTEND=noninteractive apt-get -y install \
         tedge-agent \
-        tedge-command-plugin \
         tedge-inventory-plugin \
         # Local PKI service for easy child device registration
         tedge-pki-smallstep-client \
+    # Only install tedge-command-plugin when tedge does not provide the shell_execute operation itself
+    && if ! tedge config get agent.enable.shell_execute >/dev/null 2>&1; then \
+        DEBIAN_FRONTEND=noninteractive apt-get -y install tedge-command-plugin; \
+    fi \
     # Disable tedge-agent as it needs to be setup before it can start
     && systemctl disable tedge-agent \
     # Add dummy configuration files

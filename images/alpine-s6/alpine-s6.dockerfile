@@ -35,8 +35,11 @@ RUN curl -sSL thin-edge.io/install.sh | sh -s -- --channel "$TEDGE_CHANNEL"
 RUN curl -sSL thin-edge.io/install-services.sh | sh -s \
     # Install additional community plugins
     && apk add --no-cache \
-        tedge-command-plugin \
-        tedge-apk-plugin
+        tedge-apk-plugin \
+    # Only install tedge-command-plugin when tedge does not provide the shell_execute operation itself
+    && if ! tedge config get agent.enable.shell_execute >/dev/null 2>&1; then \
+        apk add --no-cache tedge-command-plugin; \
+    fi
 
 # Set permissions of all files under /etc/tedge
 # TODO: Can thin-edge.io set permissions during installation?
