@@ -143,8 +143,12 @@ COPY common/config/mosquitto-conf/tedge-networkcontainer.conf /etc/tedge/mosquit
 # sudoers
 COPY common/config/sudoers.d/* /etc/sudoers.d/
 
+# systemd config
+COPY common/config/systemd/container-environment.conf /etc/systemd/system/service.d/container-environment.conf
+COPY common/config/systemd/entrypoint-systemd.sh /usr/bin/entrypoint-systemd.sh
+
 # Reference: https://developers.redhat.com/blog/2019/04/24/how-to-run-systemd-in-a-container#enter_podman
 # STOPSIGNAL SIGRTMIN+3 (=37)
 STOPSIGNAL 37
 
-CMD ["/lib/systemd/systemd"]
+CMD ["/usr/bin/entrypoint-systemd.sh"]
