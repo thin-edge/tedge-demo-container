@@ -100,7 +100,8 @@ bootstrap-container *ARGS="":
 bootstrap-container-mapper container_name="tedge-mapper-c8y" *ARGS="":
     c8y deviceregistration register-ca -n --id "$DEVICE_ID" --one-time-password '{{DEVICE_ONE_TIME_PASSWORD}}' -f >/dev/null
     docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec {{container_name}} tedge cert download c8y --device-id "$DEVICE_ID" --one-time-password '{{DEVICE_ONE_TIME_PASSWORD}}' --retry-every 5s
-    docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec {{container_name}} tedge reconnect c8y
+    # Retry, as Cumulocity can briefly reject the connection right after the certificate is issued
+    for attempt in 1 2 3; do docker compose --env-file {{DEV_ENV}} -f images/{{IMAGE}}/docker-compose.yaml exec {{container_name}} tedge reconnect c8y && exit 0; echo "tedge reconnect c8y failed (attempt $attempt of 3)"; [ "$attempt" -lt 3 ] && sleep 10; done; exit 1
 
 # Start a shell on the main device
 shell *args='zsh':
